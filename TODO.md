@@ -46,13 +46,20 @@
 - [ ] 🟡 Add stock-based comp expense modeling
 - [ ] 🟡 Model Series A dilution more precisely with lawyer
 
-### Investor Pipeline
-- [ ] 🟡 Build target investor list (20-30 VCs + 10-20 angels)
-- [ ] 🟡 Craft shortlist of 10 VCs you'd most want (vertical SaaS specialists)
-- [ ] 🟡 Draft cold outreach templates to investors
-- [ ] 🟢 Get warm intros to 5+ target investors via advisors/network
-- [ ] 🟢 First investor conversations by end of Q1 2027
+### Investor Pipeline (see `docs/fundraising/investor-target-list.md`)
+- [ ] 🔴 Complete pre-fundraise checklist (Section 2) — legal entity, data room, references
+- [ ] 🔴 Build final list of 100 target investors in CRM (tracker columns in Section 19)
+- [ ] 🔴 Set up DocSend for pitch deck tracking
+- [ ] 🔴 Build data room folder structure (Section 11)
+- [ ] 🔴 Engage startup lawyer for term sheet review ($5-15k budget)
+- [ ] 🟡 Draft 10-20 warm intro requests to mutual connections
+- [ ] 🟡 Shortlist 10 Tier-1 VCs most likely to say yes (vertical SaaS + supply chain)
+- [ ] 🟡 Research recent portfolio adds for each target (reference in outreach)
+- [ ] 🟡 Rehearse the 30-second opening pitch (Section 24) until automatic
+- [ ] 🟢 90-day sprint execution (Section 18): 100 contacts → 30 meetings → 10 second meetings → 2-3 term sheets
+- [ ] 🟢 Target: term sheet signed by week 10-12
 - [ ] 🟢 Target seed close: Q1 2027
+- [ ] 🟢 Post-close: monthly investor update email on 1st of each month
 
 ---
 
@@ -210,6 +217,7 @@ Mark these as DONE as I ship them to you.
 - [x] ~~Founder To-Do Tracker (this doc)~~ ✅
 - [x] ~~Advisor Board Recruitment Plan~~ ✅
 - [x] ~~Legal Entity Setup Guide~~ ✅
+- [x] ~~Investor Target List + Outreach Package~~ ✅
 
 ### Potential Next Session Deliverables (ask me)
 - [ ] Investor target list + outreach templates
@@ -305,6 +313,7 @@ Mark DONE as you decide each. These unblock multiple other items.
 | Enterprise One-Pager | `docs/sales/enterprise-one-pager.html` | [Artifact](https://claude.ai/artifact/AoYJVz6MV9i6baqYPbyP12) |
 | Advisor Board Plan | `docs/hiring/advisor-board-plan.md` | GitHub |
 | Legal Entity Guide | `docs/legal/entity-setup-guide.md` | GitHub |
+| Investor Target List | `docs/fundraising/investor-target-list.md` | GitHub |
 | **This To-Do Tracker** | `TODO.md` | GitHub |
 
 ---
