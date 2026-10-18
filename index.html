@@ -210,6 +210,25 @@
   .timeline-dot.done { background: var(--ok-soft); color: var(--ok); }
   .timeline-dot.current { background: var(--accent); color: var(--accent-ink); }
   .timeline-dot.ncr { background: var(--bad-soft); color: var(--bad); }
+  .timeline-item.tappable { cursor:pointer; border-radius:var(--radius-sm); margin:0 -8px; padding:4px 8px; transition:background 0.15s; }
+  .timeline-item.tappable:active { background:var(--accent-glow); }
+  .comment-bubble { padding:10px 14px; border-radius:14px; font-size:13px; line-height:1.45; max-width:85%; margin-bottom:8px; position:relative; }
+  .comment-bubble.them { background:var(--bg-card); border:1px solid var(--border); align-self:flex-start; border-bottom-left-radius:4px; }
+  .comment-bubble.me { background:var(--accent); color:var(--accent-ink); align-self:flex-end; border-bottom-right-radius:4px; }
+  .comment-sender { font-size:11px; font-weight:600; margin-bottom:3px; }
+  .comment-bubble.them .comment-sender { color:var(--fg-muted); }
+  .comment-bubble.me .comment-sender { color:rgba(255,255,255,0.7); }
+  .comment-time { font-size:10px; margin-top:3px; opacity:0.5; }
+  .comment-mention { font-weight:600; color:var(--accent); }
+  .comment-bubble.me .comment-mention { color:rgba(255,255,255,0.9); text-decoration:underline; }
+  .comment-thread { display:flex; flex-direction:column; gap:2px; }
+  .btn-send { width:40px; height:40px; border-radius:50%; border:none; background:var(--accent); color:var(--accent-ink); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .btn-send:active { transform:scale(0.92); }
+  .form-input:focus { border-color:var(--accent); }
+  .milestone-modal { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+  .milestone-modal.show { opacity:1; pointer-events:auto; }
+  .milestone-sheet { background:var(--bg); border-radius:20px 20px 0 0; width:100%; max-width:420px; padding:24px 20px calc(24px + env(safe-area-inset-bottom)); transform:translateY(100%); transition:transform 0.3s cubic-bezier(0.16,1,0.3,1); }
+  .milestone-modal.show .milestone-sheet { transform:translateY(0); }
   .timeline-dot.pending { background: var(--bg-dim); color: var(--fg-faint); }
   .timeline-dot svg { width: 12px; height: 12px; }
   .timeline-text { padding-top: 2px; }
@@ -394,6 +413,14 @@
       <div class="section-pad" style="padding-top:8px"><div id="detailStyles"></div></div>
       <div class="divider-label">Order Timeline</div>
       <div style="padding:12px 0"><div class="timeline" id="detailTimeline"></div></div>
+      <div class="divider-label">Comments &amp; Follow-ups</div>
+      <div class="section-pad" style="padding-top:8px">
+        <div id="detailComments"></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <input type="text" class="form-input" id="commentInput" placeholder="Ask a question or follow up..." onkeydown="if(event.key==='Enter')addComment()" style="flex:1;padding:10px 14px;border-radius:var(--radius-pill);border:1.5px solid var(--border);background:var(--bg-card);color:var(--fg);font-size:14px;font-family:var(--font-body);outline:none">
+          <button class="btn-send" onclick="addComment()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+        </div>
+      </div>
     </div>
 
     <!-- FACTORY PORTAL -->
@@ -410,6 +437,19 @@
       </div>
       <div class="divider-label">Active Orders</div>
       <div class="section-pad" style="padding-top:8px"><div class="card-list" id="factoryPoList"></div></div>
+    </div>
+
+    <div class="screen" id="factory-milestone">
+      <div class="detail-header">
+        <button class="back-btn" onclick="showScreen('factory-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <span class="detail-title" id="fmPoTitle">PO-2611-AW-001</span>
+        <span class="badge badge-accent" id="fmPoStatus">In Production</span>
+      </div>
+      <div class="section-pad" style="padding-bottom:0">
+        <div style="font-size:13px;color:var(--fg-muted);margin-bottom:12px" id="fmPoSub"></div>
+        <div class="divider-label" style="padding:0 0 8px">Tap a milestone to update</div>
+      </div>
+      <div class="section-pad" style="padding-top:0"><div class="timeline" id="fmTimeline"></div></div>
     </div>
 
     <div class="screen" id="factory-defect">
@@ -496,6 +536,26 @@
   </nav>
 </div>
 
+<div class="milestone-modal" id="milestoneModal" onclick="closeMilestoneModal(event)">
+  <div class="milestone-sheet">
+    <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>
+    <div style="font-family:var(--font-display);font-size:18px;margin-bottom:4px" id="msLabel">Milestone</div>
+    <div style="font-size:13px;color:var(--fg-muted);margin-bottom:16px" id="msSub"></div>
+    <div class="form-group">
+      <label class="form-label">Completion Date</label>
+      <input type="date" class="form-select" id="msDate" style="font-family:var(--font-body)">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes / Evidence</label>
+      <textarea class="form-textarea" id="msNotes" rows="2" placeholder="e.g. Delivery challan #DC-4521, 12 rolls received"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Attach Document (optional)</label>
+      <div class="photo-slot" style="padding:12px"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg><span>Upload file</span></div>
+    </div>
+    <button class="btn-primary" onclick="confirmMilestone()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg> Confirm Milestone</button>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <button class="fab" id="fab" style="display:none" onclick="showScreen('factory-defect')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
 
@@ -549,6 +609,25 @@
     in_production:['In Production','accent'], awaiting_inspection:['Awaiting Inspection','warn'],
     inspected:['Inspected','ok'], released:['Released','ok'], shipped:['Shipped','ok'],
     ncr_open:['NCR Open','bad'], closed:['Closed','muted'], cancelled:['Cancelled','muted']
+  };
+  var COMMENTS = {
+    'PO-2611-AW-001': [
+      { from:'Sarah Chen', role:'Brand — ActiveWave', msg:'Can we get an update on fabric inward? Supplier was 3 days late last time.', time:'Oct 10, 9:15 AM', me:false },
+      { from:'Rahim Khan', role:'Factory — Dhaka Textiles', msg:'All fabric received Sep 18 on time. QC passed Sep 22. We are on track.', time:'Oct 10, 11:42 AM', me:false },
+      { from:'Sarah Chen', role:'Brand — ActiveWave', msg:'Great, thanks Rahim. <span class="comment-mention">@QualityFirst</span> please confirm in-line inspection for Nov 10?', time:'Oct 10, 2:08 PM', me:false },
+      { from:'Amit Verma', role:'Inspector — QualityFirst', msg:'Confirmed. Inspector Priya Sharma assigned for Nov 10 at Dhaka Textiles. AQL Level II.', time:'Oct 11, 8:30 AM', me:false },
+    ],
+    'PO-2611-BB-002': [
+      { from:'James Liu', role:'Brand — Blueberry Threads', msg:'NCR raised on back yoke stitching. 8% defect rate is unacceptable. What happened?', time:'Oct 22, 3:15 PM', me:false },
+      { from:'Rahim Khan', role:'Factory — Dhaka Textiles', msg:'Issue traced to machine #7 — needle plate was misaligned. Already recalibrated. We can rework affected pieces in 10 days.', time:'Oct 22, 5:30 PM', me:false },
+      { from:'James Liu', role:'Brand — Blueberry Threads', msg:'<span class="comment-mention">@QualityFirst</span> please schedule re-inspection after rework. Need this closed before Dec 1 ship date.', time:'Oct 23, 9:00 AM', me:false },
+      { from:'Amit Verma', role:'Inspector — QualityFirst', msg:'Re-inspection penciled for Nov 12. Will do 100% check on reworked pieces + fresh AQL on full lot.', time:'Oct 23, 11:15 AM', me:false },
+    ],
+    'PO-2611-AW-002': [
+      { from:'Sarah Chen', role:'Brand — ActiveWave', msg:'Final inspection overdue by 3 days. <span class="comment-mention">@Saigon Stitch</span> what is the status?', time:'Oct 18, 10:00 AM', me:false },
+      { from:'Linh Nguyen', role:'Factory — Saigon Stitch', msg:'Apologies — pressing line had a delay. All 3,000 pcs are packed and ready. Requesting inspection slot this week.', time:'Oct 18, 2:45 PM', me:false },
+      { from:'Sarah Chen', role:'Brand — ActiveWave', msg:'<span class="comment-mention">@QualityFirst</span> can you accommodate a final inspection Nov 20?', time:'Oct 18, 3:30 PM', me:false },
+    ],
   };
   var INSPECTIONS = [
     { id:'INS-2611-DT-001', po:'PO-2611-AW-001', factory:'Dhaka Textiles', country:'BD', type:'In-line', time:'09:00', status:'scheduled', day:'today' },
@@ -781,7 +860,7 @@
       var icon = CAT_ICONS[po.cat]||'';
       var styleCount = po.styles?po.styles.length:1;
       var mainStyle = po.styles?po.styles[0].name:(po.style||po.id);
-      return '<div class="card"><div class="card-row"><div style="min-width:0;flex:1"><div class="card-title">'+icon+' '+mainStyle+(styleCount>1?' <span style="color:var(--fg-faint);font-weight:400">+' +(styleCount-1)+'</span>':'')+'</div><div class="card-sub">'+po.brand+' &middot; '+po.qty.toLocaleString()+' pcs &middot; '+po.id+'</div></div><div class="card-meta">'+progress+'%</div></div><div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:'+progress+'%;background:'+(po.status==='ncr_open'?'var(--bad)':'var(--accent)')+'"></div></div></div>';
+      return '<div class="card" onclick="showFactoryMilestone(\''+po.id+'\')"><div class="card-row"><div style="min-width:0;flex:1"><div class="card-title">'+icon+' '+mainStyle+(styleCount>1?' <span style="color:var(--fg-faint);font-weight:400">+' +(styleCount-1)+'</span>':'')+'</div><div class="card-sub">'+po.brand+' &middot; '+po.qty.toLocaleString()+' pcs &middot; '+po.id+'</div></div><div class="card-meta">'+progress+'%</div></div><div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:'+progress+'%;background:'+(po.status==='ncr_open'?'var(--bad)':'var(--accent)')+'"></div></div></div>';
     }).join('');
   }
   function renderInspections() {
@@ -849,6 +928,8 @@
       var icon = s.done?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>':s.ncr?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 8v4M12 16h.01"/></svg>':(s.current?'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor" opacity="0.3"><circle cx="12" cy="12" r="3"/></svg>');
       return '<div class="timeline-item"><div class="timeline-dot '+cls+'">'+icon+'</div><div class="timeline-text"><div class="timeline-label">'+s.label+'</div>'+(s.sub?'<div style="font-size:11px;color:var(--fg-faint);margin-top:1px">'+s.sub+'</div>':'')+(s.date?'<div class="timeline-date">'+s.date+'</div>':'')+'</div></div>';
     }).join('');
+    currentDetailPo = po.id;
+    renderComments(po.id);
     showScreen('brand-detail');
   };
   window.showInspection = function(id) {
@@ -897,6 +978,93 @@
     setTimeout(function(){ showScreen('inspector-home'); },800);
   };
   function showToast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },2500); }
+
+  // --- Factory milestone update ---
+  var currentFmPo = null;
+  var currentMsIdx = null;
+  window.showFactoryMilestone = function(poId) {
+    var po = POS.find(function(p){ return p.id===poId; }); if(!po) return;
+    currentFmPo = po;
+    document.getElementById('fmPoTitle').textContent = po.id;
+    var s = STATUSES[po.status]||['—','muted'];
+    document.getElementById('fmPoStatus').textContent = s[0];
+    document.getElementById('fmPoStatus').className = 'badge badge-'+s[1];
+    var mainStyle = po.styles?po.styles[0].name:po.id;
+    document.getElementById('fmPoSub').textContent = mainStyle+' · '+po.brand+' · '+po.qty.toLocaleString()+' pcs';
+    var steps = TIMELINES[po.id] || [];
+    var tl = document.getElementById('fmTimeline');
+    tl.innerHTML = steps.map(function(st, idx){
+      var cls = st.done?'done':st.current?'current':'pending';
+      if (st.ncr) cls = 'ncr';
+      var tappable = st.pending || st.current;
+      var icon = st.done?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>':st.ncr?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 8v4M12 16h.01"/></svg>':(st.current?'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor" opacity="0.3"><circle cx="12" cy="12" r="3"/></svg>');
+      return '<div class="timeline-item'+(tappable?' tappable':'')+'" '+(tappable?'onclick="openMilestoneModal('+idx+')"':'')+'><div class="timeline-dot '+cls+'">'+icon+'</div><div class="timeline-text"><div class="timeline-label">'+st.label+(tappable?' <span style="color:var(--accent);font-size:11px">TAP TO UPDATE</span>':'')+'</div>'+(st.sub?'<div style="font-size:11px;color:var(--fg-faint);margin-top:1px">'+st.sub+'</div>':'')+(st.date?'<div class="timeline-date">'+st.date+'</div>':'')+'</div></div>';
+    }).join('');
+    showScreen('factory-milestone');
+  };
+  window.openMilestoneModal = function(idx) {
+    if (!currentFmPo) return;
+    currentMsIdx = idx;
+    var steps = TIMELINES[currentFmPo.id] || [];
+    var st = steps[idx]; if (!st) return;
+    document.getElementById('msLabel').textContent = st.label;
+    document.getElementById('msSub').textContent = currentFmPo.id+' · '+(currentFmPo.styles?currentFmPo.styles[0].name:currentFmPo.id);
+    document.getElementById('msDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('msNotes').value = '';
+    document.getElementById('milestoneModal').classList.add('show');
+  };
+  window.closeMilestoneModal = function(e) {
+    if (e.target === document.getElementById('milestoneModal')) {
+      document.getElementById('milestoneModal').classList.remove('show');
+    }
+  };
+  window.confirmMilestone = function() {
+    if (!currentFmPo || currentMsIdx===null) return;
+    var steps = TIMELINES[currentFmPo.id];
+    if (!steps) return;
+    var st = steps[currentMsIdx];
+    var dateVal = document.getElementById('msDate').value;
+    if (dateVal) {
+      var d = new Date(dateVal);
+      st.date = d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    }
+    st.done = true;
+    st.current = false;
+    st.pending = false;
+    if (steps[currentMsIdx+1] && !steps[currentMsIdx+1].done) {
+      steps[currentMsIdx+1].current = true;
+      steps[currentMsIdx+1].pending = false;
+    }
+    document.getElementById('milestoneModal').classList.remove('show');
+    showFactoryMilestone(currentFmPo.id);
+    showToast('Milestone updated — brand notified');
+  };
+
+  // --- Brand comment thread ---
+  window.renderComments = function(poId) {
+    var el = document.getElementById('detailComments');
+    var msgs = COMMENTS[poId] || [];
+    if (!msgs.length) {
+      el.innerHTML = '<div style="text-align:center;color:var(--fg-faint);font-size:13px;padding:12px 0">No comments yet. Start a conversation with the vendor or inspector.</div>';
+      return;
+    }
+    el.innerHTML = '<div class="comment-thread">' + msgs.map(function(c){
+      return '<div class="comment-bubble '+(c.me?'me':'them')+'"><div class="comment-sender">'+c.from+' <span style="font-weight:400">· '+c.role+'</span></div><div>'+c.msg+'</div><div class="comment-time">'+c.time+'</div></div>';
+    }).join('') + '</div>';
+    el.scrollTop = el.scrollHeight;
+  };
+  var currentDetailPo = null;
+  window.addComment = function() {
+    var input = document.getElementById('commentInput');
+    var msg = input.value.trim(); if (!msg || !currentDetailPo) return;
+    if (!COMMENTS[currentDetailPo]) COMMENTS[currentDetailPo] = [];
+    var now = new Date();
+    var timeStr = now.toLocaleDateString('en-US',{month:'short',day:'numeric'})+', '+now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    COMMENTS[currentDetailPo].push({ from:'Sarah Chen', role:'Brand — ActiveWave', msg:msg, time:timeStr, me:true });
+    input.value = '';
+    renderComments(currentDetailPo);
+    showToast('Message sent — vendor notified');
+  };
 
   renderBrandPOs(); renderFactoryPOs(); renderInspections();
 })();
