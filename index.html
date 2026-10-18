@@ -447,8 +447,9 @@
           <div class="kpi"><div class="kpi-label">Ex-Factory</div><div class="kpi-value" style="font-size:18px;color:var(--fg)" id="detailDate">15 Dec 2026</div></div>
           <div class="kpi"><div class="kpi-label">Category</div><div class="kpi-value" style="font-size:18px;color:var(--fg)" id="detailCat">Garments</div></div>
         </div>
-        <div style="font-size:13px;color:var(--fg-muted);margin-bottom:4px" id="detailFactory"></div>
       </div>
+      <div class="divider-label">Vendor / Factory</div>
+      <div class="section-pad" style="padding-top:8px"><div id="detailFactory"></div></div>
       <div class="divider-label" id="detailStylesLabel">Styles &amp; SKUs</div>
       <div class="section-pad" style="padding-top:8px"><div id="detailStyles"></div></div>
       <div class="divider-label">Order Timeline</div>
@@ -651,6 +652,18 @@
     { id:'PO-2611-BB-005', cat:'Footwear', styles:[{name:'Leather Slide Sandal',sku:'SLD-LT-TAN',colors:['Tan','Black','White'],sizes:'EU 36–44',pcs:5000},{name:'EVA Sport Slide',sku:'SLD-EV-BLK',colors:['Black','Navy','Sage'],sizes:'EU 36–46',pcs:4000}], factory:'Shenzhen Footwear Co.', country:'CN', qty:9000, status:'ncr_open', date:'2027-01-05', brand:'Blueberry Threads' },
   ];
   var COUNTRIES = {BD:'Bangladesh',VN:'Vietnam',KH:'Cambodia',CN:'China',IN:'India',TR:'Turkey',PK:'Pakistan',ET:'Ethiopia'};
+  var COUNTRY_FLAGS = {BD:'🇧🇩',VN:'🇻🇳',KH:'🇰🇭',CN:'🇨🇳',IN:'🇮🇳',TR:'🇹🇷',PK:'🇵🇰',ET:'🇪🇹'};
+  var FACTORIES = {
+    'Dhaka Textiles Ltd.':      { city:'Dhaka', country:'BD', audited:true, approved:true, active:true, img:'🏭' },
+    'Saigon Stitch Co.':        { city:'Ho Chi Minh City', country:'VN', audited:true, approved:true, active:true, img:'🏗️' },
+    'Phnom Penh Garments':      { city:'Phnom Penh', country:'KH', audited:true, approved:true, active:true, img:'🧵' },
+    'Guangzhou Yufeng Shoes':   { city:'Guangzhou', country:'CN', audited:false, approved:false, active:true, img:'👟' },
+    'Tirupur Knits Pvt. Ltd.':  { city:'Tirupur', country:'IN', audited:true, approved:true, active:true, img:'🧶' },
+    'Istanbul Konfeksiyon A.S.':{ city:'Istanbul', country:'TR', audited:true, approved:true, active:true, img:'🪡' },
+    'Sialkot Sports Mfg.':     { city:'Sialkot', country:'PK', audited:true, approved:true, active:true, img:'⚽' },
+    'Addis Ababa Garments PLC': { city:'Addis Ababa', country:'ET', audited:false, approved:false, active:true, img:'🧥' },
+    'Shenzhen Footwear Co.':    { city:'Shenzhen', country:'CN', audited:true, approved:false, active:true, img:'🥾' },
+  };
   var CAT_ICONS = {Garments:'🧥',Footwear:'👟',Gloves:'🧤',Headwear:'🧢',Accessories:'👜'};
   var STATUSES = {
     draft:['Draft','muted'], pending_factory:['Pending','muted'], accepted:['Accepted','accent'],
@@ -951,7 +964,31 @@
     document.getElementById('detailQty').textContent = po.qty.toLocaleString();
     document.getElementById('detailDate').textContent = new Date(po.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
     document.getElementById('detailCat').textContent = (CAT_ICONS[po.cat]||'')+' '+po.cat;
-    document.getElementById('detailFactory').textContent = po.factory+' · '+(COUNTRIES[po.country]||po.country);
+    var fInfo = FACTORIES[po.factory] || { city:'—', country:po.country, audited:false, approved:false, active:true, img:'🏭' };
+    var flag = COUNTRY_FLAGS[fInfo.country]||'';
+    var coo = COUNTRIES[fInfo.country]||fInfo.country;
+    document.getElementById('detailFactory').innerHTML =
+      '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">'
+      +'<div style="display:flex;gap:14px;align-items:flex-start">'
+        +'<div style="width:52px;height:52px;border-radius:var(--radius-sm);background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">'+fInfo.img+'</div>'
+        +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:11px;color:var(--fg-faint);font-weight:600;text-transform:uppercase;letter-spacing:0.04em">'+flag+' '+coo+'</div>'
+          +'<div style="font-size:12px;color:var(--fg-muted);margin-top:1px">'+fInfo.city+'</div>'
+          +'<div style="font-weight:700;font-size:15px;margin-top:4px;color:var(--fg)">'+po.factory+'</div>'
+        +'</div>'
+      +'</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--divider)">'
+        +'<span style="padding:3px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:600;'
+          +(fInfo.audited?'background:var(--ok-soft);color:var(--ok)':'background:var(--warn-soft);color:var(--warn)')
+          +'">'+(fInfo.audited?'Audited':'Not Audited')+'</span>'
+        +'<span style="padding:3px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:600;'
+          +(fInfo.approved?'background:var(--accent-soft);color:var(--accent)':'background:var(--bad-soft);color:var(--bad)')
+          +'">'+(fInfo.approved?'Brand Approved':'Pending Approval')+'</span>'
+        +'<span style="padding:3px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:600;'
+          +(fInfo.active?'background:var(--ok-soft);color:var(--ok)':'background:var(--bg-dim);color:var(--fg-faint)')
+          +'">'+(fInfo.active?'Active Vendor':'Inactive')+'</span>'
+      +'</div>'
+      +'</div>';
     var stylesEl = document.getElementById('detailStyles');
     if (po.styles && po.styles.length) {
       document.getElementById('detailStylesLabel').style.display = '';
