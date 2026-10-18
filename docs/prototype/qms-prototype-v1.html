@@ -75,6 +75,64 @@ label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); display:
 .scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
 .scrollbar::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
 .scrollbar::-webkit-scrollbar-track { background: transparent; }
+/* AI Assistant Styles */
+.ai-fab {
+  position: fixed; bottom: 24px; right: 24px; z-index: 90;
+  width: 56px; height: 56px; border-radius: 999px;
+  background: linear-gradient(135deg, #4f46e5, #8b5cf6, #ec4899);
+  border: none; cursor: pointer; color: white;
+  box-shadow: 0 10px 30px rgba(79,70,229,0.4);
+  display: grid; place-items: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.ai-fab:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(79,70,229,0.6); }
+.ai-panel {
+  position: fixed; bottom: 24px; right: 24px; z-index: 91;
+  width: 400px; max-width: calc(100vw - 32px); height: 580px; max-height: calc(100vh - 48px);
+  background: var(--surface-elev); border: 1px solid var(--border);
+  border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  display: flex; flex-direction: column; overflow: hidden;
+  animation: ai-slide 0.3s ease;
+}
+@keyframes ai-slide { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.ai-header {
+  padding: 14px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(135deg, rgba(79,70,229,0.08), rgba(139,92,246,0.08));
+}
+.ai-msg { display: flex; gap: 8px; margin-bottom: 12px; }
+.ai-msg.user { flex-direction: row-reverse; }
+.ai-msg-avatar {
+  width: 28px; height: 28px; border-radius: 999px; flex-shrink: 0;
+  display: grid; place-items: center; font-size: 11px; font-weight: 700; color: white;
+}
+.ai-msg-bubble {
+  padding: 10px 12px; border-radius: 14px; max-width: 290px;
+  font-size: 13px; line-height: 1.45;
+}
+.ai-msg.user .ai-msg-bubble {
+  background: var(--primary); color: white;
+  border-top-right-radius: 4px;
+}
+.ai-msg.ai .ai-msg-bubble {
+  background: var(--bg); color: var(--text);
+  border: 1px solid var(--border); border-top-left-radius: 4px;
+}
+.ai-chip {
+  display: inline-block; padding: 2px 8px;
+  background: var(--primary-soft); color: var(--primary);
+  border-radius: 999px; font-size: 10px; font-weight: 600;
+  margin-right: 4px; margin-bottom: 4px; cursor: pointer;
+  border: 1px solid rgba(79,70,229,0.3);
+}
+.ai-chip:hover { background: var(--primary); color: white; }
+@keyframes typing-dot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+.typing-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); margin: 0 1px; animation: typing-dot 1.2s infinite; }
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
 </style>
 </head>
 <body>
@@ -107,6 +165,9 @@ const Icon = ({ name, size = 16, className = "" }) => {
     "refresh": <><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></>,
     "settings": <><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></>,
     "info": <><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></>,
+    "sparkles": <><path d="m12 3-1.9 5.8a2 2 0 0 1-1.287 1.288L3 12l5.8 1.9a2 2 0 0 1 1.288 1.287L12 21l1.9-5.8a2 2 0 0 1 1.287-1.288L21 12l-5.8-1.9a2 2 0 0 1-1.288-1.287Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></>,
+    "send": <><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></>,
+    "key": <><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></>,
   };
   return <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{p[name]}</svg>;
 };
@@ -214,6 +275,258 @@ const useToast = () => {
   return { show, ToastBar };
 };
 
+// ============ AI ASSISTANT ============
+const AI_KEY_STORAGE = 'qms_v1_claude_api_key';
+
+// Smart local responder — queries real data from the app
+const localRespond = (q, ctx) => {
+  const lo = q.toLowerCase().trim();
+  const { data, session } = ctx;
+
+  // Count queries
+  if (/how many (po|order)/i.test(lo)) {
+    return `You have **${data.pos.length} POs** total:\n- ${data.pos.filter(p => p.state === 'in_production').length} in production\n- ${data.pos.filter(p => p.state === 'ready_for_inspection').length} ready for inspection\n- ${data.pos.filter(p => p.state === 'shipped' || p.state === 'delivered').length} shipped/delivered`;
+  }
+  if (/(open|active|pending) ncr/i.test(lo) || /ncr.*(open|active|pending)/i.test(lo)) {
+    const open = data.ncrs.filter(n => n.state !== 'resolved');
+    if (open.length === 0) return "✅ No open NCRs right now. All quality issues are resolved.";
+    return `You have **${open.length} open NCR${open.length > 1 ? 's' : ''}**:\n` + open.map(n => `- **${n.id}** (${n.severity}): ${n.description.slice(0, 80)}... — ${NCR_STATES[n.state]?.label}`).join('\n');
+  }
+  if (/how many ncr/i.test(lo)) {
+    return `Total NCRs: ${data.ncrs.length} (${data.ncrs.filter(n => n.state !== 'resolved').length} open, ${data.ncrs.filter(n => n.state === 'resolved').length} resolved)`;
+  }
+  if (/how many inspection/i.test(lo)) {
+    return `${data.inspections.length} inspections logged. States: ${['scheduled', 'in_progress', 'submitted', 'passed', 'failed'].map(s => `${data.inspections.filter(i => i.state === s).length} ${s}`).join(', ')}.`;
+  }
+  if (/coq|cost.*quality|quality.*cost/i.test(lo)) {
+    const total = data.coq_entries.reduce((s, e) => s + e.amount, 0);
+    const prev = data.coq_entries.filter(e => e.category === 'prevention').reduce((s, e) => s + e.amount, 0);
+    const ext = data.coq_entries.filter(e => e.category === 'external_failure').reduce((s, e) => s + e.amount, 0);
+    return `**Cost of Quality — Live**\n- Total YTD: **$${total.toLocaleString()}**\n- Prevention investment: $${prev.toLocaleString()} (${(prev/total*100).toFixed(0)}%)\n- External failure cost: $${ext.toLocaleString()} (${(ext/total*100).toFixed(0)}%)\n\nIndustry best-in-class invests 25-30% in Prevention. You're at ${(prev/total*100).toFixed(0)}%.`;
+  }
+  // AQL lookup
+  const aqlMatch = lo.match(/aql.*?(\d{3,6})\s*(pcs|pieces|units)?/) || lo.match(/sample.*?(\d{3,6})/);
+  if (aqlMatch) {
+    const lot = parseInt(aqlMatch[1]);
+    let code = 'L', size = 200;
+    if (lot < 150) { code = 'E'; size = 13; }
+    else if (lot < 500) { code = 'H'; size = 50; }
+    else if (lot < 1200) { code = 'J'; size = 80; }
+    else if (lot < 3200) { code = 'K'; size = 125; }
+    else if (lot < 10000) { code = 'L'; size = 200; }
+    else if (lot < 35000) { code = 'M'; size = 315; }
+    else { code = 'N'; size = 500; }
+    return `**AQL (ISO 2859-1, Level II) for lot size ${lot.toLocaleString()}**\n- Sample code: **${code}**\n- Sample size: **${size} pieces**\n- Acceptable defects at AQL 2.5 (Major): ~${Math.floor(size * 0.025)}\n- Acceptable defects at AQL 4.0 (Minor): ~${Math.floor(size * 0.04)}`;
+  }
+  // Factory queries
+  if (/factory.*(worst|highest.*defect|most defect)/i.test(lo) || /worst factory/i.test(lo)) {
+    const defs = data.defects;
+    const byFactory = {};
+    defs.forEach(d => {
+      const i = data.inspections.find(x => x.id === d.inspection_id);
+      const po = i && data.pos.find(p => p.id === i.po_id);
+      if (po) byFactory[po.factory_id] = (byFactory[po.factory_id] || 0) + d.count;
+    });
+    const sorted = Object.entries(byFactory).sort((a, b) => b[1] - a[1]);
+    if (sorted.length === 0) return "No defect data yet. Submit an inspection with defects to populate this analysis.";
+    const [fid, count] = sorted[0];
+    const f = data.factories.find(x => x.id === fid);
+    return `Factory with most defects: **${f?.name}** (${count} defects across ${data.inspections.filter(i => data.pos.find(p => p.id === i.po_id)?.factory_id === fid).length} inspections)`;
+  }
+  // How-to / help
+  if (/how (do i |to )?(create|make|add).*po/i.test(lo)) {
+    return "To create a PO (as Brand user):\n1. Click **New PO** in the top nav\n2. Pick a Style, Factory, Quantity, Due date\n3. Click **Send to Factory**\n\nFactory will then see it in their PO Board and move it through states.";
+  }
+  if (/how (do i |to )?(book|schedule|create).*inspection/i.test(lo)) {
+    return "To book an inspection:\n1. Switch to **Factory** persona\n2. Open any PO in state **Ready for Inspection**\n3. Click **Book Inspection**\n\nField Inspector will see it in their Today screen on their mobile view.";
+  }
+  if (/how (do i |to )?(log|add|record).*defect/i.test(lo)) {
+    return "To log defects:\n1. Switch to **Inspector** persona\n2. Open the inspection assigned to you\n3. Pick defect category + zone + count\n4. Tap **Add**\n5. When done, tap **Submit Inspection**";
+  }
+  if (/what.*role|who.*user|who am i/i.test(lo)) {
+    return `You're logged in as **${session.name}** (${session.title}, ${session.org}). Role: ${session.role.toUpperCase()}.\n\nTo switch, click your avatar top-right → Switch user.`;
+  }
+  if (/help|what can you do|capabilities/i.test(lo)) {
+    return "I can answer questions about your data and help with QMS workflows. Try asking:\n\n• How many POs do I have?\n• Any open NCRs?\n• What's my CoQ?\n• AQL for 5000 pieces?\n• Which factory has most defects?\n• How do I book an inspection?\n• Draft a CAPA plan for [issue]\n\nOr enable **real Claude AI** (settings icon) for free-form conversations.";
+  }
+  if (/draft|write|generate.*(capa|plan|report|email)/i.test(lo)) {
+    return "📝 **CAPA plan template** (adapt to your NCR):\n\n**Root Cause (5-Why):**\n1. Why did the defect occur?\n2. Why wasn't it caught earlier?\n3. Why did the process allow it?\n4. Why isn't there a control?\n5. Why wasn't the control effective?\n\n**Corrective Action:** [immediate fix for affected units]\n**Preventive Action:** [systemic change to prevent recurrence]\n**Owner:** [name]\n**Due date:** [+7-14 days typical]\n\nFor richer drafting, enable the real Claude AI mode (settings icon).";
+  }
+  // Fallback
+  return `I don't have a built-in answer for that. Try asking about **POs, NCRs, inspections, CoQ, AQL, factories, or how-to questions**.\n\n💡 **Tip:** Enable real Claude AI mode (settings ⚙️ icon) to ask free-form questions. You'll need an Anthropic API key.`;
+};
+
+const AIAssistant = ({ data, session, goto }) => {
+  const [open, setOpen] = useState(false);
+  const [settings, setSettings] = useState(false);
+  const [apiKey, setApiKey] = useState(() => { try { return localStorage.getItem(AI_KEY_STORAGE) || ''; } catch (e) { return ''; } });
+  const [messages, setMessages] = useState([
+    { role: 'ai', content: `Hi ${session.name.split(' ')[0]} 👋 I'm your QMS AI assistant. I can see your data and answer questions about POs, inspections, NCRs, CoQ, AQL rules, and more.\n\nTry: *"How many open NCRs?"* or *"AQL for 8000 pieces"*` }
+  ]);
+  const [input, setInput] = useState('');
+  const [busy, setBusy] = useState(false);
+  const scrollRef = useRef(null);
+
+  useEffect(() => { if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight; }, [messages, busy]);
+
+  const saveApiKey = (k) => { setApiKey(k); try { localStorage.setItem(AI_KEY_STORAGE, k); } catch (e) {} };
+
+  const send = async (text) => {
+    const q = (text || input).trim();
+    if (!q) return;
+    setMessages(m => [...m, { role: 'user', content: q }]);
+    setInput('');
+    setBusy(true);
+
+    const ctx = { data, session };
+
+    // Use real Claude API if key provided; else local responder
+    if (apiKey && apiKey.startsWith('sk-ant-')) {
+      try {
+        const systemPrompt = `You are a QMS AI assistant for an apparel quality management SaaS. The current user is ${session.name} (${session.title}, ${session.role}). They work for ${session.org}.
+
+Current platform data (JSON):
+POs: ${JSON.stringify(data.pos.slice(0, 10))}
+Recent inspections: ${JSON.stringify(data.inspections.slice(-5))}
+Recent NCRs: ${JSON.stringify(data.ncrs.slice(-5))}
+CoQ summary: Total $${data.coq_entries.reduce((s, e) => s + e.amount, 0).toLocaleString()}
+Factories: ${JSON.stringify(data.factories)}
+Styles: ${JSON.stringify(data.styles)}
+
+Rules:
+- Answer concisely (under 150 words typically)
+- Use markdown for structure (bold, lists)
+- Reference specific IDs/names from the data when relevant
+- For AQL questions, use ISO 2859-1 Level II unless specified
+- If asked to draft CAPA plans, use 5-Why structure
+- You're apparel-industry focused: understand terms like AQL, 4-point fabric inspection, DUPRO, NCR, CAPA, etc.
+- Never invent data not in the JSON above`;
+
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true',
+          },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5',
+            max_tokens: 500,
+            system: systemPrompt,
+            messages: [
+              ...messages.filter(m => m.role !== 'ai' || !m.content.startsWith('Hi ')).map(m => ({ role: m.role === 'ai' ? 'assistant' : 'user', content: m.content })),
+              { role: 'user', content: q }
+            ],
+          })
+        });
+        const json = await res.json();
+        if (json.content && json.content[0]) {
+          setMessages(m => [...m, { role: 'ai', content: json.content[0].text, real: true }]);
+        } else {
+          setMessages(m => [...m, { role: 'ai', content: `⚠️ API error: ${json.error?.message || 'Unknown'}. Falling back to local mode.` }]);
+          setTimeout(() => setMessages(m => [...m, { role: 'ai', content: localRespond(q, ctx) }]), 200);
+        }
+      } catch (e) {
+        setMessages(m => [...m, { role: 'ai', content: `⚠️ Network error. Using local responder.\n\n${localRespond(q, ctx)}` }]);
+      }
+    } else {
+      // Local responder with simulated typing delay
+      await new Promise(r => setTimeout(r, 400 + Math.random() * 400));
+      setMessages(m => [...m, { role: 'ai', content: localRespond(q, ctx) }]);
+    }
+    setBusy(false);
+  };
+
+  const suggestions = ['How many open NCRs?', "What's my CoQ?", 'AQL for 5000 pieces', 'Draft a CAPA plan'];
+
+  const renderMsg = (content) => content.split('\n').map((line, i) => {
+    const bold = line.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    return <div key={i} dangerouslySetInnerHTML={{ __html: bold || '&nbsp;' }} />;
+  });
+
+  if (!open) {
+    return (
+      <button className="ai-fab" onClick={() => setOpen(true)} title="Open AI Assistant">
+        <Icon name="sparkles" size={24} />
+      </button>
+    );
+  }
+
+  return (
+    <div className="ai-panel">
+      <div className="ai-header">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full grid place-items-center" style={{ background: 'linear-gradient(135deg, #4f46e5, #ec4899)', color: 'white' }}>
+            <Icon name="sparkles" size={14} />
+          </div>
+          <div>
+            <div className="text-sm font-semibold">QMS AI</div>
+            <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{apiKey ? '🤖 Claude mode' : '⚡ Local mode'} · aware of your data</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-1">
+          <button onClick={() => setSettings(!settings)} className="btn btn-ghost btn-sm" title="Settings"><Icon name="settings" size={14} /></button>
+          <button onClick={() => setOpen(false)} className="btn btn-ghost btn-sm" title="Close"><Icon name="x" size={14} /></button>
+        </div>
+      </div>
+
+      {settings && (
+        <div className="p-3" style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+          <div className="text-xs font-semibold mb-2 flex items-center gap-1"><Icon name="key" size={12} /> Claude API Key (optional)</div>
+          <input type="password" placeholder="sk-ant-..." value={apiKey} onChange={e => saveApiKey(e.target.value)} className="text-xs" />
+          <div className="text-[10px] mt-2" style={{ color: 'var(--text-muted)' }}>
+            Get key from <a href="https://console.anthropic.com" target="_blank" style={{ color: 'var(--primary)', textDecoration: 'underline' }}>console.anthropic.com</a>. Stored only in your browser. ~$0.001 per message.
+            {apiKey && <span className="block mt-1" style={{ color: 'var(--success)' }}>✓ Real Claude mode enabled</span>}
+          </div>
+        </div>
+      )}
+
+      <div ref={scrollRef} className="flex-1 overflow-y-auto scrollbar p-3">
+        {messages.map((m, i) => (
+          <div key={i} className={`ai-msg ${m.role}`}>
+            {m.role === 'ai' ? (
+              <div className="ai-msg-avatar" style={{ background: 'linear-gradient(135deg, #4f46e5, #ec4899)' }}><Icon name="sparkles" size={12} /></div>
+            ) : (
+              <div className="ai-msg-avatar" style={{ background: session.color }}>{session.avatar}</div>
+            )}
+            <div className="ai-msg-bubble">{renderMsg(m.content)}{m.real && <div className="text-[9px] mt-1 opacity-50">via Claude API</div>}</div>
+          </div>
+        ))}
+        {busy && (
+          <div className="ai-msg ai">
+            <div className="ai-msg-avatar" style={{ background: 'linear-gradient(135deg, #4f46e5, #ec4899)' }}><Icon name="sparkles" size={12} /></div>
+            <div className="ai-msg-bubble"><span className="typing-dot"></span><span className="typing-dot"></span><span className="typing-dot"></span></div>
+          </div>
+        )}
+      </div>
+
+      {messages.length <= 2 && (
+        <div className="px-3 pb-2">
+          <div className="text-[10px] font-semibold mb-1" style={{ color: 'var(--text-muted)' }}>Try asking:</div>
+          <div>
+            {suggestions.map(s => <span key={s} className="ai-chip" onClick={() => send(s)}>{s}</span>)}
+          </div>
+        </div>
+      )}
+
+      <div className="p-3" style={{ borderTop: '1px solid var(--border)' }}>
+        <div className="flex gap-2">
+          <input
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
+            placeholder="Ask about POs, NCRs, AQL..."
+            disabled={busy}
+            className="text-sm"
+          />
+          <button onClick={() => send()} disabled={busy || !input.trim()} className="btn btn-primary"><Icon name="send" size={14} /></button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ============ MAIN APP ============
 function App() {
   const [data, setData] = useState(loadData);
@@ -248,6 +561,7 @@ function App() {
       <main className="pb-20">
         <Router route={route} session={session} data={data} update={update} toast={toast} goto={goto} />
       </main>
+      <AIAssistant data={data} session={session} goto={goto} />
     </>
   );
 }
