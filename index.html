@@ -366,7 +366,7 @@
         <div class="section-sub">ActiveWave Apparel &middot; 12 active POs</div>
         <div class="kpi-row">
           <div class="kpi"><div class="kpi-label">Active POs</div><div class="kpi-value accent">12</div><div class="kpi-spark" id="spark1"></div></div>
-          <div class="kpi"><div class="kpi-label">Open NCRs</div><div class="kpi-value bad">4</div><div class="progress-track"><div class="progress-fill" style="width:33%;background:var(--bad)"></div></div></div>
+          <div class="kpi"><div class="kpi-label">Open NCRs</div><div class="kpi-value bad">4</div><div class="progress-track"><div class="progress-fill" style="width:67%;background:var(--ok)"></div></div></div>
           <div class="kpi"><div class="kpi-label">Cost of Quality</div><div class="kpi-value warn">$14.2k</div><div class="kpi-spark" id="spark2"></div></div>
           <div class="kpi"><div class="kpi-label">On-Time Rate</div><div class="kpi-value ok">87%</div><div class="progress-track"><div class="progress-fill" style="width:87%;background:var(--ok)"></div></div></div>
         </div>
@@ -415,7 +415,7 @@
       <div class="section-pad">
         <div class="form-group">
           <label class="form-label">Purchase Order</label>
-          <select class="form-select"><option>PO-2611-AW-001 — Summer Tee</option><option>PO-2611-AW-003 — Hoodie Classic</option><option>PO-2611-BB-002 — Denim Jacket</option></select>
+          <select class="form-select"><option>PO-2611-AW-001 — Summer Tee</option><option>PO-2611-AW-003 — Hoodie Classic</option><option>PO-2611-BB-002 — Denim Jacket</option><option>PO-2611-AW-005 — Cargo Pant Slim</option><option>PO-2611-AW-007 — Track Jacket Zip</option></select>
         </div>
         <div class="form-group">
           <label class="form-label">Defect Category</label>
@@ -448,7 +448,7 @@
     <div class="screen" id="inspector-home">
       <div class="section-pad">
         <div class="section-title">Inspections <em style="color:var(--accent)">Today</em></div>
-        <div class="section-sub">QualityFirst International &middot; 3 scheduled</div>
+        <div class="section-sub">QualityFirst International &middot; 3 today</div>
         <div class="kpi-row">
           <div class="kpi"><div class="kpi-label">Today</div><div class="kpi-value accent">3</div></div>
           <div class="kpi"><div class="kpi-label">This Week</div><div class="kpi-value" style="color:var(--fg)">8</div></div>
@@ -530,6 +530,12 @@
     { id:'PO-2611-BB-001', style:'Organic Jogger', factory:'Phnom Penh Garments', qty:4000, status:'inspected', date:'2026-11-20', brand:'Blueberry Threads' },
     { id:'PO-2611-BB-002', style:'Denim Jacket', factory:'Dhaka Textiles Ltd.', qty:2500, status:'ncr_open', date:'2026-12-01', brand:'Blueberry Threads' },
     { id:'PO-2611-AW-004', style:'Linen Shorts', factory:'Saigon Stitch Co.', qty:6000, status:'accepted', date:'2027-02-15', brand:'ActiveWave' },
+    { id:'PO-2611-AW-005', style:'Cargo Pant Slim', factory:'Dhaka Textiles Ltd.', qty:4500, status:'in_production', date:'2027-01-20', brand:'ActiveWave' },
+    { id:'PO-2611-BB-003', style:'Wool Blend Coat', factory:'Istanbul Konfeksiyon', qty:2000, status:'ncr_open', date:'2026-12-10', brand:'Blueberry Threads' },
+    { id:'PO-2611-AW-006', style:'Polo Performance', factory:'Saigon Stitch Co.', qty:7000, status:'in_production', date:'2027-02-01', brand:'ActiveWave' },
+    { id:'PO-2611-BB-004', style:'Canvas Tote Bag', factory:'Phnom Penh Garments', qty:10000, status:'awaiting_inspection', date:'2026-12-05', brand:'Blueberry Threads' },
+    { id:'PO-2611-AW-007', style:'Track Jacket Zip', factory:'Dhaka Textiles Ltd.', qty:3500, status:'ncr_open', date:'2026-12-20', brand:'ActiveWave' },
+    { id:'PO-2611-BB-005', style:'Ribbed Tank Top', factory:'Istanbul Konfeksiyon', qty:9000, status:'ncr_open', date:'2027-01-05', brand:'Blueberry Threads' },
   ];
   var STATUSES = {
     draft:['Draft','muted'], pending_factory:['Pending','muted'], accepted:['Accepted','accent'],
@@ -538,9 +544,14 @@
     ncr_open:['NCR Open','bad'], closed:['Closed','muted'], cancelled:['Cancelled','muted']
   };
   var INSPECTIONS = [
-    { id:'INS-2611-DT-001', po:'PO-2611-AW-001', factory:'Dhaka Textiles', type:'In-line', time:'09:00', status:'scheduled' },
-    { id:'INS-2611-SS-001', po:'PO-2611-AW-002', factory:'Saigon Stitch', type:'Final', time:'13:30', status:'scheduled' },
-    { id:'INS-2611-PP-001', po:'PO-2611-BB-001', factory:'Phnom Penh Garments', type:'Pre-shipment', time:'16:00', status:'completed' },
+    { id:'INS-2611-DT-001', po:'PO-2611-AW-001', factory:'Dhaka Textiles', type:'In-line', time:'09:00', status:'scheduled', day:'today' },
+    { id:'INS-2611-SS-001', po:'PO-2611-AW-002', factory:'Saigon Stitch', type:'Final', time:'13:30', status:'scheduled', day:'today' },
+    { id:'INS-2611-PP-001', po:'PO-2611-BB-001', factory:'Phnom Penh Garments', type:'Pre-shipment', time:'16:00', status:'completed', day:'today' },
+    { id:'INS-2611-DT-002', po:'PO-2611-AW-005', factory:'Dhaka Textiles', type:'In-line', time:'10:00', status:'scheduled', day:'wed' },
+    { id:'INS-2611-IK-001', po:'PO-2611-BB-003', factory:'Istanbul Konfeksiyon', type:'Final', time:'09:30', status:'scheduled', day:'wed' },
+    { id:'INS-2611-SS-002', po:'PO-2611-AW-006', factory:'Saigon Stitch', type:'In-line', time:'14:00', status:'scheduled', day:'thu' },
+    { id:'INS-2611-PP-002', po:'PO-2611-BB-004', factory:'Phnom Penh Garments', type:'Final', time:'11:00', status:'scheduled', day:'fri' },
+    { id:'INS-2611-DT-003', po:'PO-2611-AW-007', factory:'Dhaka Textiles', type:'Pre-shipment', time:'15:30', status:'scheduled', day:'fri' },
   ];
   var CHECKS = [
     'Fabric weight within tolerance (GSM test)',
@@ -593,10 +604,18 @@
   }
   function renderInspections() {
     var el = document.getElementById('inspectorList');
-    el.innerHTML = INSPECTIONS.map(function(ins){
+    var today = INSPECTIONS.filter(function(i){ return i.day==='today'; });
+    var later = INSPECTIONS.filter(function(i){ return i.day!=='today'; });
+    var days = {wed:'Wednesday',thu:'Thursday',fri:'Friday'};
+    var html = today.map(function(ins){
       var done = ins.status==='completed';
       return '<div class="card'+(done?'':' card-stripe s-accent')+'" onclick="'+(done?'':"showInspection('"+ins.id+"')")+'"><div class="card-row"><div style="min-width:0"><div class="card-title">'+ins.factory+'</div><div class="card-sub">'+ins.type+' Inspection &middot; '+ins.po+'</div></div><div class="card-right"><span class="badge '+(done?'badge-ok':'badge-accent')+'">'+(done?'Done':ins.time)+'</span><div class="card-meta" style="margin-top:4px">'+ins.id+'</div></div></div></div>';
     }).join('');
+    html += '<div style="font:600 12px/1 var(--font-body);color:var(--fg-faint);text-transform:uppercase;letter-spacing:0.06em;padding:18px 4px 8px">Later This Week</div>';
+    html += later.map(function(ins){
+      return '<div class="card" style="opacity:0.7"><div class="card-row"><div style="min-width:0"><div class="card-title">'+ins.factory+'</div><div class="card-sub">'+ins.type+' &middot; '+ins.po+'</div></div><div class="card-right"><span class="badge badge-muted">'+(days[ins.day]||ins.day)+' '+ins.time+'</span></div></div></div>';
+    }).join('');
+    el.innerHTML = html;
   }
 
   window.switchPortal = function(portal) {
