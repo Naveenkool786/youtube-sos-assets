@@ -10,8 +10,10 @@ A **three-party Quality Management System (QMS)** platform connecting:
 - **Factories** (manufacturers)
 - **3rd Party Inspection Companies** (SGS, Bureau Veritas, Intertek)
 
-## The Master Blueprint
-**👉 ALWAYS READ `docs/qms-blueprint.md` FIRST** when starting any new session.
+## The Master Blueprint & To-Do Tracker
+**👉 ALWAYS READ THESE TWO FILES FIRST** when starting any new session:
+1. `TODO.md` — Current founder action items + session status
+2. `docs/qms-blueprint.md` — Master plan (single source of truth)
 
 That document is the single source of truth. It contains:
 - All 12 topic decisions (Data Model, Standards, Workflows, Notifications, Mobile, Offline, Analytics, Reporting, Animated Scenes, Integrations, Billing, i18n)
@@ -35,7 +37,18 @@ That document is the single source of truth. It contains:
 
 ## Status
 - ✅ Blueprint v1.0 locked (October 2026)
-- ⏳ Pre-build phase — pitch deck, CTO hire, anchor customer, seed round next
+- ✅ Clickable prototype shipped (10 screens)
+- ✅ Pitch deck v1 (12 slides) ready
+- ✅ CTO hiring package ready
+- ✅ Naming package (shortlist of 15) ready
+- ✅ Financial model v1 (5-year) ready
+- ✅ Customer discovery package (95 target companies) ready
+- ✅ Enterprise sales one-pager ready
+- ⏳ Current focus: name decision + customer discovery sprint + CTO search
+- 📋 See `TODO.md` for all current action items
+
+## Working with the To-Do Tracker
+The user updates me ("done with X", "blocked on Y", "add new task Z") and I maintain `TODO.md` as the single source of truth for founder-side actions. Read it at the start of every session before suggesting next steps.
 
 ## Working Rules
 - **Confidential**: This project is pre-launch and stealth. Treat all content as CONFIDENTIAL.
