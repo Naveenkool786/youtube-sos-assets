@@ -132,24 +132,30 @@
   .screen.active { display: block; }
 
   .tab-bar {
-    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(0);
     width: 100%; max-width: 480px; z-index: 60;
     display: flex; align-items: stretch;
     background: var(--tab-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid var(--divider);
     padding-bottom: env(safe-area-inset-bottom, 0px);
     height: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
   }
+  .tab-bar.hidden { transform: translateX(-50%) translateY(100%); }
   .tab-btn {
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 3px; border: none; background: none; cursor: pointer; padding: 8px 4px;
-    color: var(--fg-faint); transition: color 0.15s; -webkit-tap-highlight-color: transparent;
+    color: var(--fg-faint); transition: color 0.15s, background 0.15s; -webkit-tap-highlight-color: transparent;
+    position: relative;
   }
   .tab-btn.active { color: var(--accent); }
-  .tab-btn svg { width: 24px; height: 24px; }
+  .tab-btn svg { width: 24px; height: 24px; transition: transform 0.15s; }
+  .tab-btn.active svg { fill: var(--accent); stroke: var(--accent); transform: scale(1.1); }
+  .tab-icon-wrap { width:42px; height:30px; border-radius:var(--radius-pill); display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+  .tab-btn.active .tab-icon-wrap { background:var(--accent-soft); }
   .tab-label { font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
-  .tab-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); opacity: 0; transition: opacity 0.15s; }
-  .tab-btn.active .tab-dot { opacity: 1; }
+  .tab-btn.active .tab-label { color: var(--accent); font-weight: 700; }
+  .tab-dot { display:none; }
 
   .section-pad { padding: 20px 16px; }
   .section-title { font-family: var(--font-display); font-size: 26px; line-height: 1.15; color: var(--fg); margin-bottom: 4px; }
@@ -586,9 +592,9 @@
   </div>
 
   <nav class="tab-bar">
-    <button class="tab-btn active" data-portal="brand" onclick="switchPortal('brand')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="tab-label">Brand</span><div class="tab-dot"></div></button>
-    <button class="tab-btn" data-portal="factory" onclick="switchPortal('factory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21V8l5-5 5 5v13"/><path d="M13 21V11l4-3 4 3v10"/><path d="M7 17h2"/><path d="M7 13h2"/><path d="M15 17h2"/></svg><span class="tab-label">Factory</span><div class="tab-dot"></div></button>
-    <button class="tab-btn" data-portal="inspector" onclick="switchPortal('inspector')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg><span class="tab-label">Inspector</span><div class="tab-dot"></div></button>
+    <button class="tab-btn active" data-portal="brand" onclick="switchPortal('brand')"><div class="tab-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div><span class="tab-label">Brand</span></button>
+    <button class="tab-btn" data-portal="factory" onclick="switchPortal('factory')"><div class="tab-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21V8l5-5 5 5v13"/><path d="M13 21V11l4-3 4 3v10"/><path d="M7 17h2"/><path d="M7 13h2"/><path d="M15 17h2"/></svg></div><span class="tab-label">Factory</span></button>
+    <button class="tab-btn" data-portal="inspector" onclick="switchPortal('inspector')"><div class="tab-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg></div><span class="tab-label">Inspector</span></button>
   </nav>
 </div>
 
@@ -995,6 +1001,29 @@
     document.getElementById('splash').classList.add('hide');
     setTimeout(function(){ document.getElementById('splash').style.display = 'none'; }, 400);
   }, 1200);
+
+  // Auto-hide tab bar on scroll up, show on scroll down
+  (function(){
+    var content = document.getElementById('content');
+    var tabBar = document.querySelector('.tab-bar');
+    var lastY = 0;
+    var ticking = false;
+    content.addEventListener('scroll', function(){
+      if (!ticking) {
+        window.requestAnimationFrame(function(){
+          var y = content.scrollTop;
+          if (y > lastY && y > 60) {
+            tabBar.classList.add('hidden');
+          } else {
+            tabBar.classList.remove('hidden');
+          }
+          lastY = y;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive:true });
+  })();
 
   function buildSpark(id, vals) {
     var el = document.getElementById(id); if (!el) return;
