@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>FABRIQ - FashionHub</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0F4238">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!-- Apple PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FABRIQ">
+  <link rel="apple-touch-icon" href="icon-192.svg">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --bg: #FAF7F1;
+    --bg-card: #FFFFFF;
+    --bg-dim: #F2EDE2;
+    --bg-ink: #0F1512;
+    --fg: #171A17;
+    --fg-muted: #5A635C;
+    --fg-faint: #8A918B;
+    --accent: #0F4238;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #D8E3DF;
+    --accent-glow: rgba(15,66,56,0.08);
+    --warm: #C67952;
+    --warm-ink: #FFFFFF;
+    --warm-soft: #F3E2D4;
+    --ok: #1B7A4E;
+    --ok-soft: #D4EDDF;
+    --warn: #B8860B;
+    --warn-soft: #FFF3CD;
+    --bad: #C0392B;
+    --bad-soft: #FADBD8;
+    --border: #E6DFCF;
+    --divider: #ECE4D1;
+    --tab-bg: rgba(250,247,241,0.92);
+    --shadow-sm: 0 1px 2px rgba(23,26,23,0.04);
+    --shadow: 0 2px 8px rgba(23,26,23,0.06);
+    --shadow-lg: 0 4px 20px rgba(23,26,23,0.1);
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-pill: 100px;
+    --font-display: "DM Serif Display", Georgia, serif;
+    --font-body: "Inter", -apple-system, system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    --tab-h: 72px;
+    --header-h: 56px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0D1512; --bg-card: #152220; --bg-dim: #0A1210; --bg-ink: #FAF7F1;
+      --fg: #F0ECE2; --fg-muted: #9EA89E; --fg-faint: #6B756C;
+      --accent: #4DBEA2; --accent-ink: #0D1512; --accent-soft: #163830;
+      --accent-glow: rgba(77,190,162,0.1);
+      --warm: #E39670; --warm-ink: #0D1512; --warm-soft: #2A1F17;
+      --ok: #3EC786; --ok-soft: #132E20;
+      --warn: #D4A017; --warn-soft: #2A2310;
+      --bad: #E74C3C; --bad-soft: #2E1515;
+      --border: #253330; --divider: #1E2A27;
+      --tab-bg: rgba(13,21,18,0.94);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0D1512; --bg-card: #152220; --bg-dim: #0A1210; --bg-ink: #FAF7F1;
+    --fg: #F0ECE2; --fg-muted: #9EA89E; --fg-faint: #6B756C;
+    --accent: #4DBEA2; --accent-ink: #0D1512; --accent-soft: #163830;
+    --accent-glow: rgba(77,190,162,0.1);
+    --warm: #E39670; --warm-ink: #0D1512; --warm-soft: #2A1F17;
+    --ok: #3EC786; --ok-soft: #132E20;
+    --warn: #D4A017; --warn-soft: #2A2310;
+    --bad: #E74C3C; --bad-soft: #2E1515;
+    --border: #253330; --divider: #1E2A27;
+    --tab-bg: rgba(13,21,18,0.94);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { height: 100%; }
+  body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overflow: hidden;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px);
+  }
+
+  #app { display: flex; flex-direction: column; height: 100%; max-width: 480px; margin: 0 auto; }
+
+  .app-header {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    height: var(--header-h); padding: 0 16px;
+    background: var(--bg); border-bottom: 1px solid var(--divider);
+  }
+  .app-logo { display: flex; align-items: center; gap: 8px; }
+  .app-logo-icon {
+    width: 28px; height: 28px; border-radius: 7px; background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .app-logo-icon svg { width: 16px; height: 16px; }
+  .app-logo-name { font-family: var(--font-display); font-size: 20px; color: var(--fg); }
+  .app-header-badge {
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 3px 10px; border-radius: var(--radius-pill);
+    background: var(--accent-soft); color: var(--accent);
+  }
+
+  .app-content {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 8px);
+  }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .tab-bar {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 480px; z-index: 60;
+    display: flex; align-items: stretch;
+    background: var(--tab-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--divider);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    height: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
+  }
+  .tab-btn {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; border: none; background: none; cursor: pointer; padding: 8px 4px;
+    color: var(--fg-faint); transition: color 0.15s; -webkit-tap-highlight-color: transparent;
+  }
+  .tab-btn.active { color: var(--accent); }
+  .tab-btn svg { width: 24px; height: 24px; }
+  .tab-label { font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
+  .tab-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); opacity: 0; transition: opacity 0.15s; }
+  .tab-btn.active .tab-dot { opacity: 1; }
+
+  .section-pad { padding: 20px 16px; }
+  .section-title { font-family: var(--font-display); font-size: 26px; line-height: 1.15; color: var(--fg); margin-bottom: 4px; }
+  .section-sub { font-size: 13px; color: var(--fg-muted); margin-bottom: 16px; }
+  .kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .kpi { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; min-width: 0; }
+  .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-muted); margin-bottom: 4px; }
+  .kpi-value { font-family: var(--font-display); font-size: 28px; line-height: 1.1; }
+  .kpi-value.ok { color: var(--ok); } .kpi-value.warn { color: var(--warn); }
+  .kpi-value.bad { color: var(--bad); } .kpi-value.accent { color: var(--accent); }
+  .kpi-spark { display: flex; align-items: flex-end; gap: 2px; height: 20px; margin-top: 6px; }
+  .kpi-spark-bar { flex: 1; border-radius: 2px; background: var(--accent-soft); min-height: 3px; }
+  .progress-track { width: 100%; height: 6px; border-radius: 3px; background: var(--bg-dim); overflow: hidden; margin-top: 8px; }
+  .progress-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width 0.5s ease; }
+
+  .card-list { display: flex; flex-direction: column; gap: 10px; }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 14px 16px; cursor: pointer; transition: box-shadow 0.15s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card:active { transform: scale(0.985); box-shadow: var(--shadow-sm); }
+  .card-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .card-title { font-weight: 600; font-size: 14px; color: var(--fg); }
+  .card-sub { font-size: 12px; color: var(--fg-muted); margin-top: 2px; }
+  .card-meta { font-family: var(--font-mono); font-size: 11px; color: var(--fg-faint); }
+  .card-right { text-align: right; flex-shrink: 0; }
+
+  .badge { display: inline-flex; padding: 3px 10px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .badge-ok { background: var(--ok-soft); color: var(--ok); }
+  .badge-warn { background: var(--warn-soft); color: var(--warn); }
+  .badge-bad { background: var(--bad-soft); color: var(--bad); }
+  .badge-accent { background: var(--accent-soft); color: var(--accent); }
+  .badge-muted { background: var(--bg-dim); color: var(--fg-muted); }
+
+  .card-stripe { position: relative; padding-left: 12px; }
+  .card-stripe::before { content: ""; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; border-radius: 2px; }
+  .card-stripe.s-ok::before { background: var(--ok); }
+  .card-stripe.s-warn::before { background: var(--warn); }
+  .card-stripe.s-bad::before { background: var(--bad); }
+
+  .detail-header {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    border-bottom: 1px solid var(--divider); background: var(--bg); position: sticky; top: 0; z-index: 10;
+  }
+  .back-btn {
+    width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg-dim);
+    color: var(--fg); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+  }
+  .back-btn:active { background: var(--border); }
+  .back-btn svg { width: 20px; height: 20px; }
+  .detail-title { font-weight: 600; font-size: 16px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .timeline { padding: 0 16px; }
+  .timeline-item { display: flex; gap: 12px; padding-bottom: 20px; position: relative; }
+  .timeline-item:not(:last-child)::after { content: ""; position: absolute; left: 11px; top: 28px; bottom: 0; width: 2px; background: var(--divider); }
+  .timeline-dot { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .timeline-dot.done { background: var(--ok-soft); color: var(--ok); }
+  .timeline-dot.current { background: var(--accent); color: var(--accent-ink); }
+  .timeline-dot.pending { background: var(--bg-dim); color: var(--fg-faint); }
+  .timeline-dot svg { width: 12px; height: 12px; }
+  .timeline-text { padding-top: 2px; }
+  .timeline-label { font-weight: 600; font-size: 13px; }
+  .timeline-date { font-size: 12px; color: var(--fg-muted); }
+
+  .check-list { display: flex; flex-direction: column; gap: 2px; }
+  .check-item {
+    display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+    background: var(--bg-card); border-bottom: 1px solid var(--divider);
+    cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background 0.1s;
+  }
+  .check-item:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+  .check-item:last-child { border-radius: 0 0 var(--radius) var(--radius); border-bottom: none; }
+  .check-item:active { background: var(--accent-glow); }
+  .check-box {
+    width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--border);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+  }
+  .check-item.checked .check-box { background: var(--ok); border-color: var(--ok); }
+  .check-item.failed .check-box { background: var(--bad); border-color: var(--bad); }
+  .check-box svg { width: 14px; height: 14px; color: #fff; opacity: 0; transition: opacity 0.1s; }
+  .check-item.checked .check-box svg, .check-item.failed .check-box svg { opacity: 1; }
+  .check-text { font-size: 14px; flex: 1; min-width: 0; }
+
+  .fab {
+    position: fixed; bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 16px);
+    right: max(20px, calc(50% - 240px + 20px));
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--warm); color: var(--warm-ink); border: none;
+    box-shadow: var(--shadow-lg); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 40; transition: transform 0.15s;
+  }
+  .fab:active { transform: scale(0.9); }
+  .fab svg { width: 24px; height: 24px; }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--fg-muted); margin-bottom: 6px; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--bg-card); color: var(--fg); font-family: var(--font-body); font-size: 15px;
+    outline: none; transition: border-color 0.15s; -webkit-appearance: none;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .form-select {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='%235A635C' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; padding-right: 36px;
+  }
+  .photo-area { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+  .photo-slot {
+    width: 80px; height: 80px; border-radius: var(--radius-sm); border: 2px dashed var(--border);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    flex-shrink: 0; color: var(--fg-faint); font-size: 10px; cursor: pointer; background: var(--bg-dim);
+  }
+  .photo-slot:active { border-color: var(--accent); }
+  .photo-slot svg { width: 20px; height: 20px; }
+  .photo-thumb { width: 80px; height: 80px; border-radius: var(--radius-sm); flex-shrink: 0; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 28px; }
+
+  .btn-primary {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px; border: none; border-radius: var(--radius);
+    background: var(--accent); color: var(--accent-ink);
+    font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer;
+  }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .toast {
+    position: fixed; bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 20px);
+    left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--bg-ink); color: var(--bg);
+    padding: 12px 24px; border-radius: var(--radius-pill); font-size: 14px; font-weight: 500;
+    z-index: 200; opacity: 0; transition: transform 0.3s ease, opacity 0.3s ease; pointer-events: none; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  .score-ring { width: 64px; height: 64px; position: relative; flex-shrink: 0; }
+  .score-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .score-ring-bg { fill: none; stroke: var(--bg-dim); stroke-width: 5; }
+  .score-ring-fill { fill: none; stroke-width: 5; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
+  .score-ring-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 15px; font-weight: 600; }
+
+  .divider-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-faint); padding: 12px 16px 8px; }
+
+  .splash {
+    position: fixed; inset: 0; z-index: 500; background: var(--accent);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .splash.hide { opacity: 0; transform: scale(1.05); pointer-events: none; }
+  .splash-logo { font-family: var(--font-display); font-size: 38px; color: var(--accent-ink); }
+  .splash-sub { font-size: 14px; color: rgba(255,255,255,0.7); letter-spacing: 0.04em; }
+  .splash-tagline { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 24px; }
+
+  /* Install banner */
+  .install-banner {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--accent-soft);
+    border-bottom: 1px solid var(--border);
+  }
+  .install-banner.show { display: flex; }
+  .install-banner-text { flex: 1; font-size: 13px; color: var(--fg); }
+  .install-banner-text strong { color: var(--accent); }
+  .install-btn {
+    padding: 8px 16px; border: none; border-radius: var(--radius-pill);
+    background: var(--accent); color: var(--accent-ink);
+    font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .install-dismiss {
+    width: 28px; height: 28px; border: none; background: none; color: var(--fg-muted);
+    cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Splash screen -->
+<div class="splash" id="splash">
+  <div class="splash-logo">FABRIQ</div>
+  <div class="splash-sub">FashionHub</div>
+  <div class="splash-tagline">Quality Management for Apparel Supply Chains</div>
+</div>
+
+<div id="app">
+  <!-- Install banner (shown when PWA installable) -->
+  <div class="install-banner" id="installBanner">
+    <div class="install-banner-text"><strong>Install FABRIQ</strong> on your home screen for the full app experience</div>
+    <button class="install-btn" id="installBtn">Install</button>
+    <button class="install-dismiss" id="installDismiss">&times;</button>
+  </div>
+
+  <header class="app-header">
+    <div class="app-logo">
+      <div class="app-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M4 8L12 4L20 8L12 12Z"/><path d="M4 12L12 16L20 12"/></svg>
+      </div>
+      <span class="app-logo-name">FABRIQ</span>
+    </div>
+    <span class="app-header-badge" id="portalBadge">Brand</span>
+  </header>
+
+  <div class="app-content" id="content">
+
+    <!-- BRAND PORTAL -->
+    <div class="screen active" id="brand-home">
+      <div class="section-pad">
+        <div class="section-title">Good morning, <em style="color:var(--accent)">Sarah.</em></div>
+        <div class="section-sub">ActiveWave Apparel &middot; 12 active POs</div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-label">Active POs</div><div class="kpi-value accent">12</div><div class="kpi-spark" id="spark1"></div></div>
+          <div class="kpi"><div class="kpi-label">Open NCRs</div><div class="kpi-value bad">4</div><div class="progress-track"><div class="progress-fill" style="width:33%;background:var(--bad)"></div></div></div>
+          <div class="kpi"><div class="kpi-label">Cost of Quality</div><div class="kpi-value warn">$14.2k</div><div class="kpi-spark" id="spark2"></div></div>
+          <div class="kpi"><div class="kpi-label">On-Time Rate</div><div class="kpi-value ok">87%</div><div class="progress-track"><div class="progress-fill" style="width:87%;background:var(--ok)"></div></div></div>
+        </div>
+      </div>
+      <div class="divider-label">Recent Purchase Orders</div>
+      <div class="section-pad" style="padding-top:8px"><div class="card-list" id="brandPoList"></div></div>
+    </div>
+
+    <div class="screen" id="brand-detail">
+      <div class="detail-header">
+        <button class="back-btn" onclick="showScreen('brand-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <span class="detail-title" id="detailPoTitle">PO-2611-AW-001</span>
+        <span class="badge badge-accent" id="detailPoStatus">In Production</span>
+      </div>
+      <div class="section-pad">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+          <div class="kpi"><div class="kpi-label">Quantity</div><div class="kpi-value accent" id="detailQty">5,000</div></div>
+          <div class="kpi"><div class="kpi-label">Ex-Factory</div><div class="kpi-value" style="font-size:20px;color:var(--fg)" id="detailDate">15 Dec 2026</div></div>
+        </div>
+      </div>
+      <div class="divider-label">Order Timeline</div>
+      <div style="padding:12px 0"><div class="timeline" id="detailTimeline"></div></div>
+    </div>
+
+    <!-- FACTORY PORTAL -->
+    <div class="screen" id="factory-home">
+      <div class="section-pad">
+        <div class="section-title">Dhaka Textiles <em style="color:var(--warm)">Ltd.</em></div>
+        <div class="section-sub">Production Floor &middot; Kiosk Mode</div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-label">In Production</div><div class="kpi-value accent">5</div></div>
+          <div class="kpi"><div class="kpi-label">Defects Today</div><div class="kpi-value bad">7</div></div>
+          <div class="kpi"><div class="kpi-label">Efficiency</div><div class="kpi-value ok">92%</div><div class="progress-track"><div class="progress-fill" style="width:92%"></div></div></div>
+          <div class="kpi"><div class="kpi-label">Workers Active</div><div class="kpi-value" style="color:var(--fg)">47</div></div>
+        </div>
+      </div>
+      <div class="divider-label">Active Orders</div>
+      <div class="section-pad" style="padding-top:8px"><div class="card-list" id="factoryPoList"></div></div>
+    </div>
+
+    <div class="screen" id="factory-defect">
+      <div class="detail-header">
+        <button class="back-btn" onclick="showScreen('factory-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <span class="detail-title">Report Defect</span>
+      </div>
+      <div class="section-pad">
+        <div class="form-group">
+          <label class="form-label">Purchase Order</label>
+          <select class="form-select"><option>PO-2611-AW-001 — Summer Tee</option><option>PO-2611-AW-003 — Hoodie Classic</option><option>PO-2611-BB-002 — Denim Jacket</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Defect Category</label>
+          <select class="form-select"><option value="">Select category...</option><option>Stitching — Open seam</option><option>Stitching — Broken stitch</option><option>Fabric — Hole/tear</option><option>Fabric — Color variation</option><option>Measurement — Out of tolerance</option><option>Trim — Missing/wrong button</option><option>Packaging — Wrong fold</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Severity</label>
+          <div style="display:flex;gap:8px">
+            <button class="sev-btn" data-sev="minor" onclick="selectSev(this)" style="flex:1;padding:10px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--bg-card);color:var(--fg);font-weight:600;font-size:13px;cursor:pointer;font-family:var(--font-body)">Minor</button>
+            <button class="sev-btn" data-sev="major" onclick="selectSev(this)" style="flex:1;padding:10px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--bg-card);color:var(--fg);font-weight:600;font-size:13px;cursor:pointer;font-family:var(--font-body)">Major</button>
+            <button class="sev-btn" data-sev="critical" onclick="selectSev(this)" style="flex:1;padding:10px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--bg-card);color:var(--fg);font-weight:600;font-size:13px;cursor:pointer;font-family:var(--font-body)">Critical</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Photo Evidence</label>
+          <div class="photo-area">
+            <div class="photo-thumb" id="photoThumb1" style="display:none"></div>
+            <div class="photo-slot" onclick="capturePhoto()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3"/><path d="M8 5l1-2h6l1 2"/></svg><span>Add photo</span></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <textarea class="form-textarea" placeholder="Describe the defect location and details..."></textarea>
+        </div>
+        <button class="btn-primary" onclick="submitDefect()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg> Submit Defect Report</button>
+      </div>
+    </div>
+
+    <!-- INSPECTOR PORTAL -->
+    <div class="screen" id="inspector-home">
+      <div class="section-pad">
+        <div class="section-title">Inspections <em style="color:var(--accent)">Today</em></div>
+        <div class="section-sub">QualityFirst International &middot; 3 scheduled</div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-label">Today</div><div class="kpi-value accent">3</div></div>
+          <div class="kpi"><div class="kpi-label">This Week</div><div class="kpi-value" style="color:var(--fg)">8</div></div>
+        </div>
+      </div>
+      <div class="divider-label">Schedule</div>
+      <div class="section-pad" style="padding-top:8px"><div class="card-list" id="inspectorList"></div></div>
+    </div>
+
+    <div class="screen" id="inspector-check">
+      <div class="detail-header">
+        <button class="back-btn" onclick="showScreen('inspector-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <span class="detail-title" id="inspTitle">INS-2611-DT-001</span>
+      </div>
+      <div class="section-pad" style="padding-bottom:8px">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
+          <div class="score-ring">
+            <svg viewBox="0 0 40 40"><circle class="score-ring-bg" cx="20" cy="20" r="17"/><circle class="score-ring-fill" cx="20" cy="20" r="17" stroke="var(--ok)" stroke-dasharray="106.8" stroke-dashoffset="106.8" id="scoreArc"/></svg>
+            <div class="score-ring-text" id="scoreText">0/8</div>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:15px">AQL Level II — General</div>
+            <div style="font-size:13px;color:var(--fg-muted)">Sample: 200 of 5,000 units</div>
+            <div style="font-size:12px;color:var(--fg-faint);margin-top:2px">Tap to pass &middot; Long-press to fail</div>
+          </div>
+        </div>
+      </div>
+      <div class="divider-label">Inspection Checklist</div>
+      <div class="check-list" id="checkList"></div>
+      <div class="section-pad" style="padding-top:16px">
+        <button class="btn-primary" onclick="submitInspection()" id="submitInspBtn" style="display:none"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> Submit Inspection Report</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="tab-bar">
+    <button class="tab-btn active" data-portal="brand" onclick="switchPortal('brand')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="tab-label">Brand</span><div class="tab-dot"></div></button>
+    <button class="tab-btn" data-portal="factory" onclick="switchPortal('factory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21V8l5-5 5 5v13"/><path d="M13 21V11l4-3 4 3v10"/><path d="M7 17h2"/><path d="M7 13h2"/><path d="M15 17h2"/></svg><span class="tab-label">Factory</span><div class="tab-dot"></div></button>
+    <button class="tab-btn" data-portal="inspector" onclick="switchPortal('inspector')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg><span class="tab-label">Inspector</span><div class="tab-dot"></div></button>
+  </nav>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="fab" id="fab" style="display:none" onclick="showScreen('factory-defect')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+
+<script>
+(function(){
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  }
+
+  // PWA install prompt
+  var deferredPrompt;
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('installBanner').classList.add('show');
+  });
+  document.getElementById('installBtn').addEventListener('click', function() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function() { deferredPrompt = null; });
+    }
+    document.getElementById('installBanner').classList.remove('show');
+  });
+  document.getElementById('installDismiss').addEventListener('click', function() {
+    document.getElementById('installBanner').classList.remove('show');
+  });
+  // iOS: detect standalone mode
+  if (window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) {
+    document.getElementById('installBanner').classList.remove('show');
+  }
+
+  var POS = [
+    { id:'PO-2611-AW-001', style:'Summer Tee Basic', factory:'Dhaka Textiles Ltd.', qty:5000, status:'in_production', date:'2026-12-15', brand:'ActiveWave' },
+    { id:'PO-2611-AW-002', style:'Winter Parka Pro', factory:'Saigon Stitch Co.', qty:3000, status:'awaiting_inspection', date:'2026-11-28', brand:'ActiveWave' },
+    { id:'PO-2611-AW-003', style:'Hoodie Classic', factory:'Dhaka Textiles Ltd.', qty:8000, status:'in_production', date:'2027-01-10', brand:'ActiveWave' },
+    { id:'PO-2611-BB-001', style:'Organic Jogger', factory:'Phnom Penh Garments', qty:4000, status:'inspected', date:'2026-11-20', brand:'Blueberry Threads' },
+    { id:'PO-2611-BB-002', style:'Denim Jacket', factory:'Dhaka Textiles Ltd.', qty:2500, status:'ncr_open', date:'2026-12-01', brand:'Blueberry Threads' },
+    { id:'PO-2611-AW-004', style:'Linen Shorts', factory:'Saigon Stitch Co.', qty:6000, status:'accepted', date:'2027-02-15', brand:'ActiveWave' },
+  ];
+  var STATUSES = {
+    draft:['Draft','muted'], pending_factory:['Pending','muted'], accepted:['Accepted','accent'],
+    in_production:['In Production','accent'], awaiting_inspection:['Awaiting Inspection','warn'],
+    inspected:['Inspected','ok'], released:['Released','ok'], shipped:['Shipped','ok'],
+    ncr_open:['NCR Open','bad'], closed:['Closed','muted'], cancelled:['Cancelled','muted']
+  };
+  var INSPECTIONS = [
+    { id:'INS-2611-DT-001', po:'PO-2611-AW-001', factory:'Dhaka Textiles', type:'In-line', time:'09:00', status:'scheduled' },
+    { id:'INS-2611-SS-001', po:'PO-2611-AW-002', factory:'Saigon Stitch', type:'Final', time:'13:30', status:'scheduled' },
+    { id:'INS-2611-PP-001', po:'PO-2611-BB-001', factory:'Phnom Penh Garments', type:'Pre-shipment', time:'16:00', status:'completed' },
+  ];
+  var CHECKS = [
+    'Fabric weight within tolerance (GSM test)',
+    'Color fastness to washing (ISO 105-C06)',
+    'Dimensional stability after wash (<3%)',
+    'Seam strength > 15 N/cm',
+    'Needle detector test — all clear',
+    'Label placement per spec sheet',
+    'Packaging per buyer instructions',
+    'AQL defect count within acceptance'
+  ];
+  var TIMELINE_STEPS = [
+    { label:'PO Created', date:'Oct 5, 2026', done:true },
+    { label:'Factory Accepted', date:'Oct 8, 2026', done:true },
+    { label:'In Production', date:'Oct 15, 2026', current:true },
+    { label:'Inspection Scheduled', date:'Nov 20, 2026', pending:true },
+    { label:'Quality Released', date:'', pending:true },
+    { label:'Shipped', date:'', pending:true },
+  ];
+
+  var checkStates = CHECKS.map(function(){ return 'none'; });
+
+  setTimeout(function(){
+    document.getElementById('splash').classList.add('hide');
+    setTimeout(function(){ document.getElementById('splash').style.display = 'none'; }, 400);
+  }, 1200);
+
+  function buildSpark(id, vals) {
+    var el = document.getElementById(id); if (!el) return;
+    var max = Math.max.apply(null, vals);
+    el.innerHTML = vals.map(function(v){ return '<div class="kpi-spark-bar" style="height:'+Math.max(15,(v/max)*100)+'%"></div>'; }).join('');
+  }
+  buildSpark('spark1', [8,10,9,11,12,10,12]);
+  buildSpark('spark2', [9.2,10.1,11.5,12.8,13.1,14.0,14.2]);
+
+  function renderBrandPOs() {
+    var el = document.getElementById('brandPoList');
+    el.innerHTML = POS.map(function(po){
+      var s = STATUSES[po.status]||['—','muted'];
+      return '<div class="card" onclick="showPoDetail(\''+po.id+'\')"><div class="card-row"><div style="min-width:0"><div class="card-title">'+po.style+'</div><div class="card-sub">'+po.factory+'</div></div><div class="card-right"><span class="badge badge-'+s[1]+'">'+s[0]+'</span><div class="card-meta" style="margin-top:4px">'+po.id+'</div></div></div></div>';
+    }).join('');
+  }
+  function renderFactoryPOs() {
+    var el = document.getElementById('factoryPoList');
+    var fps = POS.filter(function(p){ return p.factory.indexOf('Dhaka')>=0; });
+    el.innerHTML = fps.map(function(po){
+      var progress = po.status==='in_production'?Math.floor(Math.random()*40+40):po.status==='ncr_open'?65:100;
+      return '<div class="card"><div class="card-row"><div style="min-width:0;flex:1"><div class="card-title">'+po.style+'</div><div class="card-sub">'+po.brand+' &middot; '+po.qty.toLocaleString()+' pcs</div></div><div class="card-meta">'+progress+'%</div></div><div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:'+progress+'%;background:'+(po.status==='ncr_open'?'var(--bad)':'var(--accent)')+'"></div></div></div>';
+    }).join('');
+  }
+  function renderInspections() {
+    var el = document.getElementById('inspectorList');
+    el.innerHTML = INSPECTIONS.map(function(ins){
+      var done = ins.status==='completed';
+      return '<div class="card'+(done?'':' card-stripe s-accent')+'" onclick="'+(done?'':"showInspection('"+ins.id+"')")+'"><div class="card-row"><div style="min-width:0"><div class="card-title">'+ins.factory+'</div><div class="card-sub">'+ins.type+' Inspection &middot; '+ins.po+'</div></div><div class="card-right"><span class="badge '+(done?'badge-ok':'badge-accent')+'">'+(done?'Done':ins.time)+'</span><div class="card-meta" style="margin-top:4px">'+ins.id+'</div></div></div></div>';
+    }).join('');
+  }
+
+  window.switchPortal = function(portal) {
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.portal===portal); });
+    document.getElementById('portalBadge').textContent = portal.charAt(0).toUpperCase()+portal.slice(1);
+    var screens = {brand:'brand-home',factory:'factory-home',inspector:'inspector-home'};
+    showScreen(screens[portal]);
+    document.getElementById('fab').style.display = portal==='factory'?'flex':'none';
+    document.getElementById('content').scrollTop = 0;
+  };
+  window.showScreen = function(id) {
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+    document.getElementById('content').scrollTop = 0;
+  };
+  window.showPoDetail = function(poId) {
+    var po = POS.find(function(p){ return p.id===poId; }); if(!po) return;
+    document.getElementById('detailPoTitle').textContent = po.id;
+    var s = STATUSES[po.status]||['—','muted'];
+    document.getElementById('detailPoStatus').textContent = s[0];
+    document.getElementById('detailPoStatus').className = 'badge badge-'+s[1];
+    document.getElementById('detailQty').textContent = po.qty.toLocaleString();
+    document.getElementById('detailDate').textContent = new Date(po.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    var tl = document.getElementById('detailTimeline');
+    tl.innerHTML = TIMELINE_STEPS.map(function(s){
+      var cls = s.done?'done':s.current?'current':'pending';
+      var icon = s.done?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>':s.current?'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor" opacity="0.3"><circle cx="12" cy="12" r="3"/></svg>';
+      return '<div class="timeline-item"><div class="timeline-dot '+cls+'">'+icon+'</div><div class="timeline-text"><div class="timeline-label">'+s.label+'</div>'+(s.date?'<div class="timeline-date">'+s.date+'</div>':'')+'</div></div>';
+    }).join('');
+    showScreen('brand-detail');
+  };
+  window.showInspection = function(id) {
+    var ins = INSPECTIONS.find(function(i){ return i.id===id; }); if(!ins) return;
+    document.getElementById('inspTitle').textContent = ins.id;
+    checkStates = CHECKS.map(function(){ return 'none'; });
+    renderChecklist();
+    document.getElementById('submitInspBtn').style.display = 'none';
+    showScreen('inspector-check');
+  };
+
+  function renderChecklist() {
+    var el = document.getElementById('checkList');
+    el.innerHTML = CHECKS.map(function(c,i){
+      var st=checkStates[i], cls=st==='pass'?'checked':st==='fail'?'failed':'';
+      var icon=st==='pass'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>':st==='fail'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 18L18 6M6 6l12 12"/></svg>':'<svg viewBox="0 0 24 24"></svg>';
+      return '<div class="check-item '+cls+'" data-idx="'+i+'"><div class="check-box">'+icon+'</div><div class="check-text">'+c+'</div></div>';
+    }).join('');
+    el.querySelectorAll('.check-item').forEach(function(item){
+      var timer, idx=parseInt(item.dataset.idx);
+      item.addEventListener('pointerdown',function(){ timer=setTimeout(function(){ checkStates[idx]=checkStates[idx]==='fail'?'none':'fail'; renderChecklist(); timer=null; },400); });
+      item.addEventListener('pointerup',function(){ if(timer){ clearTimeout(timer); checkStates[idx]=checkStates[idx]==='pass'?'none':'pass'; renderChecklist(); } });
+      item.addEventListener('pointerleave',function(){ if(timer) clearTimeout(timer); });
+    });
+    var total=CHECKS.length, done=checkStates.filter(function(s){return s!=='none';}).length;
+    var circ=2*Math.PI*17;
+    document.getElementById('scoreArc').style.strokeDashoffset = circ*(1-done/total);
+    document.getElementById('scoreArc').style.stroke = checkStates.some(function(s){return s==='fail';})?'var(--bad)':'var(--ok)';
+    document.getElementById('scoreText').textContent = done+'/'+total;
+    if(done===total) document.getElementById('submitInspBtn').style.display = 'flex';
+  }
+
+  window.selectSev = function(btn) {
+    document.querySelectorAll('.sev-btn').forEach(function(b){ b.style.borderColor='var(--border)'; b.style.background='var(--bg-card)'; b.style.color='var(--fg)'; });
+    var colors={minor:'var(--warn)',major:'var(--warm)',critical:'var(--bad)'};
+    btn.style.borderColor=colors[btn.dataset.sev]; btn.style.color=colors[btn.dataset.sev];
+    btn.style.background=btn.dataset.sev==='minor'?'var(--warn-soft)':btn.dataset.sev==='major'?'var(--warm-soft)':'var(--bad-soft)';
+  };
+  window.capturePhoto = function(){ document.getElementById('photoThumb1').textContent='📸'; document.getElementById('photoThumb1').style.display='flex'; showToast('Photo captured'); };
+  window.submitDefect = function(){ showToast('Defect report submitted'); setTimeout(function(){ showScreen('factory-home'); },600); };
+  window.submitInspection = function(){
+    var passed=checkStates.filter(function(s){return s==='pass';}).length;
+    var failed=checkStates.filter(function(s){return s==='fail';}).length;
+    var result=failed===0?'PASSED':failed<=2?'ACCEPTED':'REJECTED';
+    showToast('Inspection '+result+' ('+passed+' pass, '+failed+' fail)');
+    setTimeout(function(){ showScreen('inspector-home'); },800);
+  };
+  function showToast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },2500); }
+
+  renderBrandPOs(); renderFactoryPOs(); renderInspections();
+})();
+</script>
+</body>
+</html>
