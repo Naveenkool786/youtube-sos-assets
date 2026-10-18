@@ -259,6 +259,15 @@
   .timeline-label { font-weight: 600; font-size: 13px; }
   .timeline-date { font-size: 12px; color: var(--fg-muted); }
 
+  .style-tl-toggle { display:flex; align-items:center; gap:6px; border:none; background:var(--accent-soft); color:var(--accent); padding:6px 12px; border-radius:var(--radius-pill); font-size:12px; font-weight:600; font-family:var(--font-body); cursor:pointer; margin-top:10px; -webkit-tap-highlight-color:transparent; transition:background 0.15s; }
+  .style-tl-toggle:active { background:var(--accent); color:var(--accent-ink); }
+  .style-tl-toggle svg { width:14px; height:14px; transition:transform 0.25s ease; }
+  .style-tl-toggle.open svg { transform:rotate(180deg); }
+  .style-tl-body { max-height:0; overflow:hidden; transition:max-height 0.35s cubic-bezier(0.16,1,0.3,1); }
+  .style-tl-body.open { max-height:1200px; }
+  .style-tl-inner { padding:12px 0 4px; }
+  .style-status-chip { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; }
+
   .check-list { display: flex; flex-direction: column; gap: 2px; }
   .check-item {
     display: flex; align-items: center; gap: 12px; padding: 14px 16px;
@@ -452,8 +461,6 @@
       <div class="section-pad" style="padding-top:8px"><div id="detailFactory"></div></div>
       <div class="divider-label" id="detailStylesLabel">Styles &amp; SKUs</div>
       <div class="section-pad" style="padding-top:8px"><div id="detailStyles"></div></div>
-      <div class="divider-label">Order Timeline</div>
-      <div style="padding:12px 0"><div class="timeline" id="detailTimeline"></div></div>
       <div class="divider-label">Comments &amp; Follow-ups</div>
       <div class="section-pad" style="padding-top:8px">
         <div id="detailComments"></div>
@@ -886,6 +893,102 @@
     ]
   };
 
+  var STYLE_TIMELINES = {
+    'TEE-VN-BLK': [
+      { label:'Material Ordered', sub:'Single jersey cotton 180GSM', date:'Aug 20, 2026', done:true },
+      { label:'Materials In-House', date:'Sep 15, 2026', done:true },
+      { label:'Material QC Passed', sub:'GSM OK, shrinkage 1.8%', date:'Sep 20, 2026', done:true },
+      { label:'PP Sample Approved', date:'Sep 28, 2026', done:true },
+      { label:'Bulk Cutting', date:'Oct 5, 2026', done:true },
+      { label:'Bulk Production', sub:'3 color runs: Black, White, Navy', date:'Oct 12, 2026', current:true },
+      { label:'In-line Inspection', date:'Nov 10, 2026', pending:true },
+      { label:'Final Inspection (AQL)', date:'Dec 1, 2026', pending:true },
+    ],
+    'TEE-CR-GRY': [
+      { label:'Material Ordered', sub:'Marl knit fabric + rib trim', date:'Aug 20, 2026', done:true },
+      { label:'Materials In-House', sub:'Fabric delayed — supplier short on Grey Marl yarn', date:'Oct 2, 2026', done:true },
+      { label:'Material QC Passed', sub:'GSM OK, color match within tolerance', date:'Oct 8, 2026', done:true },
+      { label:'PP Sample Approved', date:'Oct 14, 2026', done:true },
+      { label:'Bulk Cutting', date:'Oct 18, 2026', current:true },
+      { label:'Bulk Production', sub:'2 color runs: Grey Marl, Olive', date:'Oct 28, 2026', pending:true },
+      { label:'In-line Inspection', date:'Nov 20, 2026', pending:true },
+      { label:'Final Inspection (AQL)', date:'Dec 5, 2026', pending:true },
+    ],
+    'TEE-HN-BLU': [
+      { label:'Material Ordered', sub:'Henley placket buttons + jersey', date:'Aug 20, 2026', done:true },
+      { label:'Materials In-House', date:'Sep 18, 2026', done:true },
+      { label:'Material QC Passed', date:'Sep 22, 2026', done:true },
+      { label:'PP Sample Approved', date:'Sep 30, 2026', done:true },
+      { label:'Bulk Cutting', date:'Oct 3, 2026', done:true },
+      { label:'Bulk Production', sub:'Single color: Sky Blue', date:'Oct 10, 2026', done:true },
+      { label:'In-line Inspection', date:'Nov 5, 2026', current:true },
+      { label:'Final Inspection (AQL)', date:'Nov 28, 2026', pending:true },
+    ],
+    'PRK-HD-BLK': [
+      { label:'Material Ordered', sub:'Shell fabric, goose down, DWR coating', date:'Jul 28, 2026', done:true },
+      { label:'Materials In-House', date:'Aug 25, 2026', done:true },
+      { label:'Material QC Passed', sub:'Waterproof 10K, fill power 650+', date:'Aug 30, 2026', done:true },
+      { label:'PP Sample Approved', date:'Sep 10, 2026', done:true },
+      { label:'Bulk Cutting', date:'Sep 15, 2026', done:true },
+      { label:'Bulk Production', sub:'2 colors: Black, Charcoal', date:'Sep 22, 2026', done:true },
+      { label:'In-line Inspection', date:'Oct 15, 2026', done:true },
+      { label:'Final Inspection (AQL)', sub:'Awaiting inspector', date:'Nov 20, 2026', current:true },
+    ],
+    'PRK-BM-NVY': [
+      { label:'Material Ordered', sub:'Bomber shell, rib knit cuff, insulation', date:'Jul 28, 2026', done:true },
+      { label:'Materials In-House', sub:'Rib knit cuff delayed — capacity issue at trim supplier', date:'Sep 5, 2026', done:true },
+      { label:'Material QC Passed', date:'Sep 10, 2026', done:true },
+      { label:'PP Sample Approved', date:'Sep 18, 2026', done:true },
+      { label:'Bulk Cutting', date:'Sep 22, 2026', done:true },
+      { label:'Bulk Production', sub:'Single color: Navy', date:'Oct 1, 2026', done:true },
+      { label:'In-line Inspection', date:'Oct 20, 2026', done:true },
+      { label:'Final Inspection (AQL)', sub:'Awaiting inspector, combined with Hooded', date:'Nov 20, 2026', current:true },
+    ],
+    'HOD-PL-BLK': [
+      { label:'Material Ordered', sub:'Fleece 320GSM, drawcords, eyelets', date:'Sep 2, 2026', done:true },
+      { label:'Materials In-House', date:'Sep 28, 2026', done:true },
+      { label:'Material QC Passed', sub:'Pilling grade 4, GSM OK', date:'Oct 2, 2026', done:true },
+      { label:'PP Sample Approved', date:'Oct 10, 2026', done:true },
+      { label:'Bulk Cutting', date:'Oct 14, 2026', done:true },
+      { label:'Bulk Production', sub:'3 color runs: Black, Grey, Burgundy — high volume', date:'Oct 20, 2026', current:true },
+      { label:'In-line Inspection', date:'Nov 25, 2026', pending:true },
+      { label:'Final Inspection (AQL)', date:'Dec 20, 2026', pending:true },
+    ],
+    'HOD-ZP-GRN': [
+      { label:'Material Ordered', sub:'Fleece + YKK zippers + zip tape', date:'Sep 2, 2026', done:true },
+      { label:'Materials In-House', sub:'YKK zipper lot delayed by 10 days', date:'Oct 8, 2026', done:true },
+      { label:'Material QC Passed', sub:'Pilling OK, zipper pull strength OK', date:'Oct 12, 2026', done:true },
+      { label:'PP Sample Approved', date:'Oct 18, 2026', current:true },
+      { label:'Bulk Cutting', date:'Oct 24, 2026', pending:true },
+      { label:'Bulk Production', sub:'2 colors: Forest Green, Stone', date:'Nov 2, 2026', pending:true },
+      { label:'In-line Inspection', date:'Dec 5, 2026', pending:true },
+      { label:'Final Inspection (AQL)', date:'Dec 28, 2026', pending:true },
+    ],
+    'DNM-TR-IND': [
+      { label:'Material Ordered', sub:'14oz raw denim, rivets, tack buttons', date:'Jul 12, 2026', done:true },
+      { label:'Materials In-House', date:'Aug 10, 2026', done:true },
+      { label:'Material QC Passed', sub:'Denim weight, wash test OK', date:'Aug 15, 2026', done:true },
+      { label:'PP Sample Approved', date:'Aug 25, 2026', done:true },
+      { label:'Bulk Cutting', date:'Sep 1, 2026', done:true },
+      { label:'Bulk Production', sub:'2 colors: Indigo, Light Wash', date:'Sep 8, 2026', done:true },
+      { label:'In-line Inspection', date:'Oct 5, 2026', done:true },
+      { label:'Final Inspection (AQL)', date:'Oct 20, 2026', done:true },
+      { label:'NCR Raised', sub:'Back yoke stitching — 8% defect on Indigo', date:'Oct 22, 2026', current:true, ncr:true },
+      { label:'Rework / Re-inspection', date:'Nov 5, 2026', pending:true },
+    ],
+    'DNM-OV-BLK': [
+      { label:'Material Ordered', sub:'12oz stretch denim, oversized pattern', date:'Jul 12, 2026', done:true },
+      { label:'Materials In-House', date:'Aug 10, 2026', done:true },
+      { label:'Material QC Passed', date:'Aug 15, 2026', done:true },
+      { label:'PP Sample Approved', date:'Aug 28, 2026', done:true },
+      { label:'Bulk Cutting', date:'Sep 3, 2026', done:true },
+      { label:'Bulk Production', sub:'Single color: Black', date:'Sep 10, 2026', done:true },
+      { label:'In-line Inspection', date:'Oct 5, 2026', done:true },
+      { label:'Final Inspection (AQL)', sub:'Passed — no defects on this style', date:'Oct 20, 2026', done:true },
+      { label:'Quality Released', sub:'Held pending Trucker rework', date:'Oct 22, 2026', current:true },
+    ],
+  };
+
   var checkStates = CHECKS.map(function(){ return 'none'; });
 
   setTimeout(function(){
@@ -950,6 +1053,11 @@
     document.getElementById('fab').style.display = portal==='factory'?'flex':'none';
     document.getElementById('content').scrollTop = 0;
   };
+  window.toggleStyleTl = function(btn, id) {
+    var body = document.getElementById(id);
+    var isOpen = body.classList.toggle('open');
+    btn.classList.toggle('open', isOpen);
+  };
   window.showScreen = function(id) {
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById(id).classList.add('active');
@@ -992,27 +1100,43 @@
     var stylesEl = document.getElementById('detailStyles');
     if (po.styles && po.styles.length) {
       document.getElementById('detailStylesLabel').style.display = '';
-      stylesEl.innerHTML = po.styles.map(function(st){
-        return '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px">'
+      stylesEl.innerHTML = po.styles.map(function(st, si){
+        var stl = STYLE_TIMELINES[st.sku] || TIMELINES[po.id] || [];
+        var currentStep = stl.find(function(s){return s.current;});
+        var statusLabel = currentStep ? currentStep.label : 'Pending';
+        var statusColor = currentStep ? (currentStep.ncr ? 'background:var(--bad-soft);color:var(--bad)' : 'background:var(--accent-soft);color:var(--accent)') : 'background:var(--bg-dim);color:var(--fg-faint)';
+        var doneCount = stl.filter(function(s){return s.done;}).length;
+        var pct = stl.length ? Math.round((doneCount/stl.length)*100) : 0;
+        var tlId = 'stl-'+po.id.replace(/[^a-zA-Z0-9]/g,'')+'-'+si;
+        var tlHtml = stl.map(function(s){
+          var cls = s.done?'done':s.current?'current':'pending';
+          if (s.ncr) cls = 'ncr';
+          var icon = s.done?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>':s.ncr?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 8v4M12 16h.01"/></svg>':(s.current?'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor" opacity="0.3"><circle cx="12" cy="12" r="3"/></svg>');
+          return '<div class="timeline-item"><div class="timeline-dot '+cls+'">'+icon+'</div><div class="timeline-text"><div class="timeline-label">'+s.label+'</div>'+(s.sub?'<div style="font-size:11px;color:var(--fg-faint);margin-top:1px">'+s.sub+'</div>':'')+(s.date?'<div class="timeline-date">'+s.date+'</div>':'')+'</div></div>';
+        }).join('');
+        return '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px">'
           +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600;font-size:14px">'+st.name+'</span><span style="font-family:var(--font-mono);font-size:12px;color:var(--fg-muted)">'+st.sku+'</span></div>'
-          +'<div style="display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--fg-muted)">'
+          +'<div style="display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--fg-muted);margin-bottom:8px">'
           +'<span style="background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:10px">'+st.colors.join(', ')+'</span>'
           +'<span style="background:var(--bg-dim);padding:2px 8px;border-radius:10px">'+st.sizes+'</span>'
           +'<span style="background:var(--warm-soft);color:var(--warm);padding:2px 8px;border-radius:10px">'+st.pcs.toLocaleString()+' pcs</span>'
-          +'</div></div>';
+          +'</div>'
+          +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">'
+            +'<span class="style-status-chip" style="'+statusColor+'">'+statusLabel+'</span>'
+            +'<div style="flex:1;height:4px;border-radius:2px;background:var(--bg-dim);overflow:hidden"><div style="height:100%;width:'+pct+'%;border-radius:2px;background:'+(currentStep&&currentStep.ncr?'var(--bad)':'var(--accent)')+'"></div></div>'
+            +'<span style="font-family:var(--font-mono);font-size:11px;color:var(--fg-faint)">'+pct+'%</span>'
+          +'</div>'
+          +'<button class="style-tl-toggle" onclick="toggleStyleTl(this,\''+tlId+'\')">'
+            +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>'
+            +'Order Timeline'
+          +'</button>'
+          +'<div class="style-tl-body" id="'+tlId+'"><div class="style-tl-inner"><div class="timeline">'+tlHtml+'</div></div></div>'
+          +'</div>';
       }).join('');
     } else {
       document.getElementById('detailStylesLabel').style.display = 'none';
       stylesEl.innerHTML = '';
     }
-    var tl = document.getElementById('detailTimeline');
-    var steps = TIMELINES[po.id] || TIMELINES['_default'];
-    tl.innerHTML = steps.map(function(s){
-      var cls = s.done?'done':s.current?'current':'pending';
-      if (s.ncr) cls = 'ncr';
-      var icon = s.done?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>':s.ncr?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 8v4M12 16h.01"/></svg>':(s.current?'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor" opacity="0.3"><circle cx="12" cy="12" r="3"/></svg>');
-      return '<div class="timeline-item"><div class="timeline-dot '+cls+'">'+icon+'</div><div class="timeline-text"><div class="timeline-label">'+s.label+'</div>'+(s.sub?'<div style="font-size:11px;color:var(--fg-faint);margin-top:1px">'+s.sub+'</div>':'')+(s.date?'<div class="timeline-date">'+s.date+'</div>':'')+'</div></div>';
-    }).join('');
     currentDetailPo = po.id;
     renderComments(po.id);
     showScreen('brand-detail');
