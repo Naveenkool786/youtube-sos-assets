@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QMS Prototype v1</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.26.0/babel.min.js"></script>
+<style>
+:root {
+  --bg: #fafbfc;
+  --surface: #ffffff;
+  --surface-elev: #ffffff;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-soft: #eef2ff;
+  --success: #10b981;
+  --success-soft: #ecfdf5;
+  --warning: #f59e0b;
+  --warning-soft: #fffbeb;
+  --danger: #ef4444;
+  --danger-soft: #fef2f2;
+  --info: #0ea5e9;
+  --info-soft: #f0f9ff;
+}
+:root[data-theme="dark"] {
+  --bg: #0b1120;
+  --surface: #0f172a;
+  --surface-elev: #1e293b;
+  --border: #1e293b;
+  --border-strong: #334155;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-subtle: #64748b;
+  --primary: #818cf8;
+  --primary-soft: #1e1b4b;
+  --success-soft: #064e3b;
+  --warning-soft: #78350f;
+  --danger-soft: #7f1d1d;
+  --info-soft: #0c4a6e;
+}
+body { background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; margin: 0; }
+.card { background: var(--surface-elev); border: 1px solid var(--border); border-radius: 12px; }
+.btn { padding: 0.5rem 0.875rem; border-radius: 8px; font-weight: 500; font-size: 0.875rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.375rem; border: 1px solid transparent; transition: all 0.15s; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--border); }
+.btn-ghost:hover { background: var(--surface-elev); }
+.btn-danger { background: var(--danger); color: white; }
+.btn-sm { padding: 0.25rem 0.625rem; font-size: 0.75rem; }
+.chip { padding: 0.125rem 0.5rem; border-radius: 999px; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.25rem; }
+.chip-success { background: var(--success-soft); color: var(--success); }
+.chip-warning { background: var(--warning-soft); color: var(--warning); }
+.chip-danger { background: var(--danger-soft); color: var(--danger); }
+.chip-info { background: var(--info-soft); color: var(--info); }
+.chip-neutral { background: var(--border); color: var(--text-muted); }
+.chip-primary { background: var(--primary-soft); color: var(--primary); }
+input, select, textarea { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: var(--text); width: 100%; font-family: inherit; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary); }
+label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem; }
+@keyframes slide-in { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.toast { animation: slide-in 0.3s ease; }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.dot-live { animation: pulse-dot 1.5s ease-in-out infinite; }
+.phone-frame { width: 320px; height: 620px; background: #0f172a; border-radius: 44px; padding: 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); margin: 0 auto; }
+.phone-screen { background: var(--surface); width: 100%; height: 100%; border-radius: 36px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+.phone-notch { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: 120px; height: 28px; background: #0f172a; border-radius: 20px; z-index: 10; }
+.scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.scrollbar::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+.scrollbar::-webkit-scrollbar-track { background: transparent; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useMemo, useRef } = React;
+
+// ============ ICONS ============
+const Icon = ({ name, size = 16, className = "" }) => {
+  const p = {
+    "layout": <><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></>,
+    "factory": <><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></>,
+    "check": <><polyline points="20 6 9 17 4 12"/></>,
+    "x": <><path d="M18 6 6 18"/><path d="m6 6 12 12"/></>,
+    "plus": <><path d="M5 12h14"/><path d="M12 5v14"/></>,
+    "arrow-right": <><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></>,
+    "arrow-left": <><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></>,
+    "building": <><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></>,
+    "map-pin": <><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></>,
+    "user": <><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></>,
+    "logout": <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></>,
+    "trash": <><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></>,
+    "clipboard": <><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></>,
+    "alert": <><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></>,
+    "dollar": <><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></>,
+    "chevron-right": <><polyline points="9 18 15 12 9 6"/></>,
+    "camera": <><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></>,
+    "download": <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></>,
+    "refresh": <><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></>,
+    "settings": <><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></>,
+    "info": <><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></>,
+  };
+  return <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{p[name]}</svg>;
+};
+
+// ============ DATA LAYER (localStorage) ============
+const STORAGE_KEY = 'qms_v1_data';
+const SEED = {
+  session: null,
+  users: [
+    { id: 'u-brand', name: 'Sarah Chen', role: 'brand', title: 'Head of Quality', org: 'Brand A', avatar: 'S', color: 'var(--primary)' },
+    { id: 'u-factory', name: 'Rahman Khan', role: 'factory', title: 'Production Manager', org: 'Factory 1 · Dhaka', avatar: 'R', color: 'var(--success)' },
+    { id: 'u-inspector', name: 'Priya Nair', role: 'inspector', title: 'Field Inspector', org: 'InspectionCo', avatar: 'P', color: 'var(--warning)' },
+  ],
+  styles: [
+    { id: 's-1', code: 'STY-001', name: 'Classic Oxford Shirt', category: 'Shirt', brand: 'Brand A' },
+    { id: 's-2', code: 'STY-002', name: 'Chino Trousers', category: 'Trouser', brand: 'Brand A' },
+    { id: 's-3', code: 'STY-003', name: 'Polo T-Shirt', category: 'T-shirt', brand: 'Brand A' },
+    { id: 's-4', code: 'STY-004', name: 'Denim Jacket', category: 'Jacket', brand: 'Brand A' },
+  ],
+  factories: [
+    { id: 'f-1', name: 'Factory 1', country: 'Bangladesh', city: 'Dhaka', score: 92 },
+    { id: 'f-2', name: 'Factory 2', country: 'Vietnam', city: 'HCMC', score: 85 },
+    { id: 'f-3', name: 'Factory 3', country: 'India', city: 'Tirupur', score: 94 },
+  ],
+  pos: [
+    { id: 'po-001', number: 'PO-2026-0142', style_id: 's-1', factory_id: 'f-1', qty: 5000, state: 'in_production', created_at: Date.now() - 7 * 86400000, due_date: '2026-12-15' },
+    { id: 'po-002', number: 'PO-2026-0143', style_id: 's-2', factory_id: 'f-3', qty: 8000, state: 'ready_for_inspection', created_at: Date.now() - 3 * 86400000, due_date: '2026-11-28' },
+  ],
+  inspections: [],
+  defects: [],
+  ncrs: [],
+  coq_entries: [
+    { id: 'coq-1', category: 'prevention', subcategory: 'Fabric inspection', amount: 4200, created_at: Date.now() - 30 * 86400000 },
+    { id: 'coq-2', category: 'prevention', subcategory: 'Training', amount: 8200, created_at: Date.now() - 20 * 86400000 },
+    { id: 'coq-3', category: 'appraisal', subcategory: 'Inline QC', amount: 15200, created_at: Date.now() - 15 * 86400000 },
+    { id: 'coq-4', category: 'appraisal', subcategory: 'Lab testing', amount: 13400, created_at: Date.now() - 10 * 86400000 },
+    { id: 'coq-5', category: 'internal_failure', subcategory: 'Rework', amount: 25000, created_at: Date.now() - 8 * 86400000 },
+    { id: 'coq-6', category: 'internal_failure', subcategory: 'Scrap', amount: 17300, created_at: Date.now() - 5 * 86400000 },
+    { id: 'coq-7', category: 'external_failure', subcategory: 'Returns', amount: 48000, created_at: Date.now() - 3 * 86400000 },
+    { id: 'coq-8', category: 'external_failure', subcategory: 'Warranty', amount: 36200, created_at: Date.now() - 1 * 86400000 },
+  ],
+};
+const loadData = () => { try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : SEED; } catch (e) { return SEED; } };
+const saveData = (d) => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } catch (e) { console.error(e); } };
+const resetData = () => { localStorage.removeItem(STORAGE_KEY); location.reload(); };
+
+// ============ STATE MACHINE ============
+const PO_STATES = {
+  draft: { label: 'Draft', color: 'chip-neutral', next: ['sent'] },
+  sent: { label: 'Sent to Factory', color: 'chip-info', next: ['accepted', 'rejected'] },
+  accepted: { label: 'Accepted', color: 'chip-info', next: ['in_production'] },
+  rejected: { label: 'Rejected', color: 'chip-danger', next: [] },
+  in_production: { label: 'In Production', color: 'chip-primary', next: ['ready_for_inspection'] },
+  ready_for_inspection: { label: 'Ready for Inspection', color: 'chip-warning', next: ['passed', 'failed'] },
+  passed: { label: 'Inspection Passed', color: 'chip-success', next: ['shipped'] },
+  failed: { label: 'Inspection Failed', color: 'chip-danger', next: ['in_production'] },
+  shipped: { label: 'Shipped', color: 'chip-success', next: ['delivered'] },
+  delivered: { label: 'Delivered', color: 'chip-success', next: [] },
+};
+const INSP_STATES = {
+  scheduled: { label: 'Scheduled', color: 'chip-info' },
+  in_progress: { label: 'In Progress', color: 'chip-warning' },
+  submitted: { label: 'Submitted', color: 'chip-primary' },
+  passed: { label: 'Passed', color: 'chip-success' },
+  failed: { label: 'Failed', color: 'chip-danger' },
+};
+const NCR_STATES = {
+  raised: { label: 'Raised', color: 'chip-danger' },
+  acknowledged: { label: 'Acknowledged', color: 'chip-warning' },
+  resolved: { label: 'Resolved', color: 'chip-success' },
+};
+
+// ============ DEFECT CATALOG ============
+const DEFECT_CATEGORIES = [
+  { code: 'OPEN_SEAM', name: 'Open seam', severity: 'major' },
+  { code: 'LOOSE_BUTTON', name: 'Loose button', severity: 'major' },
+  { code: 'STAIN', name: 'Stain / spot', severity: 'minor' },
+  { code: 'BROKEN_STITCH', name: 'Broken stitch', severity: 'minor' },
+  { code: 'WRONG_COLOR', name: 'Wrong color shade', severity: 'critical' },
+  { code: 'HOLE', name: 'Fabric hole', severity: 'critical' },
+  { code: 'LABEL_MISSING', name: 'Label missing', severity: 'major' },
+  { code: 'SIZE_WRONG', name: 'Size out of tolerance', severity: 'major' },
+];
+const GARMENT_ZONES = ['Collar', 'Placket', 'Sleeve', 'Cuff', 'Side-seam', 'Hem', 'Pocket', 'Front panel', 'Back panel', 'Lining'];
+
+// ============ TOAST ============
+let toastId = 0;
+const useToast = () => {
+  const [toasts, setToasts] = useState([]);
+  const show = (msg, type = 'success') => {
+    const id = ++toastId;
+    setToasts(ts => [...ts, { id, msg, type }]);
+    setTimeout(() => setToasts(ts => ts.filter(t => t.id !== id)), 3000);
+  };
+  const ToastBar = () => (
+    <div className="fixed top-4 right-4 z-[200] space-y-2">
+      {toasts.map(t => (
+        <div key={t.id} className={`toast card px-4 py-3 shadow-lg flex items-center gap-2 ${t.type === 'error' ? 'border-red-400' : 'border-green-400'}`} style={{ minWidth: 240 }}>
+          <Icon name={t.type === 'error' ? 'x' : 'check'} size={14} style={{ color: t.type === 'error' ? 'var(--danger)' : 'var(--success)' }} />
+          <span className="text-sm">{t.msg}</span>
+        </div>
+      ))}
+    </div>
+  );
+  return { show, ToastBar };
+};
+
+// ============ MAIN APP ============
+function App() {
+  const [data, setData] = useState(loadData);
+  const [theme, setTheme] = useState('light');
+  const [route, setRoute] = useState('/');
+  const { show: toast, ToastBar } = useToast();
+
+  useEffect(() => saveData(data), [data]);
+  useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
+
+  const update = (fn) => setData(d => fn({ ...d }));
+  const session = data.session ? data.users.find(u => u.id === data.session) : null;
+
+  const goto = (r) => { setRoute(r); window.scrollTo(0, 0); };
+
+  const login = (userId) => { update(d => { d.session = userId; return d; }); goto('/'); toast(`Welcome, ${data.users.find(u => u.id === userId).name}`); };
+  const logout = () => { update(d => { d.session = null; return d; }); goto('/'); };
+
+  if (!session) {
+    return (
+      <>
+        <ToastBar />
+        <LoginScreen users={data.users} onLogin={login} theme={theme} setTheme={setTheme} />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <ToastBar />
+      <TopBar session={session} data={data} logout={logout} theme={theme} setTheme={setTheme} toast={toast} goto={goto} route={route} update={update} />
+      <main className="pb-20">
+        <Router route={route} session={session} data={data} update={update} toast={toast} goto={goto} />
+      </main>
+    </>
+  );
+}
+
+// ============ LOGIN ============
+const LoginScreen = ({ users, onLogin, theme, setTheme }) => (
+  <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="w-full max-w-2xl">
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" style={{ background: 'linear-gradient(135deg, var(--primary), #8b5cf6)' }}>
+          <Icon name="layout" size={28} className="text-white" />
+        </div>
+        <h1 className="text-4xl font-bold mb-2">QMS Platform <span className="chip chip-info text-xs ml-2">v1 Prototype</span></h1>
+        <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>Three-party Quality Management for apparel. Pick a persona to log in.</p>
+      </div>
+      <div className="grid md:grid-cols-3 gap-3">
+        {users.map(u => (
+          <button key={u.id} onClick={() => onLogin(u.id)} className="card p-5 text-left hover:shadow-lg transition-all hover:scale-[1.02]">
+            <div className="w-12 h-12 rounded-full grid place-items-center text-white text-xl font-bold mb-3" style={{ background: u.color }}>{u.avatar}</div>
+            <div className="font-semibold">{u.name}</div>
+            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{u.title}</div>
+            <div className="text-xs mt-1" style={{ color: 'var(--text-subtle)' }}>{u.org}</div>
+            <div className="mt-3"><span className={`chip chip-${u.role === 'brand' ? 'primary' : u.role === 'factory' ? 'success' : 'warning'}`}>{u.role.toUpperCase()}</span></div>
+          </button>
+        ))}
+      </div>
+      <div className="text-center mt-8 space-y-2">
+        <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="btn btn-ghost">{theme === 'dark' ? '☀️ Light' : '🌙 Dark'} mode</button>
+        <div className="text-xs" style={{ color: 'var(--text-subtle)' }}>All data stored in your browser's localStorage. No backend. No account needed.</div>
+      </div>
+    </div>
+  </div>
+);
+
+// ============ TOP BAR ============
+const TopBar = ({ session, data, logout, theme, setTheme, toast, goto, route, update }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navItems = {
+    brand: [
+      { r: '/', label: 'Dashboard', icon: 'layout' },
+      { r: '/pos', label: 'Purchase Orders', icon: 'clipboard' },
+      { r: '/create-po', label: 'New PO', icon: 'plus' },
+      { r: '/inspections', label: 'Inspections', icon: 'check' },
+      { r: '/ncrs', label: 'NCRs', icon: 'alert' },
+      { r: '/coq', label: 'Cost of Quality', icon: 'dollar' },
+    ],
+    factory: [
+      { r: '/', label: 'Dashboard', icon: 'layout' },
+      { r: '/kanban', label: 'PO Board', icon: 'factory' },
+      { r: '/inspections', label: 'Inspections', icon: 'check' },
+      { r: '/ncrs', label: 'NCRs', icon: 'alert' },
+    ],
+    inspector: [
+      { r: '/', label: 'Today', icon: 'map-pin' },
+      { r: '/my-inspections', label: 'My Inspections', icon: 'check' },
+    ],
+  };
+  const items = navItems[session.role] || [];
+
+  return (
+    <>
+      <nav className="sticky top-0 z-40" style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
+        <div className="max-w-[1400px] mx-auto px-4 py-3 flex items-center gap-3">
+          <button onClick={() => goto('/')} className="flex items-center gap-2 pr-3" style={{ borderRight: '1px solid var(--border)' }}>
+            <div className="w-7 h-7 rounded-lg grid place-items-center" style={{ background: 'linear-gradient(135deg, var(--primary), #8b5cf6)' }}>
+              <Icon name="layout" size={14} className="text-white" />
+            </div>
+            <span className="font-bold text-sm hidden sm:inline">QMS</span>
+            <span className="chip chip-info text-[10px]">v1</span>
+          </button>
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar flex-1">
+            {items.map(i => (
+              <button key={i.r} onClick={() => goto(i.r)} className={`btn ${route === i.r ? 'btn-primary' : 'btn-ghost'} whitespace-nowrap text-xs`}>
+                <Icon name={i.icon} size={14} />
+                <span className="hidden md:inline">{i.label}</span>
+              </button>
+            ))}
+          </div>
+          <button onClick={() => setMenuOpen(!menuOpen)} className="flex items-center gap-2 btn btn-ghost text-xs">
+            <div className="w-6 h-6 rounded-full grid place-items-center text-white font-bold text-xs" style={{ background: session.color }}>{session.avatar}</div>
+            <span className="hidden sm:inline">{session.name.split(' ')[0]}</span>
+          </button>
+        </div>
+      </nav>
+      {menuOpen && (
+        <div className="fixed right-4 top-16 z-50 card p-2 w-64 shadow-xl">
+          <div className="p-3 border-b" style={{ borderColor: 'var(--border)' }}>
+            <div className="font-semibold text-sm">{session.name}</div>
+            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{session.title}</div>
+            <div className="text-xs" style={{ color: 'var(--text-subtle)' }}>{session.org}</div>
+          </div>
+          <button onClick={() => { setTheme(theme === 'dark' ? 'light' : 'dark'); setMenuOpen(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-opacity-50 rounded flex items-center gap-2" style={{ background: 'transparent' }}>
+            <span>{theme === 'dark' ? '☀️' : '🌙'}</span> Toggle theme
+          </button>
+          <button onClick={() => { if (confirm('Reset all data? This clears all POs, inspections, NCRs, defects.')) { resetData(); } }} className="w-full text-left px-3 py-2 text-sm hover:bg-opacity-50 rounded flex items-center gap-2" style={{ color: 'var(--danger)' }}>
+            <Icon name="trash" size={14} /> Reset demo data
+          </button>
+          <button onClick={() => { logout(); setMenuOpen(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-opacity-50 rounded flex items-center gap-2">
+            <Icon name="logout" size={14} /> Switch user
+          </button>
+        </div>
+      )}
+      <div className="max-w-[1400px] mx-auto px-4 py-2 flex items-center justify-between text-xs" style={{ color: 'var(--text-muted)' }}>
+        <div className="flex items-center gap-2">
+          <span className="chip chip-success"><span className="w-1.5 h-1.5 rounded-full dot-live" style={{ background: 'currentColor' }}/>LIVE</span>
+          <span>{data.pos.length} POs · {data.inspections.length} inspections · {data.ncrs.length} NCRs · {data.defects.length} defects logged</span>
+        </div>
+        <div style={{ color: 'var(--text-subtle)' }}>Data persists in browser · Share this file for demo access</div>
+      </div>
+    </>
+  );
+};
+
+// ============ ROUTER ============
+const Router = ({ route, session, data, update, toast, goto }) => {
+  const props = { data, update, toast, goto, session };
+  // Brand routes
+  if (session.role === 'brand') {
+    if (route === '/') return <BrandDashboard {...props} />;
+    if (route === '/pos') return <POList {...props} />;
+    if (route === '/create-po') return <CreatePO {...props} />;
+    if (route === '/inspections') return <AllInspections {...props} />;
+    if (route === '/ncrs') return <NCRList {...props} />;
+    if (route === '/coq') return <CoQDashboard {...props} />;
+    if (route.startsWith('/po/')) return <PODetail {...props} id={route.split('/')[2]} />;
+    if (route.startsWith('/insp/')) return <InspectionDetail {...props} id={route.split('/')[2]} />;
+  }
+  // Factory routes
+  if (session.role === 'factory') {
+    if (route === '/') return <FactoryDashboard {...props} />;
+    if (route === '/kanban') return <KanbanBoard {...props} />;
+    if (route === '/inspections') return <AllInspections {...props} />;
+    if (route === '/ncrs') return <NCRList {...props} />;
+    if (route.startsWith('/po/')) return <PODetail {...props} id={route.split('/')[2]} />;
+    if (route.startsWith('/insp/')) return <InspectionDetail {...props} id={route.split('/')[2]} />;
+  }
+  // Inspector routes (mobile)
+  if (session.role === 'inspector') {
+    if (route === '/') return <InspectorToday {...props} />;
+    if (route === '/my-inspections') return <AllInspections {...props} />;
+    if (route.startsWith('/insp/')) return <InspectionExecute {...props} id={route.split('/')[2]} />;
+  }
+  return <div className="p-8">Route not found</div>;
+};
+
+// ============ BRAND: DASHBOARD ============
+const BrandDashboard = ({ data, goto }) => {
+  const openNCRs = data.ncrs.filter(n => n.state !== 'resolved').length;
+  const pendingInsp = data.inspections.filter(i => i.state === 'submitted').length;
+  const activePOs = data.pos.filter(p => !['delivered', 'rejected'].includes(p.state)).length;
+  const coqTotal = data.coq_entries.reduce((s, e) => s + e.amount, 0);
+  const coqByCat = data.coq_entries.reduce((acc, e) => { acc[e.category] = (acc[e.category] || 0) + e.amount; return acc; }, {});
+
+  return (
+    <div className="max-w-[1400px] mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold mb-1">Dashboard</h1>
+      <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>Brand A · Live from your data</p>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        {[
+          { label: 'Active POs', value: activePOs, icon: 'clipboard', color: 'var(--primary)', onClick: () => goto('/pos') },
+          { label: 'Pending Reports', value: pendingInsp, icon: 'check', color: 'var(--warning)', onClick: () => goto('/inspections') },
+          { label: 'Open NCRs', value: openNCRs, icon: 'alert', color: 'var(--danger)', onClick: () => goto('/ncrs') },
+          { label: 'CoQ YTD', value: '$' + (coqTotal / 1000).toFixed(1) + 'k', icon: 'dollar', color: 'var(--info)', onClick: () => goto('/coq') },
+        ].map(k => (
+          <button key={k.label} onClick={k.onClick} className="card p-4 text-left hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-8 h-8 rounded-lg grid place-items-center" style={{ background: k.color + '20', color: k.color }}>
+                <Icon name={k.icon} size={16} />
+              </div>
+            </div>
+            <div className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{k.label}</div>
+            <div className="text-2xl font-bold">{k.value}</div>
+          </button>
+        ))}
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-4 mb-4">
+        <div className="card p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-sm">Recent Purchase Orders</h3>
+            <button onClick={() => goto('/pos')} className="text-xs flex items-center gap-1" style={{ color: 'var(--primary)' }}>View all <Icon name="arrow-right" size={12} /></button>
+          </div>
+          <div className="space-y-2">
+            {data.pos.slice(-5).reverse().map(po => {
+              const style = data.styles.find(s => s.id === po.style_id);
+              const factory = data.factories.find(f => f.id === po.factory_id);
+              return (
+                <button key={po.id} onClick={() => goto('/po/' + po.id)} className="w-full flex items-center justify-between p-3 rounded-lg text-left hover:shadow-sm" style={{ background: 'var(--bg)' }}>
+                  <div>
+                    <div className="font-mono text-xs font-bold">{po.number}</div>
+                    <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{style?.name} · {factory?.name} · {po.qty.toLocaleString()} pcs</div>
+                  </div>
+                  <span className={`chip ${PO_STATES[po.state]?.color || 'chip-neutral'}`}>{PO_STATES[po.state]?.label}</span>
+                </button>
+              );
+            })}
+            {data.pos.length === 0 && <div className="text-sm text-center py-4" style={{ color: 'var(--text-subtle)' }}>No POs yet. <button onClick={() => goto('/create-po')} className="underline" style={{ color: 'var(--primary)' }}>Create one →</button></div>}
+          </div>
+        </div>
+
+        <div className="card p-5">
+          <h3 className="font-semibold text-sm mb-3">CoQ Breakdown</h3>
+          <div className="space-y-3">
+            {[
+              { key: 'prevention', label: 'Prevention', color: 'var(--success)' },
+              { key: 'appraisal', label: 'Appraisal', color: 'var(--info)' },
+              { key: 'internal_failure', label: 'Internal Failure', color: 'var(--warning)' },
+              { key: 'external_failure', label: 'External Failure', color: 'var(--danger)' },
+            ].map(c => {
+              const amt = coqByCat[c.key] || 0;
+              const pct = coqTotal > 0 ? (amt / coqTotal) * 100 : 0;
+              return (
+                <div key={c.key}>
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span>{c.label}</span>
+                    <span className="font-mono font-semibold">${amt.toLocaleString()}</span>
+                  </div>
+                  <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--border)' }}>
+                    <div className="h-full rounded-full transition-all" style={{ width: pct + '%', background: c.color }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <button onClick={() => goto('/coq')} className="btn btn-ghost w-full mt-4 justify-center text-xs">Full CoQ Dashboard <Icon name="arrow-right" size={12} /></button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============ BRAND: CREATE PO ============
+const CreatePO = ({ data, update, toast, goto }) => {
+  const [form, setForm] = useState({ style_id: data.styles[0]?.id || '', factory_id: data.factories[0]?.id || '', qty: 5000, due_date: '2026-12-31' });
+
+  const submit = () => {
+    const num = 'PO-2026-' + String(100 + data.pos.length + 1).padStart(4, '0');
+    const po = { id: 'po-' + Date.now(), number: num, ...form, qty: parseInt(form.qty), state: 'sent', created_at: Date.now() };
+    update(d => { d.pos = [...d.pos, po]; return d; });
+    toast('PO created and sent to factory');
+    goto('/pos');
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto px-4 py-6">
+      <button onClick={() => goto('/')} className="btn btn-ghost mb-4"><Icon name="arrow-left" size={14} /> Back</button>
+      <div className="card p-6">
+        <h1 className="text-xl font-bold mb-1">Create Purchase Order</h1>
+        <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>Fill the form; PO is auto-sent to Factory upon submit.</p>
+        <div className="space-y-4">
+          <div>
+            <label>Style</label>
+            <select value={form.style_id} onChange={e => setForm({ ...form, style_id: e.target.value })}>
+              {data.styles.map(s => <option key={s.id} value={s.id}>{s.code} — {s.name} ({s.category})</option>)}
+            </select>
+          </div>
+          <div>
+            <label>Factory</label>
+            <select value={form.factory_id} onChange={e => setForm({ ...form, factory_id: e.target.value })}>
+              {data.factories.map(f => <option key={f.id} value={f.id}>{f.name} — {f.city}, {f.country} (score {f.score})</option>)}
+            </select>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label>Quantity (pieces)</label>
+              <input type="number" value={form.qty} onChange={e => setForm({ ...form, qty: e.target.value })} min="100" step="100" />
+            </div>
+            <div>
+              <label>Ex-factory date</label>
+              <input type="date" value={form.due_date} onChange={e => setForm({ ...form, due_date: e.target.value })} />
+            </div>
+          </div>
+          <div className="p-3 rounded-lg text-xs" style={{ background: 'var(--primary-soft)', color: 'var(--primary)' }}>
+            <Icon name="info" size={12} className="inline mr-1" /> Auto-applied: AQL Level II (2.5/4.0), Brand A tolerance ±1cm, mandatory 10 lab tests on first sample.
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <button onClick={() => goto('/')} className="btn btn-ghost">Cancel</button>
+            <button onClick={submit} className="btn btn-primary">Send to Factory <Icon name="arrow-right" size={14} /></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============ PO LIST ============
+const POList = ({ data, goto }) => {
+  const [filter, setFilter] = useState('all');
+  const filtered = filter === 'all' ? data.pos : data.pos.filter(p => p.state === filter);
+  return (
+    <div className="max-w-[1400px] mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">Purchase Orders</h1>
+        <button onClick={() => goto('/create-po')} className="btn btn-primary"><Icon name="plus" size={14} /> New PO</button>
+      </div>
+      <div className="flex items-center gap-2 mb-4 overflow-x-auto scrollbar">
+        <button onClick={() => setFilter('all')} className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-ghost'} btn-sm`}>All ({data.pos.length})</button>
+        {Object.entries(PO_STATES).map(([k, s]) => {
+          const count = data.pos.filter(p => p.state === k).length;
+          if (!count) return null;
+          return <button key={k} onClick={() => setFilter(k)} className={`btn ${filter === k ? 'btn-primary' : 'btn-ghost'} btn-sm whitespace-nowrap`}>{s.label} ({count})</button>;
+        })}
+      </div>
+      <div className="card overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr style={{ background: 'var(--bg)', color: 'var(--text-muted)' }} className="text-xs">
+              <th className="text-left px-3 py-2 font-medium">PO #</th>
+              <th className="text-left px-3 py-2 font-medium">Style</th>
+              <th className="text-left px-3 py-2 font-medium">Factory</th>
+              <th className="text-right px-3 py-2 font-medium">Qty</th>
+              <th className="text-left px-3 py-2 font-medium">Due</th>
+              <th className="text-left px-3 py-2 font-medium">State</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map(po => {
+              const s = data.styles.find(x => x.id === po.style_id);
+              const f = data.factories.find(x => x.id === po.factory_id);
+              return (
+                <tr key={po.id} className="border-t cursor-pointer hover:bg-opacity-50" style={{ borderColor: 'var(--border)' }} onClick={() => goto('/po/' + po.id)}>
+                  <td className="px-3 py-3 font-mono text-xs font-bold">{po.number}</td>
+                  <td className="px-3 py-3">{s?.name}</td>
+                  <td className="px-3 py-3 text-xs">{f?.name}</td>
+                  <td className="px-3 py-3 text-right">{po.qty.toLocaleString()}</td>
+                  <td className="px-3 py-3 text-xs" style={{ color: 'var(--text-muted)' }}>{po.due_date}</td>
+                  <td className="px-3 py-3"><span className={`chip ${PO_STATES[po.state]?.color}`}>{PO_STATES[po.state]?.label}</span></td>
+                  <td className="px-3 py-3"><Icon name="chevron-right" size={14} style={{ color: 'var(--text-subtle)' }} /></td>
+                </tr>
+              );
+            })}
+            {filtered.length === 0 && <tr><td colSpan="7" className="px-3 py-8 text-center text-sm" style={{ color: 'var(--text-subtle)' }}>No POs match this filter.</td></tr>}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+// ============ PO DETAIL ============
+const PODetail = ({ data, update, toast, goto, id, session }) => {
+  const po = data.pos.find(p => p.id === id);
+  if (!po) return <div className="p-8">PO not found.</div>;
+  const style = data.styles.find(s => s.id === po.style_id);
+  const factory = data.factories.find(f => f.id === po.factory_id);
+  const inspections = data.inspections.filter(i => i.po_id === id);
+  const ncrs = data.ncrs.filter(n => n.po_id === id);
+  const nextStates = PO_STATES[po.state]?.next || [];
+
+  const transition = (newState) => {
+    update(d => { d.pos = d.pos.map(p => p.id === id ? { ...p, state: newState } : p); return d; });
+    toast(`PO moved to ${PO_STATES[newState].label}`);
+  };
+
+  const bookInspection = () => {
+    const insp = { id: 'insp-' + Date.now(), po_id: id, type: 'final', state: 'scheduled', aql_level: 'II', aql_major: 2.5, aql_minor: 4.0, created_at: Date.now(), inspector_id: 'u-inspector' };
+    update(d => { d.inspections = [...d.inspections, insp]; return d; });
+    toast('Inspection booked. Field inspector notified.');
+  };
+
+  return (
+    <div className="max-w-[1200px] mx-auto px-4 py-6">
+      <button onClick={() => goto(session.role === 'brand' ? '/pos' : '/kanban')} className="btn btn-ghost mb-4"><Icon name="arrow-left" size={14} /> Back</button>
+      <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
+        <div>
+          <div className="font-mono text-sm font-bold" style={{ color: 'var(--text-muted)' }}>{po.number}</div>
+          <h1 className="text-2xl font-bold">{style?.name}</h1>
+          <div className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Brand A · {factory?.name} · {po.qty.toLocaleString()} pcs · due {po.due_date}</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className={`chip ${PO_STATES[po.state]?.color}`}>{PO_STATES[po.state]?.label}</span>
+          {nextStates.map(ns => <button key={ns} onClick={() => transition(ns)} className="btn btn-primary btn-sm">→ {PO_STATES[ns].label}</button>)}
+        </div>
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 space-y-4">
+          <div className="card p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-sm">Inspections ({inspections.length})</h3>
+              {po.state === 'ready_for_inspection' && session.role === 'factory' && (
+                <button onClick={bookInspection} className="btn btn-primary btn-sm"><Icon name="plus" size={12} /> Book Inspection</button>
+              )}
+            </div>
+            {inspections.length === 0 && <div className="text-sm text-center py-4" style={{ color: 'var(--text-subtle)' }}>No inspections yet.</div>}
+            <div className="space-y-2">
+              {inspections.map(i => (
+                <button key={i.id} onClick={() => goto('/insp/' + i.id)} className="w-full text-left p-3 rounded-lg flex items-center justify-between" style={{ background: 'var(--bg)' }}>
+                  <div>
+                    <div className="font-mono text-xs font-bold">{i.id}</div>
+                    <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{i.type.toUpperCase()} · AQL {i.aql_level} · {new Date(i.created_at).toLocaleDateString()}</div>
+                  </div>
+                  <span className={`chip ${INSP_STATES[i.state]?.color}`}>{INSP_STATES[i.state]?.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="card p-5">
+            <h3 className="font-semibold text-sm mb-3">NCRs ({ncrs.length})</h3>
+            {ncrs.length === 0 && <div className="text-sm text-center py-4" style={{ color: 'var(--text-subtle)' }}>No NCRs raised.</div>}
+            <div className="space-y-2">
+              {ncrs.map(n => (
+                <div key={n.id} className="p-3 rounded-lg" style={{ background: 'var(--bg)' }}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-mono text-xs font-bold">{n.id}</span>
+                    <span className={`chip ${NCR_STATES[n.state]?.color}`}>{NCR_STATES[n.state]?.label}</span>
+                  </div>
+                  <div className="text-xs">{n.description}</div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className={`chip ${n.severity === 'critical' ? 'chip-danger' : n.severity === 'major' ? 'chip-warning' : 'chip-info'}`}>{n.severity}</span>
+                    {n.state === 'raised' && session.role === 'factory' && (
+                      <button onClick={() => { update(d => { d.ncrs = d.ncrs.map(x => x.id === n.id ? { ...x, state: 'acknowledged' } : x); return d; }); toast('NCR acknowledged'); }} className="btn btn-primary btn-sm">Acknowledge</button>
+                    )}
+                    {n.state === 'acknowledged' && session.role === 'brand' && (
+                      <button onClick={() => { update(d => { d.ncrs = d.ncrs.map(x => x.id === n.id ? { ...x, state: 'resolved' } : x); return d; }); toast('NCR resolved'); }} className="btn btn-primary btn-sm">Resolve</button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="card p-5">
+            <h3 className="font-semibold text-sm mb-3">Timeline</h3>
+            <div className="space-y-3 text-xs">
+              <div className="flex items-start gap-2">
+                <div className="w-2 h-2 rounded-full mt-1" style={{ background: 'var(--primary)' }} />
+                <div>
+                  <div className="font-semibold">Created</div>
+                  <div style={{ color: 'var(--text-muted)' }}>{new Date(po.created_at).toLocaleString()}</div>
+                </div>
+              </div>
+              {inspections.map(i => (
+                <div key={i.id} className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full mt-1" style={{ background: 'var(--info)' }} />
+                  <div>
+                    <div className="font-semibold">Inspection {i.state}</div>
+                    <div style={{ color: 'var(--text-muted)' }}>{new Date(i.created_at).toLocaleString()}</div>
+                  </div>
+                </div>
+              ))}
+              {ncrs.map(n => (
+                <div key={n.id} className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full mt-1" style={{ background: 'var(--danger)' }} />
+                  <div>
+                    <div className="font-semibold">NCR {n.state}</div>
+                    <div style={{ color: 'var(--text-muted)' }}>{new Date(n.created_at).toLocaleString()}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="card p-5">
+            <h3 className="font-semibold text-sm mb-3">Quality Standards</h3>
+            <div className="space-y-2 text-xs">
+              <div className="flex justify-between"><span style={{ color: 'var(--text-muted)' }}>Sampling</span><span>AQL Level II</span></div>
+              <div className="flex justify-between"><span style={{ color: 'var(--text-muted)' }}>Major AQL</span><span>2.5</span></div>
+              <div className="flex justify-between"><span style={{ color: 'var(--text-muted)' }}>Minor AQL</span><span>4.0</span></div>
+              <div className="flex justify-between"><span style={{ color: 'var(--text-muted)' }}>Tolerance</span><span>±1cm (Brand A)</span></div>
+              <div className="flex justify-between"><span style={{ color: 'var(--text-muted)' }}>Lab tests</span><span>10 mandatory</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============ ALL INSPECTIONS ============
+const AllInspections = ({ data, goto, session }) => {
+  let list = data.inspections;
+  if (session.role === 'inspector') list = list.filter(i => i.inspector_id === session.id);
+  return (
+    <div className="max-w-[1200px] mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold mb-4">{session.role === 'inspector' ? 'My Inspections' : 'All Inspections'}</h1>
+      <div className="card overflow-hidden">
+        <table className="w-full text-sm">
+          <thead style={{ background: 'var(--bg)', color: 'var(--text-muted)' }} className="text-xs">
+            <tr><th className="text-left px-3 py-2">ID</th><th className="text-left px-3 py-2">PO</th><th className="text-left px-3 py-2">Type</th><th className="text-left px-3 py-2">State</th><th className="text-left px-3 py-2">Created</th><th /></tr>
+          </thead>
+          <tbody>
+            {list.map(i => {
+              const po = data.pos.find(p => p.id === i.po_id);
+              const defectCount = data.defects.filter(d => d.inspection_id === i.id).length;
+              return (
+                <tr key={i.id} className="border-t cursor-pointer" style={{ borderColor: 'var(--border)' }} onClick={() => goto('/insp/' + i.id)}>
+                  <td className="px-3 py-3 font-mono text-xs">{i.id.slice(-8)}</td>
+                  <td className="px-3 py-3 text-xs">{po?.number}</td>
+                  <td className="px-3 py-3 text-xs uppercase">{i.type}</td>
+                  <td className="px-3 py-3"><span className={`chip ${INSP_STATES[i.state]?.color}`}>{INSP_STATES[i.state]?.label}</span></td>
+                  <td className="px-3 py-3 text-xs" style={{ color: 'var(--text-muted)' }}>{new Date(i.created_at).toLocaleDateString()} · {defectCount} defects</td>
+                  <td className="px-3 py-3"><Icon name="chevron-right" size={14} /></td>
+                </tr>
+              );
+            })}
+            {list.length === 0 && <tr><td colSpan="6" className="px-3 py-8 text-center text-sm" style={{ color: 'var(--text-subtle)' }}>No inspections yet. {session.role === 'factory' && 'Book one from a PO.'}</td></tr>}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+// ============ INSPECTION DETAIL (Brand/Factory view) ============
+const InspectionDetail = ({ data, update, toast, goto, id, session }) => {
+  const insp = data.inspections.find(i => i.id === id);
+  if (!insp) return <div className="p-8">Inspection not found</div>;
+  const po = data.pos.find(p => p.id === insp.po_id);
+  const defects = data.defects.filter(d => d.inspection_id === id);
+  const critical = defects.filter(d => d.severity === 'critical').reduce((s, d) => s + d.count, 0);
+  const major = defects.filter(d => d.severity === 'major').reduce((s, d) => s + d.count, 0);
+  const minor = defects.filter(d => d.severity === 'minor').reduce((s, d) => s + d.count, 0);
+  const sampleSize = Math.min(200, po?.qty || 200);
+  const majorLimit = Math.floor(sampleSize * insp.aql_major / 100);
+  const minorLimit = Math.floor(sampleSize * insp.aql_minor / 100);
+  const willPass = critical === 0 && major <= majorLimit && minor <= minorLimit;
+
+  const raiseNCR = () => {
+    const ncr = { id: 'NCR-' + String(Date.now()).slice(-5), po_id: insp.po_id, inspection_id: id, severity: critical > 0 ? 'critical' : major > majorLimit ? 'major' : 'minor', description: `Inspection failed: ${critical} critical, ${major} major, ${minor} minor defects`, state: 'raised', created_at: Date.now() };
+    update(d => { d.ncrs = [...d.ncrs, ncr]; d.pos = d.pos.map(p => p.id === insp.po_id ? { ...p, state: 'failed' } : p); d.inspections = d.inspections.map(i => i.id === id ? { ...i, state: 'failed' } : i); return d; });
+    toast('NCR raised. PO marked as Inspection Failed.');
+  };
+  const approve = () => {
+    update(d => { d.pos = d.pos.map(p => p.id === insp.po_id ? { ...p, state: 'passed' } : p); d.inspections = d.inspections.map(i => i.id === id ? { ...i, state: 'passed' } : i); return d; });
+    toast('Inspection approved. PO ready to ship.');
+  };
+
+  return (
+    <div className="max-w-[1200px] mx-auto px-4 py-6">
+      <button onClick={() => goto('/inspections')} className="btn btn-ghost mb-4"><Icon name="arrow-left" size={14} /> Back</button>
+      <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
+        <div>
+          <div className="font-mono text-sm font-bold" style={{ color: 'var(--text-muted)' }}>{id.slice(-12)}</div>
+          <h1 className="text-2xl font-bold">{insp.type.toUpperCase()} Inspection</h1>
+          <div className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>{po?.number} · AQL Level {insp.aql_level}</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className={`chip ${INSP_STATES[insp.state]?.color}`}>{INSP_STATES[insp.state]?.label}</span>
+          {insp.state === 'submitted' && session.role === 'brand' && (
+            <>
+              {willPass ? <button onClick={approve} className="btn btn-primary btn-sm">✓ Approve</button> : <button onClick={raiseNCR} className="btn btn-danger btn-sm">⚠ Raise NCR</button>}
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-4 gap-3 mb-4">
+        <div className="card p-4 text-center">
+          <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Sample Size</div>
+          <div className="text-2xl font-bold">{sampleSize}</div>
+        </div>
+        <div className="card p-4 text-center" style={{ background: critical > 0 ? 'var(--danger-soft)' : '' }}>
+          <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Critical (max 0)</div>
+          <div className="text-2xl font-bold" style={{ color: critical > 0 ? 'var(--danger)' : 'var(--success)' }}>{critical}</div>
+        </div>
+        <div className="card p-4 text-center" style={{ background: major > majorLimit ? 'var(--danger-soft)' : '' }}>
+          <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Major (max {majorLimit})</div>
+          <div className="text-2xl font-bold" style={{ color: major > majorLimit ? 'var(--danger)' : 'var(--success)' }}>{major}</div>
+        </div>
+        <div className="card p-4 text-center" style={{ background: minor > minorLimit ? 'var(--danger-soft)' : '' }}>
+          <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Minor (max {minorLimit})</div>
+          <div className="text-2xl font-bold" style={{ color: minor > minorLimit ? 'var(--danger)' : 'var(--success)' }}>{minor}</div>
+        </div>
+      </div>
+
+      {insp.state === 'submitted' && (
+        <div className="card p-4 mb-4 flex items-center justify-between" style={{ background: willPass ? 'var(--success-soft)' : 'var(--danger-soft)' }}>
+          <div className="flex items-center gap-2">
+            <Icon name={willPass ? 'check' : 'x'} size={18} style={{ color: willPass ? 'var(--success)' : 'var(--danger)' }} />
+            <span className="font-semibold" style={{ color: willPass ? 'var(--success)' : 'var(--danger)' }}>
+              Verdict: {willPass ? 'PASS — within AQL limits' : 'FAIL — exceeds AQL'}
+            </span>
+          </div>
+        </div>
+      )}
+
+      <div className="card p-5">
+        <h3 className="font-semibold text-sm mb-3">Defects Logged ({defects.length})</h3>
+        <table className="w-full text-sm">
+          <thead style={{ color: 'var(--text-muted)' }} className="text-xs">
+            <tr><th className="text-left pb-2">Defect</th><th className="text-left pb-2">Zone</th><th className="text-left pb-2">Severity</th><th className="text-right pb-2">Count</th></tr>
+          </thead>
+          <tbody>
+            {defects.map(d => {
+              const dc = DEFECT_CATEGORIES.find(c => c.code === d.category);
+              return (
+                <tr key={d.id} className="border-t" style={{ borderColor: 'var(--border)' }}>
+                  <td className="py-2">{dc?.name}</td>
+                  <td className="py-2 text-xs" style={{ color: 'var(--text-muted)' }}>{d.zone}</td>
+                  <td className="py-2"><span className={`chip ${d.severity === 'critical' ? 'chip-danger' : d.severity === 'major' ? 'chip-warning' : 'chip-info'}`}>{d.severity}</span></td>
+                  <td className="py-2 text-right font-mono font-bold">{d.count}</td>
+                </tr>
+              );
+            })}
+            {defects.length === 0 && <tr><td colSpan="4" className="py-6 text-center text-sm" style={{ color: 'var(--text-subtle)' }}>No defects logged.</td></tr>}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+// ============ FACTORY: DASHBOARD + KANBAN ============
+const FactoryDashboard = ({ data, goto }) => (
+  <div className="max-w-[1400px] mx-auto px-4 py-6">
+    <h1 className="text-2xl font-bold mb-1">Dashboard</h1>
+    <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>Factory 1 · Dhaka</p>
+    <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="card p-4"><div className="text-xs" style={{ color: 'var(--text-muted)' }}>POs active</div><div className="text-2xl font-bold">{data.pos.filter(p => !['delivered'].includes(p.state)).length}</div></div>
+      <div className="card p-4"><div className="text-xs" style={{ color: 'var(--text-muted)' }}>Inspections</div><div className="text-2xl font-bold">{data.inspections.length}</div></div>
+      <div className="card p-4"><div className="text-xs" style={{ color: 'var(--text-muted)' }}>Open NCRs</div><div className="text-2xl font-bold">{data.ncrs.filter(n => n.state !== 'resolved').length}</div></div>
+    </div>
+    <button onClick={() => goto('/kanban')} className="btn btn-primary">Open PO Board <Icon name="arrow-right" size={14} /></button>
+  </div>
+);
+
+const KanbanBoard = ({ data, update, toast, goto, session }) => {
+  const cols = ['sent', 'accepted', 'in_production', 'ready_for_inspection', 'failed', 'shipped'];
+  const transition = (po_id, newState) => {
+    update(d => { d.pos = d.pos.map(p => p.id === po_id ? { ...p, state: newState } : p); return d; });
+    toast(`PO moved to ${PO_STATES[newState].label}`);
+  };
+  return (
+    <div className="max-w-[1400px] mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold mb-4">PO Board — Factory 1</h1>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        {cols.map(col => {
+          const items = data.pos.filter(p => p.state === col);
+          return (
+            <div key={col} className="rounded-xl p-3" style={{ background: 'var(--surface-elev)', border: '1px solid var(--border)', minHeight: 400 }}>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-semibold uppercase">{PO_STATES[col].label}</span>
+                <span className="chip chip-neutral text-[10px]">{items.length}</span>
+              </div>
+              <div className="space-y-2">
+                {items.map(po => {
+                  const s = data.styles.find(x => x.id === po.style_id);
+                  const next = PO_STATES[po.state].next;
+                  return (
+                    <div key={po.id} className="card p-3 cursor-pointer hover:shadow-md" onClick={() => goto('/po/' + po.id)}>
+                      <div className="font-mono text-[10px] font-bold" style={{ color: 'var(--text-muted)' }}>{po.number}</div>
+                      <div className="font-medium text-sm mb-1">{s?.name}</div>
+                      <div className="text-xs mb-2" style={{ color: 'var(--text-subtle)' }}>{po.qty.toLocaleString()} pcs</div>
+                      {next.length > 0 && (
+                        <div className="flex gap-1 flex-wrap">
+                          {next.map(n => <button key={n} onClick={(e) => { e.stopPropagation(); transition(po.id, n); }} className="btn btn-ghost btn-sm text-[10px]">→ {PO_STATES[n].label}</button>)}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+// ============ NCR LIST ============
+const NCRList = ({ data, goto }) => (
+  <div className="max-w-[1200px] mx-auto px-4 py-6">
+    <h1 className="text-2xl font-bold mb-4">NCRs</h1>
+    <div className="card overflow-hidden">
+      <table className="w-full text-sm">
+        <thead style={{ background: 'var(--bg)', color: 'var(--text-muted)' }} className="text-xs">
+          <tr><th className="text-left px-3 py-2">ID</th><th className="text-left px-3 py-2">PO</th><th className="text-left px-3 py-2">Severity</th><th className="text-left px-3 py-2">Description</th><th className="text-left px-3 py-2">State</th></tr>
+        </thead>
+        <tbody>
+          {data.ncrs.map(n => {
+            const po = data.pos.find(p => p.id === n.po_id);
+            return (
+              <tr key={n.id} className="border-t cursor-pointer" style={{ borderColor: 'var(--border)' }} onClick={() => goto('/po/' + n.po_id)}>
+                <td className="px-3 py-3 font-mono text-xs font-bold">{n.id}</td>
+                <td className="px-3 py-3 text-xs">{po?.number}</td>
+                <td className="px-3 py-3"><span className={`chip ${n.severity === 'critical' ? 'chip-danger' : n.severity === 'major' ? 'chip-warning' : 'chip-info'}`}>{n.severity}</span></td>
+                <td className="px-3 py-3 text-xs">{n.description}</td>
+                <td className="px-3 py-3"><span className={`chip ${NCR_STATES[n.state]?.color}`}>{NCR_STATES[n.state]?.label}</span></td>
+              </tr>
+            );
+          })}
+          {data.ncrs.length === 0 && <tr><td colSpan="5" className="px-3 py-8 text-center text-sm" style={{ color: 'var(--text-subtle)' }}>No NCRs raised. Submit a failing inspection to generate one.</td></tr>}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
+// ============ CoQ DASHBOARD ============
+const CoQDashboard = ({ data }) => {
+  const [newEntry, setNewEntry] = useState({ category: 'prevention', subcategory: '', amount: 0 });
+  const total = data.coq_entries.reduce((s, e) => s + e.amount, 0);
+  const byCat = data.coq_entries.reduce((acc, e) => { (acc[e.category] = acc[e.category] || []).push(e); return acc; }, {});
+  const catColors = { prevention: 'var(--success)', appraisal: 'var(--info)', internal_failure: 'var(--warning)', external_failure: 'var(--danger)' };
+  const catLabels = { prevention: 'Prevention', appraisal: 'Appraisal', internal_failure: 'Internal Failure', external_failure: 'External Failure' };
+
+  return (
+    <div className="max-w-[1200px] mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold mb-1">Cost of Quality</h1>
+      <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>Live calculated from all entries. Add manual ones to see the dashboard update.</p>
+
+      <div className="grid lg:grid-cols-3 gap-4 mb-6">
+        <div className="lg:col-span-2 card p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Total CoQ YTD</div>
+              <div className="text-4xl font-bold">${total.toLocaleString()}</div>
+            </div>
+            <svg width="140" height="140" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="52" fill="none" stroke="var(--border)" strokeWidth="16"/>
+              {(() => {
+                const data_pts = ['prevention', 'appraisal', 'internal_failure', 'external_failure'].map(c => ({ k: c, v: (byCat[c] || []).reduce((s, e) => s + e.amount, 0), c: catColors[c] }));
+                let acc = 0; const circ = 2 * Math.PI * 52;
+                return data_pts.map((d, i) => { const pct = total > 0 ? d.v / total : 0; const el = <circle key={i} cx="70" cy="70" r="52" fill="none" stroke={d.c} strokeWidth="16" strokeDasharray={`${circ * pct} ${circ}`} strokeDashoffset={-circ * acc} transform="rotate(-90 70 70)"/>; acc += pct; return el; });
+              })()}
+            </svg>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {Object.keys(catLabels).map(k => {
+              const items = byCat[k] || [];
+              const sum = items.reduce((s, e) => s + e.amount, 0);
+              const pct = total > 0 ? (sum / total * 100).toFixed(1) : 0;
+              return (
+                <div key={k} className="p-3 rounded-lg" style={{ background: 'var(--bg)' }}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-3 h-3 rounded-full" style={{ background: catColors[k] }} />
+                    <span className="text-sm font-semibold">{catLabels[k]}</span>
+                  </div>
+                  <div className="text-xl font-bold">${sum.toLocaleString()}</div>
+                  <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{pct}% of total · {items.length} entries</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="card p-5">
+          <h3 className="font-semibold text-sm mb-3">Add CoQ Entry</h3>
+          <div className="space-y-3">
+            <div>
+              <label>Category</label>
+              <select value={newEntry.category} onChange={e => setNewEntry({ ...newEntry, category: e.target.value })}>
+                {Object.entries(catLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+              </select>
+            </div>
+            <div>
+              <label>Subcategory</label>
+              <input placeholder="e.g., Rework cost" value={newEntry.subcategory} onChange={e => setNewEntry({ ...newEntry, subcategory: e.target.value })} />
+            </div>
+            <div>
+              <label>Amount (USD)</label>
+              <input type="number" value={newEntry.amount} onChange={e => setNewEntry({ ...newEntry, amount: parseFloat(e.target.value) || 0 })} />
+            </div>
+            <button onClick={() => { if (!newEntry.subcategory || newEntry.amount <= 0) return; const e = { id: 'coq-' + Date.now(), ...newEntry, created_at: Date.now() }; const current = loadData(); current.coq_entries.push(e); saveData(current); location.reload(); }} className="btn btn-primary w-full justify-center">Add Entry</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="card p-5">
+        <h3 className="font-semibold text-sm mb-3">All CoQ Entries ({data.coq_entries.length})</h3>
+        <table className="w-full text-sm">
+          <thead style={{ color: 'var(--text-muted)' }} className="text-xs">
+            <tr><th className="text-left pb-2">Date</th><th className="text-left pb-2">Category</th><th className="text-left pb-2">Subcategory</th><th className="text-right pb-2">Amount</th></tr>
+          </thead>
+          <tbody>
+            {data.coq_entries.slice().reverse().map(e => (
+              <tr key={e.id} className="border-t" style={{ borderColor: 'var(--border)' }}>
+                <td className="py-2 text-xs" style={{ color: 'var(--text-muted)' }}>{new Date(e.created_at).toLocaleDateString()}</td>
+                <td className="py-2"><span className="chip" style={{ background: catColors[e.category] + '20', color: catColors[e.category] }}>{catLabels[e.category]}</span></td>
+                <td className="py-2 text-xs">{e.subcategory}</td>
+                <td className="py-2 text-right font-mono font-bold">${e.amount.toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+// ============ INSPECTOR MOBILE: TODAY ============
+const InspectorToday = ({ data, goto, session }) => {
+  const myInsp = data.inspections.filter(i => i.inspector_id === session.id);
+  const today = myInsp.filter(i => ['scheduled', 'in_progress'].includes(i.state));
+
+  return (
+    <div className="max-w-md mx-auto px-4 py-6">
+      <div className="phone-frame">
+        <div className="phone-notch"/>
+        <div className="phone-screen">
+          <div className="h-10 flex items-center justify-between px-6 pt-3 text-[10px] font-semibold">
+            <span>9:41</span><span>🔋</span>
+          </div>
+          <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--border)' }}>
+            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Today</div>
+            <div className="text-lg font-bold">Hi, {session.name.split(' ')[0]} 👋</div>
+          </div>
+          <div className="flex-1 overflow-y-auto scrollbar p-3 space-y-2">
+            {today.length === 0 && <div className="text-center py-8 text-xs" style={{ color: 'var(--text-subtle)' }}>No active assignments.<br/>Switch to Factory, create a PO, book an inspection to see one here.</div>}
+            {today.map(i => {
+              const po = data.pos.find(p => p.id === i.po_id);
+              return (
+                <button key={i.id} onClick={() => goto('/insp/' + i.id)} className="w-full rounded-xl p-3 text-left" style={{ background: 'var(--primary-soft)', border: '1px solid var(--primary)' }}>
+                  <div className="chip chip-info text-[9px] mb-2">URGENT</div>
+                  <div className="font-bold text-xs">{i.type.toUpperCase()} Inspection</div>
+                  <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{po?.number} · {po?.qty.toLocaleString()} pcs</div>
+                  <div className="text-[10px] mt-1" style={{ color: 'var(--text-muted)' }}>📍 Factory 1 · 2.4 km</div>
+                  <div className="btn btn-primary mt-3 text-xs w-full justify-center">Start Inspection →</div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============ INSPECTOR: EXECUTE INSPECTION ============
+const InspectionExecute = ({ data, update, toast, goto, id, session }) => {
+  const insp = data.inspections.find(i => i.id === id);
+  if (!insp) return <div className="p-8">Inspection not found</div>;
+  const po = data.pos.find(p => p.id === insp.po_id);
+  const existing = data.defects.filter(d => d.inspection_id === id);
+  const [newDefect, setNewDefect] = useState({ category: DEFECT_CATEGORIES[0].code, zone: GARMENT_ZONES[0], count: 1 });
+
+  const addDefect = () => {
+    const cat = DEFECT_CATEGORIES.find(c => c.code === newDefect.category);
+    const d = { id: 'd-' + Date.now(), inspection_id: id, ...newDefect, severity: cat.severity, created_at: Date.now() };
+    update(dd => { dd.defects = [...dd.defects, d]; if (insp.state === 'scheduled') dd.inspections = dd.inspections.map(i => i.id === id ? { ...i, state: 'in_progress' } : i); return dd; });
+    toast('Defect logged');
+  };
+  const removeDefect = (did) => {
+    update(d => { d.defects = d.defects.filter(x => x.id !== did); return d; });
+    toast('Defect removed');
+  };
+  const submit = () => {
+    update(d => { d.inspections = d.inspections.map(i => i.id === id ? { ...i, state: 'submitted' } : i); return d; });
+    toast('Inspection submitted. Brand will review.');
+    goto('/my-inspections');
+  };
+
+  const critical = existing.filter(d => d.severity === 'critical').reduce((s, d) => s + d.count, 0);
+  const major = existing.filter(d => d.severity === 'major').reduce((s, d) => s + d.count, 0);
+  const minor = existing.filter(d => d.severity === 'minor').reduce((s, d) => s + d.count, 0);
+
+  return (
+    <div className="max-w-md mx-auto px-4 py-6">
+      <div className="phone-frame">
+        <div className="phone-notch"/>
+        <div className="phone-screen">
+          <div className="h-10 flex items-center justify-between px-6 pt-3 text-[10px] font-semibold">
+            <span>9:41</span><span>🔋</span>
+          </div>
+          <div className="px-4 py-3 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
+            <button onClick={() => goto('/')} className="text-xs"><Icon name="arrow-left" size={14} /></button>
+            <div className="text-xs font-bold">{insp.type.toUpperCase()} · {po?.number}</div>
+            <span className={`chip ${INSP_STATES[insp.state]?.color} text-[9px]`}>{INSP_STATES[insp.state]?.label}</span>
+          </div>
+          <div className="flex-1 overflow-y-auto scrollbar p-3 space-y-3">
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="rounded-lg p-2" style={{ background: critical > 0 ? 'var(--danger-soft)' : 'var(--bg)' }}>
+                <div className="text-[9px]" style={{ color: 'var(--text-muted)' }}>Critical</div>
+                <div className="text-lg font-bold" style={{ color: critical > 0 ? 'var(--danger)' : 'var(--text)' }}>{critical}</div>
+              </div>
+              <div className="rounded-lg p-2" style={{ background: 'var(--bg)' }}>
+                <div className="text-[9px]" style={{ color: 'var(--text-muted)' }}>Major</div>
+                <div className="text-lg font-bold">{major}</div>
+              </div>
+              <div className="rounded-lg p-2" style={{ background: 'var(--bg)' }}>
+                <div className="text-[9px]" style={{ color: 'var(--text-muted)' }}>Minor</div>
+                <div className="text-lg font-bold">{minor}</div>
+              </div>
+            </div>
+
+            <div className="card p-3">
+              <div className="text-[10px] font-semibold uppercase mb-2" style={{ color: 'var(--text-muted)' }}>Add Defect</div>
+              <div className="space-y-2">
+                <select value={newDefect.category} onChange={e => setNewDefect({ ...newDefect, category: e.target.value })} className="text-xs">
+                  {DEFECT_CATEGORIES.map(c => <option key={c.code} value={c.code}>{c.name} ({c.severity})</option>)}
+                </select>
+                <select value={newDefect.zone} onChange={e => setNewDefect({ ...newDefect, zone: e.target.value })} className="text-xs">
+                  {GARMENT_ZONES.map(z => <option key={z} value={z}>{z}</option>)}
+                </select>
+                <div className="flex gap-2">
+                  <input type="number" value={newDefect.count} onChange={e => setNewDefect({ ...newDefect, count: parseInt(e.target.value) || 1 })} min="1" className="text-xs flex-1" />
+                  <button onClick={addDefect} className="btn btn-primary text-xs">+ Add</button>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <div className="text-[10px] font-semibold uppercase" style={{ color: 'var(--text-muted)' }}>Logged ({existing.length})</div>
+              {existing.map(d => {
+                const cat = DEFECT_CATEGORIES.find(c => c.code === d.category);
+                return (
+                  <div key={d.id} className="flex items-center justify-between p-2 rounded-lg text-xs" style={{ background: 'var(--bg)' }}>
+                    <div>
+                      <div className="font-semibold">{cat?.name} ×{d.count}</div>
+                      <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{d.zone} · {d.severity}</div>
+                    </div>
+                    <button onClick={() => removeDefect(d.id)} className="text-red-500"><Icon name="x" size={12} /></button>
+                  </div>
+                );
+              })}
+            </div>
+
+            {insp.state !== 'submitted' && insp.state !== 'passed' && insp.state !== 'failed' && (
+              <button onClick={submit} className="btn btn-primary w-full justify-center text-xs">Submit Inspection</button>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="text-center mt-4 text-xs" style={{ color: 'var(--text-subtle)' }}>
+        Mobile view · all data persists in your browser
+      </div>
+    </div>
+  );
+};
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App/>);
+</script>
+</body>
+</html>
