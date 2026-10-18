@@ -1,4 +1,4 @@
--- Weftly — Row Level Security (RLS) Policies
+-- FABRIQ — Row Level Security (RLS) Policies
 -- Run AFTER schema.sql
 -- These policies enforce multi-tenant isolation at the database level.
 

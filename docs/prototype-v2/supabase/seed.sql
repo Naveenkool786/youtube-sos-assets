@@ -1,4 +1,4 @@
--- Weftly — Sample Data
+-- FABRIQ — Sample Data
 -- Run AFTER schema.sql and policies.sql
 -- NOTE: You must have created at least one user via Supabase Auth first.
 -- After signup, note the auth.users.id and update seed_user_id below.

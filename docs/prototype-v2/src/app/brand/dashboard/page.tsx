@@ -1,4 +1,4 @@
-// Weftly — Brand Dashboard
+// FABRIQ — Brand Dashboard
 // Server component — renders with live data from Supabase on the server.
 
 import { redirect } from 'next/navigation';
@@ -74,7 +74,7 @@ export default async function BrandDashboard() {
               <rect x="3" y="3" width="24" height="24" rx="6" fill="currentColor" opacity="0.08" />
               <path d="M7 10 L15 6 L23 10 L15 14 Z" fill="currentColor" opacity="0.9" />
             </svg>
-            <span className="font-serif text-xl" style={{ color: '#171A17' }}>Weftly</span>
+            <span className="font-serif text-xl" style={{ color: '#171A17' }}>FABRIQ</span>
             <span className="ml-3 text-xs uppercase tracking-widest" style={{ color: '#5A635C' }}>Brand</span>
           </div>
           <div className="flex items-center gap-3 text-sm" style={{ color: '#5A635C' }}>

@@ -1,4 +1,4 @@
-// Weftly — Supabase client setup (Next.js 15 App Router)
+// FABRIQ — Supabase client setup (Next.js 15 App Router)
 // Two clients: one for the browser, one for server components / route handlers.
 
 import { createBrowserClient, createServerClient, type CookieOptions } from '@supabase/ssr';

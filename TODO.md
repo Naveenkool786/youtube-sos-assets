@@ -11,12 +11,10 @@
 ### Strategic Decisions
 - [ ] 🔴 **Pick funding path** — bootstrap vs friends/family vs seed round from day 1
 - [ ] 🔴 **Decide on co-founder vs CTO hire** — materially affects equity + outreach
-- [ ] 🔴 **Pick product/company name** — see `docs/branding/naming-package.md`
-  - [ ] Check `weftly.com` availability (primary pick)
-  - [ ] Check `veridian.io` + `veridian.ai` (backup)
-  - [ ] Check `threadline.com`, `veracio.com`, `verion.com`
-  - [ ] If all available: pick 2 for Fiverr logo mockups ($50-200)
-  - [ ] If primary taken: get native speaker (8 locales) feedback on top 3 — DEFERRED per your request
+- [x] ~~**Pick product/company name**~~ ✅ **FABRIQ - FashionHub** chosen (Oct 2026)
+  - [ ] Check `fabriq.app` / `fabriq.io` domain availability
+  - [ ] Get Fiverr logo mockups for FABRIQ ($50-200)
+  - [ ] Native speaker (8 locales) feedback on FABRIQ — DEFERRED per your request
 
 ### Naming / Trademark (defer if needed)
 - [ ] 🟡 Preliminary TM search on picked name — US (TESS), EU (TMview), India
@@ -183,13 +181,13 @@ See `docs/discovery/customer-discovery-package.md` for the full playbook.
 - [x] ~~Clickable prototype~~ ✅
 - [x] ~~Pitch deck v1~~ ✅
 - [x] ~~Enterprise one-pager~~ ✅
-- [x] ~~Product demo website (Weftly branded)~~ ✅
+- [x] ~~Product demo website (FABRIQ branded)~~ ✅
 - [x] ~~Feedback form (interactive, email-based)~~ ✅
 - [x] ~~Demo guide (15-min walkthrough)~~ ✅
 - [x] ~~Prototype v2 Supabase deployment package~~ ✅
 - [x] ~~Demo kit (email templates + sharing timeline)~~ ✅
 - [ ] 🔴 **ACTIVATE SHARING** — Open each artifact → Share menu → "Anyone with link"
-- [ ] 🟡 Buy custom domain `weftly.app` or similar (post-naming decision)
+- [ ] 🔴 Buy custom domain `fabriq.app` or `fabriq.io` (name chosen — do this now)
 - [ ] 🟡 Waitlist signup for interested Brands/Factories/3Ps
 - [ ] 🟢 LinkedIn Company Page (post-naming)
 - [ ] 🟢 Content calendar (industry insights, QMS best practices)
@@ -228,7 +226,7 @@ Mark these as DONE as I ship them to you.
 - [x] ~~Prototype v1 (working, persistent, AI-powered)~~ ✅
 - [x] ~~AI Coding Playbook~~ ✅
 - [x] ~~Term Sheet Negotiation Deep-Dive~~ ✅
-- [x] ~~Product Demo Website (Weftly branded)~~ ✅
+- [x] ~~Product Demo Website (FABRIQ branded)~~ ✅
 - [x] ~~Interactive Feedback Form (artifact)~~ ✅
 - [x] ~~Demo Guide (15-min walkthrough + Mom Test)~~ ✅
 - [x] ~~Prototype v2 Supabase/Next.js code package (deployment-ready)~~ ✅
@@ -249,7 +247,7 @@ Mark DONE as you decide each. These unblock multiple other items.
 
 - [ ] 🔴 Funding path (bootstrap vs seed round from day 1)
 - [ ] 🔴 CTO hire vs co-founder CTO
-- [ ] 🔴 Product/company name decision
+- [x] ~~Product/company name decision~~ ✅ FABRIQ - FashionHub chosen
 - [ ] 🟡 Legal entity jurisdiction (US/IN/SG)
 - [ ] 🟡 Anchor customer identification (who's your pilot Brand?)
 - [ ] 🟡 Office vs remote strategy
@@ -263,7 +261,7 @@ Mark DONE as you decide each. These unblock multiple other items.
 - [x] Blueprint locked ✅
 - [x] Prototype shipped ✅
 - [x] Pitch deck v1 ✅
-- [ ] Name chosen + domain + TM filed
+- [x] Name chosen ✅ FABRIQ - FashionHub — domain + TM still pending
 - [ ] 20 customer discovery interviews completed
 - [ ] CTO search started
 - [ ] First 5 investor conversations
@@ -331,9 +329,9 @@ Mark DONE as you decide each. These unblock multiple other items.
 | **90-Day Execution Roadmap** | `docs/execution/90-day-roadmap.md` | GitHub ⭐ Weekly rhythm doc |
 | **AI Coding Playbook** | `docs/execution/ai-coding-playbook.md` | GitHub ⭐ Build-it-yourself guide |
 | Prototype v1 (with AI) | `docs/prototype/qms-prototype-v1.html` | [Artifact](https://claude.ai/artifact/Xa7viYB9VjeSGuynzpD9yx) |
-| **Product Demo Website** | `docs/marketing/weftly-demo-site.html` | [Artifact](https://claude.ai/artifact/8BqLj8k5cQWe7xWbgRvL5q) ⭐ Share FIRST with everyone |
-| **Demo Guide (walkthrough)** | `docs/demo/weftly-demo-guide.html` | [Artifact](https://claude.ai/artifact/9RDdQG2VA2fpTSKvkZxoue) ⭐ Pre-demo prep |
-| **Feedback Form** | `docs/demo/weftly-feedback-form.html` | [Artifact](https://claude.ai/artifact/3aB6poxu2R9KKkwDXQdQG9) ⭐ Post-demo |
+| **Product Demo Website** | `docs/marketing/fabriq-demo-site.html` | [Artifact](https://claude.ai/artifact/8BqLj8k5cQWe7xWbgRvL5q) ⭐ Share FIRST with everyone |
+| **Demo Guide (walkthrough)** | `docs/demo/fabriq-demo-guide.html` | [Artifact](https://claude.ai/artifact/9RDdQG2VA2fpTSKvkZxoue) ⭐ Pre-demo prep |
+| **Feedback Form** | `docs/demo/fabriq-feedback-form.html` | [Artifact](https://claude.ai/artifact/3aB6poxu2R9KKkwDXQdQG9) ⭐ Post-demo |
 | **Demo Kit (email templates)** | `docs/demo/demo-kit-package.md` | GitHub ⭐ How-to for sharing |
 | **Prototype v2 (Supabase)** | `docs/prototype-v2/` | GitHub ⭐ Deployment-ready code |
 | **This To-Do Tracker** | `TODO.md` | GitHub |
@@ -352,4 +350,4 @@ I'll re-save this file each time it changes and commit it to the repo so you hav
 
 ---
 
-*Last update: 2026-10-18 — session ending status: 23 deliverables shipped, demo kit complete, next focus = ACTIVATE SHARING on all artifacts + name decision + discovery sprint + CTO search*
+*Last update: 2026-10-18 — session status: 23 deliverables shipped, brand renamed Weftly → FABRIQ - FashionHub, next focus = ACTIVATE SHARING on all artifacts + buy domain + discovery sprint + CTO search*

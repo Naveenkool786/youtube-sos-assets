@@ -1,5 +1,5 @@
 <meta name="claude:viewport-fit-sides" content="cover">
-<title>Weftly Feedback</title>
+<title>FABRIQ Feedback</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -484,7 +484,7 @@
         <path d="M7 15 L15 11 L23 15 L15 19 Z" fill="currentColor" opacity="0.6"/>
         <path d="M7 20 L15 16 L23 20 L15 24 Z" fill="currentColor" opacity="0.3"/>
       </svg>
-      <span>Weftly</span>
+      <span>FABRIQ</span>
     </a>
     <div class="eyebrow">Pilot feedback · ~5 minutes</div>
     <h1>You've tried the demo. <em>What did we miss?</em></h1>
@@ -647,13 +647,13 @@
     <div class="summary-box" id="summaryBox"></div>
     <div class="btn-row">
       <button type="button" class="btn btn-ghost" id="copyAgain">Copy response</button>
-      <a class="btn btn-primary" href="https://claude.ai/artifact/8BqLj8k5cQWe7xWbgRvL5q" target="_blank" rel="noopener">Back to Weftly</a>
+      <a class="btn btn-primary" href="https://claude.ai/artifact/8BqLj8k5cQWe7xWbgRvL5q" target="_blank" rel="noopener">Back to FABRIQ</a>
     </div>
   </div>
 </div>
 
 <footer>
-  © 2026 Weftly — working name · Naveen Kool, Founder
+  © 2026 — Copyrights FABRIQ - FashionHub
   <span class="confidential-tag">● Confidential</span>
 </footer>
 
@@ -662,7 +662,7 @@
 <script>
   (function(){
     try {
-      const stored = localStorage.getItem('weftly-theme');
+      const stored = localStorage.getItem('fabriq-theme');
       if (stored === 'dark' || stored === 'light') {
         document.documentElement.setAttribute('data-theme', stored);
       }
@@ -683,7 +683,7 @@
 
     // Restore draft from localStorage
     try {
-      const draft = JSON.parse(localStorage.getItem('weftly-feedback-draft') || '{}');
+      const draft = JSON.parse(localStorage.getItem('fabriq-feedback-draft') || '{}');
       Object.entries(draft).forEach(([k, v]) => {
         if (!v) return;
         const el = form.elements[k];
@@ -734,7 +734,7 @@
           if (el.type === 'radio') { if (el.checked) data[el.name] = el.value; }
           else data[el.name] = el.value;
         });
-        localStorage.setItem('weftly-feedback-draft', JSON.stringify(data));
+        localStorage.setItem('fabriq-feedback-draft', JSON.stringify(data));
       } catch(_) {}
     }
 
@@ -770,7 +770,7 @@
     function buildSummary(d) {
       const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
       return [
-        'WEFTLY — PILOT FEEDBACK',
+        'FABRIQ — PILOT FEEDBACK',
         '────────────────────────────',
         'Submitted: ' + stamp + ' UTC',
         '',
@@ -806,7 +806,7 @@
         '  ' + (d.other || '—'),
         '',
         '────────────────────────────',
-        'Sent from the Weftly feedback form'
+        'Sent from the FABRIQ feedback form'
       ].join('\n');
     }
 
@@ -858,7 +858,7 @@
       document.querySelector('.progress-wrap').hidden = true;
       thanks.hidden = false;
       thanks.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      try { localStorage.removeItem('weftly-feedback-draft'); } catch(_) {}
+      try { localStorage.removeItem('fabriq-feedback-draft'); } catch(_) {}
     }
 
     submitEmail.addEventListener('click', () => {
@@ -869,7 +869,7 @@
         return;
       }
       const summary = buildSummary(d);
-      const subject = encodeURIComponent('Weftly feedback — ' + (d.name || 'anonymous'));
+      const subject = encodeURIComponent('FABRIQ feedback — ' + (d.name || 'anonymous'));
       const body = encodeURIComponent(summary);
       const mailto = 'mailto:' + FOUNDER_EMAIL + '?subject=' + subject + '&body=' + body;
       copyText(summary);

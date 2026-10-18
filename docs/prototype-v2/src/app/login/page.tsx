@@ -52,7 +52,7 @@ export default function LoginPage() {
             <path d="M7 15 L15 11 L23 15 L15 19 Z" fill="currentColor" opacity="0.6" />
             <path d="M7 20 L15 16 L23 20 L15 24 Z" fill="currentColor" opacity="0.3" />
           </svg>
-          <span className="font-serif text-2xl" style={{ color: '#171A17' }}>Weftly</span>
+          <span className="font-serif text-2xl" style={{ color: '#171A17' }}>FABRIQ</span>
         </div>
 
         {!sent ? (
@@ -126,7 +126,7 @@ export default function LoginPage() {
         )}
 
         <p className="mt-8 text-xs text-center" style={{ color: '#5A635C' }}>
-          By signing in, you agree to Weftly's confidentiality terms.
+          By signing in, you agree to FABRIQ's confidentiality terms.
         </p>
       </div>
     </main>

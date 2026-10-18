@@ -1,4 +1,4 @@
-# Weftly — Prototype v2 (Supabase + Next.js + Vercel)
+# FABRIQ — Prototype v2 (Supabase + Next.js + Vercel)
 
 **Status:** Deployment-ready starter kit · October 2026
 **Target:** You, deploying this in ~2 hours to a real multi-user staging environment
@@ -60,7 +60,7 @@ docs/prototype-v2/
 
 1. Go to **https://supabase.com** → Sign in with GitHub
 2. Click **"New project"**
-3. Project name: `weftly-pilot`
+3. Project name: `fabriq-pilot`
 4. Database password: Generate strong, save in password manager
 5. Region: Choose closest to your target users (e.g., `ap-south-1` for India, `ap-southeast-1` for SE Asia)
 6. Wait ~2 minutes for provisioning
@@ -127,9 +127,9 @@ Save these for Phase 2.
 
 ```bash
 # In a new terminal, in your dev folder
-npx create-next-app@15.0.3 weftly-pilot \
+npx create-next-app@15.0.3 fabriq-pilot \
   --typescript --tailwind --app --src-dir --no-eslint --import-alias "@/*"
-cd weftly-pilot
+cd fabriq-pilot
 ```
 
 ### 2.2 Install dependencies
@@ -193,25 +193,25 @@ You should now see the Brand Dashboard with real data from Supabase.
 ```bash
 git init
 git add .
-git commit -m "Weftly pilot v2 — initial deployment"
+git commit -m "FABRIQ pilot v2 — initial deployment"
 ```
 
-Create a new private repo on GitHub called `weftly-pilot`:
+Create a new private repo on GitHub called `fabriq-pilot`:
 
 ```bash
-git remote add origin git@github.com:yourname/weftly-pilot.git
+git remote add origin git@github.com:yourname/fabriq-pilot.git
 git push -u origin main
 ```
 
 ### 3.2 Deploy to Vercel
 
 1. Go to **https://vercel.com** → Add New → Project
-2. Import your `weftly-pilot` repo
+2. Import your `fabriq-pilot` repo
 3. Framework: Next.js (auto-detected)
 4. **Environment Variables:** Paste all the keys from `.env.local`
 5. Click **Deploy**
 
-Wait ~2 minutes. Vercel gives you a URL like `weftly-pilot.vercel.app`.
+Wait ~2 minutes. Vercel gives you a URL like `fabriq-pilot.vercel.app`.
 
 ### 3.3 Update Supabase auth URLs
 
@@ -246,7 +246,7 @@ What you still need to build (in priority order):
 - [ ] Role-based nav (hide features by role)
 
 ### Launch polish (Week 5-6)
-- [ ] Custom domain (`weftly.app`)
+- [ ] Custom domain (`fabriq.app`)
 - [ ] Error monitoring (Sentry free tier)
 - [ ] Analytics (Vercel Analytics free tier)
 - [ ] Legal: Terms, Privacy, DPA

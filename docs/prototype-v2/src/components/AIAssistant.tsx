@@ -81,7 +81,7 @@ export default function AIAssistant() {
                 AI
               </div>
               <div>
-                <div className="font-serif text-base" style={{ color: '#171A17' }}>Weftly Assistant</div>
+                <div className="font-serif text-base" style={{ color: '#171A17' }}>FABRIQ Assistant</div>
                 <div className="text-xs" style={{ color: '#5A635C' }}>Ask about your supply chain</div>
               </div>
             </div>

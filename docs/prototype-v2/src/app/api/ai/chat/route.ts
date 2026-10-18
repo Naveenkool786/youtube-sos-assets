@@ -1,4 +1,4 @@
-// Weftly — AI Chat API Route
+// FABRIQ — AI Chat API Route
 // Receives chat messages + fetches user's data from Supabase + calls Claude Haiku
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Build system prompt
-    const systemPrompt = `You are the Weftly AI Assistant — a quality management AI for apparel supply chains.
+    const systemPrompt = `You are the FABRIQ AI Assistant — a quality management AI for apparel supply chains.
 
 User context:
 ${JSON.stringify(context, null, 2)}

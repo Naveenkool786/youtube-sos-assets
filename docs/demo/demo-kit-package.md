@@ -1,7 +1,7 @@
-# Weftly Demo Kit — Everything You Need to Show the Platform
+# FABRIQ - FashionHub Demo Kit — Everything You Need to Show the Platform
 
 **Date:** October 2026
-**Owner:** Naveen Kool (naveenkool786@gmail.com)
+**Owner:** FABRIQ - FashionHub (naveenkool786@gmail.com)
 **Status:** Pre-launch · Stealth · Confidential
 **Audience:** Friends, pilot customer leads, advisors, investors
 
@@ -99,7 +99,7 @@ Subject: Quick question re: how [Company] handles [specific pain]
 
 Hi [Name],
 
-I'm Naveen, founder of Weftly — a quality management platform for the
+I'm Naveen, founder of FABRIQ — a quality management platform for the
 apparel supply chain. We're in pilot discussions with [X number] of
 brands/factories/inspectors right now.
 
@@ -116,8 +116,8 @@ I'll have learned something.
 
 Any slot that works next week?
 
-Naveen Kool
-Founder, Weftly
+Naveen
+Founder, FABRIQ - FashionHub
 ```
 
 ### Template 3 — Warm Pilot Customer Outreach
@@ -132,7 +132,7 @@ Hi [Introducer],
 Hugely appreciate you connecting me with [Name] at [Company]. Quick update
 + ask:
 
-I showed them the Weftly prototype last week — [specific feedback they
+I showed them the FABRIQ prototype last week — [specific feedback they
 gave]. They're interested in [specific next step].
 
 Would it be okay if I mentioned you referred us when I follow up with
@@ -151,7 +151,7 @@ Naveen
 Use for: Angels, early-stage VCs you've met once at an event
 
 ```
-Subject: Weftly — a stealth-stage pre-seed worth 10 min of your time?
+Subject: FABRIQ — a stealth-stage pre-seed worth 10 min of your time?
 
 Hi [Name],
 
@@ -174,8 +174,8 @@ start the official process.
 
 30 min next week?
 
-Naveen Kool
-Founder, Weftly (naveenkool786@gmail.com)
+Naveen
+Founder, FABRIQ - FashionHub (naveenkool786@gmail.com)
 ```
 
 ### Template 5 — Follow-up After Demo
@@ -183,7 +183,7 @@ Founder, Weftly (naveenkool786@gmail.com)
 Use for: Anyone who tried the demo but hasn't filled out the feedback form
 
 ```
-Subject: Any thoughts on the Weftly demo?
+Subject: Any thoughts on the FABRIQ demo?
 
 Hi [Name],
 
@@ -206,7 +206,7 @@ Naveen
 Use for: Someone who said "yes, I'd use this" or filled out the form positively
 
 ```
-Subject: Re: your Weftly feedback — a next step?
+Subject: Re: your FABRIQ feedback — a next step?
 
 Hi [Name],
 
@@ -219,7 +219,7 @@ A quick ask: can we set up a 30-minute call next week? I'd love to:
 - See if there's a fit
 
 If pilot's not the right path right now, no pressure — I just want to
-make sure Weftly is being built for people like you.
+make sure FABRIQ is being built for people like you.
 
 Here's my calendar: [CALENDLY / BOOKING LINK]
 
@@ -286,8 +286,8 @@ Create a sheet with these columns:
 
 The feedback form (link #4) sends completed responses to your email as `mailto:` messages. Create a Gmail filter:
 - From: *
-- Subject contains: "Weftly feedback"
-- Apply label: "Weftly Pilot Feedback"
+- Subject contains: "FABRIQ feedback"
+- Apply label: "FABRIQ Pilot Feedback"
 - Star it
 
 Then weekly:

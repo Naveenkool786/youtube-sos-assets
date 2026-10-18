@@ -1,4 +1,4 @@
--- Weftly — Prototype v2 Database Schema
+-- FABRIQ — Prototype v2 Database Schema
 -- Run this in Supabase SQL Editor BEFORE policies.sql and seed.sql
 -- Postgres 15+ (Supabase default)
 

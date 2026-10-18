@@ -1,4 +1,4 @@
-// Weftly — Database Types
+// FABRIQ — Database Types
 // This is a hand-written starter. For production, generate from Supabase:
 //   npx supabase gen types typescript --project-id YOUR_ID > src/types/database.generated.ts
 // Then re-export from here.
