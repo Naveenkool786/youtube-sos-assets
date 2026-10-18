@@ -219,6 +219,8 @@ Mark these as DONE as I ship them to you.
 - [x] ~~Legal Entity Setup Guide~~ ✅
 - [x] ~~Investor Target List + Outreach Package~~ ✅
 - [x] ~~90-Day Execution Roadmap~~ ✅
+- [x] ~~Prototype v1 (working, persistent, AI-powered)~~ ✅
+- [x] ~~AI Coding Playbook~~ ✅
 
 ### Potential Next Session Deliverables (ask me)
 - [ ] Investor target list + outreach templates
@@ -316,6 +318,8 @@ Mark DONE as you decide each. These unblock multiple other items.
 | Legal Entity Guide | `docs/legal/entity-setup-guide.md` | GitHub |
 | Investor Target List | `docs/fundraising/investor-target-list.md` | GitHub |
 | **90-Day Execution Roadmap** | `docs/execution/90-day-roadmap.md` | GitHub ⭐ Weekly rhythm doc |
+| **AI Coding Playbook** | `docs/execution/ai-coding-playbook.md` | GitHub ⭐ Build-it-yourself guide |
+| Prototype v1 (with AI) | `docs/prototype/qms-prototype-v1.html` | [Artifact](https://claude.ai/artifact/Xa7viYB9VjeSGuynzpD9yx) |
 | **This To-Do Tracker** | `TODO.md` | GitHub |
 
 ---
