@@ -382,11 +382,15 @@
         <span class="badge badge-accent" id="detailPoStatus">In Production</span>
       </div>
       <div class="section-pad">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
-          <div class="kpi"><div class="kpi-label">Quantity</div><div class="kpi-value accent" id="detailQty">5,000</div></div>
-          <div class="kpi"><div class="kpi-label">Ex-Factory</div><div class="kpi-value" style="font-size:20px;color:var(--fg)" id="detailDate">15 Dec 2026</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+          <div class="kpi"><div class="kpi-label">Total Qty</div><div class="kpi-value accent" id="detailQty">5,000</div></div>
+          <div class="kpi"><div class="kpi-label">Ex-Factory</div><div class="kpi-value" style="font-size:18px;color:var(--fg)" id="detailDate">15 Dec 2026</div></div>
+          <div class="kpi"><div class="kpi-label">Category</div><div class="kpi-value" style="font-size:18px;color:var(--fg)" id="detailCat">Garments</div></div>
         </div>
+        <div style="font-size:13px;color:var(--fg-muted);margin-bottom:4px" id="detailFactory"></div>
       </div>
+      <div class="divider-label" id="detailStylesLabel">Styles &amp; SKUs</div>
+      <div class="section-pad" style="padding-top:8px"><div id="detailStyles"></div></div>
       <div class="divider-label">Order Timeline</div>
       <div style="padding:12px 0"><div class="timeline" id="detailTimeline"></div></div>
     </div>
@@ -397,7 +401,7 @@
         <div class="section-title">Dhaka Textiles <em style="color:var(--warm)">Ltd.</em></div>
         <div class="section-sub">Production Floor &middot; Kiosk Mode</div>
         <div class="kpi-row">
-          <div class="kpi"><div class="kpi-label">In Production</div><div class="kpi-value accent">5</div></div>
+          <div class="kpi"><div class="kpi-label">In Production</div><div class="kpi-value accent">3</div></div>
           <div class="kpi"><div class="kpi-label">Defects Today</div><div class="kpi-value bad">7</div></div>
           <div class="kpi"><div class="kpi-label">Efficiency</div><div class="kpi-value ok">92%</div><div class="progress-track"><div class="progress-fill" style="width:92%"></div></div></div>
           <div class="kpi"><div class="kpi-label">Workers Active</div><div class="kpi-value" style="color:var(--fg)">47</div></div>
@@ -415,7 +419,7 @@
       <div class="section-pad">
         <div class="form-group">
           <label class="form-label">Purchase Order</label>
-          <select class="form-select"><option>PO-2611-AW-001 — Summer Tee</option><option>PO-2611-AW-003 — Hoodie Classic</option><option>PO-2611-BB-002 — Denim Jacket</option><option>PO-2611-AW-005 — Cargo Pant Slim</option><option>PO-2611-AW-007 — Track Jacket Zip</option></select>
+          <select class="form-select"><option>PO-2611-AW-001 — Summer Tee (3 styles)</option><option>PO-2611-AW-003 — Hoodie Classic (2 styles)</option><option>PO-2611-BB-002 — Denim Jacket (2 styles)</option></select>
         </div>
         <div class="form-group">
           <label class="form-label">Defect Category</label>
@@ -524,19 +528,21 @@
   }
 
   var POS = [
-    { id:'PO-2611-AW-001', style:'Summer Tee Basic', factory:'Dhaka Textiles Ltd.', qty:5000, status:'in_production', date:'2026-12-15', brand:'ActiveWave' },
-    { id:'PO-2611-AW-002', style:'Winter Parka Pro', factory:'Saigon Stitch Co.', qty:3000, status:'awaiting_inspection', date:'2026-11-28', brand:'ActiveWave' },
-    { id:'PO-2611-AW-003', style:'Hoodie Classic', factory:'Dhaka Textiles Ltd.', qty:8000, status:'in_production', date:'2027-01-10', brand:'ActiveWave' },
-    { id:'PO-2611-BB-001', style:'Organic Jogger', factory:'Phnom Penh Garments', qty:4000, status:'inspected', date:'2026-11-20', brand:'Blueberry Threads' },
-    { id:'PO-2611-BB-002', style:'Denim Jacket', factory:'Dhaka Textiles Ltd.', qty:2500, status:'ncr_open', date:'2026-12-01', brand:'Blueberry Threads' },
-    { id:'PO-2611-AW-004', style:'Linen Shorts', factory:'Saigon Stitch Co.', qty:6000, status:'accepted', date:'2027-02-15', brand:'ActiveWave' },
-    { id:'PO-2611-AW-005', style:'Cargo Pant Slim', factory:'Dhaka Textiles Ltd.', qty:4500, status:'in_production', date:'2027-01-20', brand:'ActiveWave' },
-    { id:'PO-2611-BB-003', style:'Wool Blend Coat', factory:'Istanbul Konfeksiyon', qty:2000, status:'ncr_open', date:'2026-12-10', brand:'Blueberry Threads' },
-    { id:'PO-2611-AW-006', style:'Polo Performance', factory:'Saigon Stitch Co.', qty:7000, status:'in_production', date:'2027-02-01', brand:'ActiveWave' },
-    { id:'PO-2611-BB-004', style:'Canvas Tote Bag', factory:'Phnom Penh Garments', qty:10000, status:'awaiting_inspection', date:'2026-12-05', brand:'Blueberry Threads' },
-    { id:'PO-2611-AW-007', style:'Track Jacket Zip', factory:'Dhaka Textiles Ltd.', qty:3500, status:'ncr_open', date:'2026-12-20', brand:'ActiveWave' },
-    { id:'PO-2611-BB-005', style:'Ribbed Tank Top', factory:'Istanbul Konfeksiyon', qty:9000, status:'ncr_open', date:'2027-01-05', brand:'Blueberry Threads' },
+    { id:'PO-2611-AW-001', cat:'Garments', styles:[{name:'Summer Tee V-Neck',sku:'TEE-VN-BLK',colors:['Black','White','Navy'],sizes:'S–XXL',pcs:2400},{name:'Summer Tee Crew',sku:'TEE-CR-GRY',colors:['Grey Marl','Olive'],sizes:'S–XL',pcs:1600},{name:'Summer Tee Henley',sku:'TEE-HN-BLU',colors:['Sky Blue'],sizes:'M–XL',pcs:1000}], factory:'Dhaka Textiles Ltd.', country:'BD', qty:5000, status:'in_production', date:'2026-12-15', brand:'ActiveWave' },
+    { id:'PO-2611-AW-002', cat:'Garments', styles:[{name:'Winter Parka Hooded',sku:'PRK-HD-BLK',colors:['Black','Charcoal'],sizes:'S–XXL',pcs:2000},{name:'Winter Parka Bomber',sku:'PRK-BM-NVY',colors:['Navy'],sizes:'M–XL',pcs:1000}], factory:'Saigon Stitch Co.', country:'VN', qty:3000, status:'awaiting_inspection', date:'2026-11-28', brand:'ActiveWave' },
+    { id:'PO-2611-AW-003', cat:'Garments', styles:[{name:'Hoodie Classic Pullover',sku:'HOD-PL-BLK',colors:['Black','Grey','Burgundy'],sizes:'S–XXL',pcs:5000},{name:'Hoodie Classic Zip',sku:'HOD-ZP-GRN',colors:['Forest Green','Stone'],sizes:'S–XL',pcs:3000}], factory:'Dhaka Textiles Ltd.', country:'BD', qty:8000, status:'in_production', date:'2027-01-10', brand:'ActiveWave' },
+    { id:'PO-2611-BB-001', cat:'Garments', styles:[{name:'Organic Jogger Slim',sku:'JOG-SL-KHK',colors:['Khaki','Black'],sizes:'S–XL',pcs:2500},{name:'Organic Jogger Relaxed',sku:'JOG-RX-NVY',colors:['Navy','Oat'],sizes:'M–XXL',pcs:1500}], factory:'Phnom Penh Garments', country:'KH', qty:4000, status:'inspected', date:'2026-11-20', brand:'Blueberry Threads' },
+    { id:'PO-2611-BB-002', cat:'Garments', styles:[{name:'Denim Jacket Trucker',sku:'DNM-TR-IND',colors:['Indigo','Light Wash'],sizes:'S–XL',pcs:1500},{name:'Denim Jacket Oversized',sku:'DNM-OV-BLK',colors:['Black'],sizes:'M–XL',pcs:1000}], factory:'Dhaka Textiles Ltd.', country:'BD', qty:2500, status:'ncr_open', date:'2026-12-01', brand:'Blueberry Threads' },
+    { id:'PO-2611-AW-004', cat:'Footwear', styles:[{name:'Canvas Sneaker Low',sku:'SNK-LO-WHT',colors:['White','Off-White','Black'],sizes:'EU 36–46',pcs:4000},{name:'Canvas Sneaker High',sku:'SNK-HI-NVY',colors:['Navy','Olive'],sizes:'EU 38–45',pcs:2000}], factory:'Guangzhou Yufeng Shoes', country:'CN', qty:6000, status:'accepted', date:'2027-02-15', brand:'ActiveWave' },
+    { id:'PO-2611-AW-005', cat:'Garments', styles:[{name:'Cargo Pant Slim Tapered',sku:'CRG-ST-KHK',colors:['Khaki','Olive','Black'],sizes:'28–38',pcs:3000},{name:'Cargo Pant Utility Wide',sku:'CRG-UW-STN',colors:['Stone','Charcoal'],sizes:'30–36',pcs:1500}], factory:'Tirupur Knits Pvt. Ltd.', country:'IN', qty:4500, status:'in_production', date:'2027-01-20', brand:'ActiveWave' },
+    { id:'PO-2611-BB-003', cat:'Garments', styles:[{name:'Wool Blend Overcoat',sku:'WOL-OC-CAM',colors:['Camel','Charcoal'],sizes:'S–XL',pcs:1200},{name:'Wool Blend Peacoat',sku:'WOL-PC-NVY',colors:['Navy'],sizes:'M–XL',pcs:800}], factory:'Istanbul Konfeksiyon A.S.', country:'TR', qty:2000, status:'ncr_open', date:'2026-12-10', brand:'Blueberry Threads' },
+    { id:'PO-2611-AW-006', cat:'Headwear', styles:[{name:'Performance Cap 6-Panel',sku:'CAP-6P-BLK',colors:['Black','White','Red','Navy'],sizes:'One Size',pcs:5000},{name:'Bucket Hat Reversible',sku:'BKT-RV-OLV',colors:['Olive/Tan','Navy/Sky'],sizes:'S/M, L/XL',pcs:2000}], factory:'Sialkot Sports Mfg.', country:'PK', qty:7000, status:'in_production', date:'2027-02-01', brand:'ActiveWave' },
+    { id:'PO-2611-BB-004', cat:'Accessories', styles:[{name:'Canvas Tote Large',sku:'TOT-LG-NAT',colors:['Natural','Black'],sizes:'One Size',pcs:6000},{name:'Canvas Crossbody',sku:'TOT-CB-TAN',colors:['Tan','Olive','Black'],sizes:'One Size',pcs:4000}], factory:'Addis Ababa Garments PLC', country:'ET', qty:10000, status:'awaiting_inspection', date:'2026-12-05', brand:'Blueberry Threads' },
+    { id:'PO-2611-AW-007', cat:'Gloves', styles:[{name:'Leather Work Glove',sku:'GLV-WK-BRN',colors:['Brown','Black'],sizes:'S–XXL',pcs:2000},{name:'Knit Liner Glove',sku:'GLV-KN-GRY',colors:['Grey','Black'],sizes:'M–XL',pcs:1500}], factory:'Sialkot Sports Mfg.', country:'PK', qty:3500, status:'ncr_open', date:'2026-12-20', brand:'ActiveWave' },
+    { id:'PO-2611-BB-005', cat:'Footwear', styles:[{name:'Leather Slide Sandal',sku:'SLD-LT-TAN',colors:['Tan','Black','White'],sizes:'EU 36–44',pcs:5000},{name:'EVA Sport Slide',sku:'SLD-EV-BLK',colors:['Black','Navy','Sage'],sizes:'EU 36–46',pcs:4000}], factory:'Shenzhen Footwear Co.', country:'CN', qty:9000, status:'ncr_open', date:'2027-01-05', brand:'Blueberry Threads' },
   ];
+  var COUNTRIES = {BD:'Bangladesh',VN:'Vietnam',KH:'Cambodia',CN:'China',IN:'India',TR:'Turkey',PK:'Pakistan',ET:'Ethiopia'};
+  var CAT_ICONS = {Garments:'🧥',Footwear:'👟',Gloves:'🧤',Headwear:'🧢',Accessories:'👜'};
   var STATUSES = {
     draft:['Draft','muted'], pending_factory:['Pending','muted'], accepted:['Accepted','accent'],
     in_production:['In Production','accent'], awaiting_inspection:['Awaiting Inspection','warn'],
@@ -544,14 +550,14 @@
     ncr_open:['NCR Open','bad'], closed:['Closed','muted'], cancelled:['Cancelled','muted']
   };
   var INSPECTIONS = [
-    { id:'INS-2611-DT-001', po:'PO-2611-AW-001', factory:'Dhaka Textiles', type:'In-line', time:'09:00', status:'scheduled', day:'today' },
-    { id:'INS-2611-SS-001', po:'PO-2611-AW-002', factory:'Saigon Stitch', type:'Final', time:'13:30', status:'scheduled', day:'today' },
-    { id:'INS-2611-PP-001', po:'PO-2611-BB-001', factory:'Phnom Penh Garments', type:'Pre-shipment', time:'16:00', status:'completed', day:'today' },
-    { id:'INS-2611-DT-002', po:'PO-2611-AW-005', factory:'Dhaka Textiles', type:'In-line', time:'10:00', status:'scheduled', day:'wed' },
-    { id:'INS-2611-IK-001', po:'PO-2611-BB-003', factory:'Istanbul Konfeksiyon', type:'Final', time:'09:30', status:'scheduled', day:'wed' },
-    { id:'INS-2611-SS-002', po:'PO-2611-AW-006', factory:'Saigon Stitch', type:'In-line', time:'14:00', status:'scheduled', day:'thu' },
-    { id:'INS-2611-PP-002', po:'PO-2611-BB-004', factory:'Phnom Penh Garments', type:'Final', time:'11:00', status:'scheduled', day:'fri' },
-    { id:'INS-2611-DT-003', po:'PO-2611-AW-007', factory:'Dhaka Textiles', type:'Pre-shipment', time:'15:30', status:'scheduled', day:'fri' },
+    { id:'INS-2611-DT-001', po:'PO-2611-AW-001', factory:'Dhaka Textiles', country:'BD', type:'In-line', time:'09:00', status:'scheduled', day:'today' },
+    { id:'INS-2611-SS-001', po:'PO-2611-AW-002', factory:'Saigon Stitch', country:'VN', type:'Final', time:'13:30', status:'scheduled', day:'today' },
+    { id:'INS-2611-PP-001', po:'PO-2611-BB-001', factory:'Phnom Penh Garments', country:'KH', type:'Pre-shipment', time:'16:00', status:'completed', day:'today' },
+    { id:'INS-2611-TK-001', po:'PO-2611-AW-005', factory:'Tirupur Knits', country:'IN', type:'In-line', time:'10:00', status:'scheduled', day:'wed' },
+    { id:'INS-2611-IK-001', po:'PO-2611-BB-003', factory:'Istanbul Konfeksiyon', country:'TR', type:'Final', time:'09:30', status:'scheduled', day:'wed' },
+    { id:'INS-2611-SK-001', po:'PO-2611-AW-006', factory:'Sialkot Sports', country:'PK', type:'In-line', time:'14:00', status:'scheduled', day:'thu' },
+    { id:'INS-2611-AA-001', po:'PO-2611-BB-004', factory:'Addis Ababa Garments', country:'ET', type:'Final', time:'11:00', status:'scheduled', day:'fri' },
+    { id:'INS-2611-GZ-001', po:'PO-2611-AW-004', factory:'Guangzhou Yufeng', country:'CN', type:'Pre-shipment', time:'15:30', status:'scheduled', day:'fri' },
   ];
   var CHECKS = [
     'Fabric weight within tolerance (GSM test)',
@@ -591,7 +597,12 @@
     var el = document.getElementById('brandPoList');
     el.innerHTML = POS.map(function(po){
       var s = STATUSES[po.status]||['—','muted'];
-      return '<div class="card" onclick="showPoDetail(\''+po.id+'\')"><div class="card-row"><div style="min-width:0"><div class="card-title">'+po.style+'</div><div class="card-sub">'+po.factory+'</div></div><div class="card-right"><span class="badge badge-'+s[1]+'">'+s[0]+'</span><div class="card-meta" style="margin-top:4px">'+po.id+'</div></div></div></div>';
+      var flag = COUNTRIES[po.country]||po.country;
+      var icon = CAT_ICONS[po.cat]||'';
+      var styleCount = po.styles?po.styles.length:1;
+      var mainStyle = po.styles?po.styles[0].name:(po.style||po.id);
+      var sub = po.factory+' · '+flag;
+      return '<div class="card" onclick="showPoDetail(\''+po.id+'\')"><div class="card-row"><div style="min-width:0"><div class="card-title">'+icon+' '+mainStyle+(styleCount>1?' <span style="color:var(--fg-faint);font-weight:400">+' +(styleCount-1)+' more</span>':'')+'</div><div class="card-sub">'+sub+'</div></div><div class="card-right"><span class="badge badge-'+s[1]+'">'+s[0]+'</span><div class="card-meta" style="margin-top:4px">'+po.id+'</div></div></div></div>';
     }).join('');
   }
   function renderFactoryPOs() {
@@ -599,7 +610,10 @@
     var fps = POS.filter(function(p){ return p.factory.indexOf('Dhaka')>=0; });
     el.innerHTML = fps.map(function(po){
       var progress = po.status==='in_production'?Math.floor(Math.random()*40+40):po.status==='ncr_open'?65:100;
-      return '<div class="card"><div class="card-row"><div style="min-width:0;flex:1"><div class="card-title">'+po.style+'</div><div class="card-sub">'+po.brand+' &middot; '+po.qty.toLocaleString()+' pcs</div></div><div class="card-meta">'+progress+'%</div></div><div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:'+progress+'%;background:'+(po.status==='ncr_open'?'var(--bad)':'var(--accent)')+'"></div></div></div>';
+      var icon = CAT_ICONS[po.cat]||'';
+      var styleCount = po.styles?po.styles.length:1;
+      var mainStyle = po.styles?po.styles[0].name:(po.style||po.id);
+      return '<div class="card"><div class="card-row"><div style="min-width:0;flex:1"><div class="card-title">'+icon+' '+mainStyle+(styleCount>1?' <span style="color:var(--fg-faint);font-weight:400">+' +(styleCount-1)+'</span>':'')+'</div><div class="card-sub">'+po.brand+' &middot; '+po.qty.toLocaleString()+' pcs &middot; '+po.id+'</div></div><div class="card-meta">'+progress+'%</div></div><div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:'+progress+'%;background:'+(po.status==='ncr_open'?'var(--bad)':'var(--accent)')+'"></div></div></div>';
     }).join('');
   }
   function renderInspections() {
@@ -609,11 +623,13 @@
     var days = {wed:'Wednesday',thu:'Thursday',fri:'Friday'};
     var html = today.map(function(ins){
       var done = ins.status==='completed';
-      return '<div class="card'+(done?'':' card-stripe s-accent')+'" onclick="'+(done?'':"showInspection('"+ins.id+"')")+'"><div class="card-row"><div style="min-width:0"><div class="card-title">'+ins.factory+'</div><div class="card-sub">'+ins.type+' Inspection &middot; '+ins.po+'</div></div><div class="card-right"><span class="badge '+(done?'badge-ok':'badge-accent')+'">'+(done?'Done':ins.time)+'</span><div class="card-meta" style="margin-top:4px">'+ins.id+'</div></div></div></div>';
+      var loc = ins.factory+' · '+(COUNTRIES[ins.country]||ins.country);
+      return '<div class="card'+(done?'':' card-stripe s-accent')+'" onclick="'+(done?'':"showInspection('"+ins.id+"')")+'"><div class="card-row"><div style="min-width:0"><div class="card-title">'+loc+'</div><div class="card-sub">'+ins.type+' Inspection &middot; '+ins.po+'</div></div><div class="card-right"><span class="badge '+(done?'badge-ok':'badge-accent')+'">'+(done?'Done':ins.time)+'</span><div class="card-meta" style="margin-top:4px">'+ins.id+'</div></div></div></div>';
     }).join('');
     html += '<div style="font:600 12px/1 var(--font-body);color:var(--fg-faint);text-transform:uppercase;letter-spacing:0.06em;padding:18px 4px 8px">Later This Week</div>';
     html += later.map(function(ins){
-      return '<div class="card" style="opacity:0.7"><div class="card-row"><div style="min-width:0"><div class="card-title">'+ins.factory+'</div><div class="card-sub">'+ins.type+' &middot; '+ins.po+'</div></div><div class="card-right"><span class="badge badge-muted">'+(days[ins.day]||ins.day)+' '+ins.time+'</span></div></div></div>';
+      var loc = ins.factory+' · '+(COUNTRIES[ins.country]||ins.country);
+      return '<div class="card" style="opacity:0.7"><div class="card-row"><div style="min-width:0"><div class="card-title">'+loc+'</div><div class="card-sub">'+ins.type+' &middot; '+ins.po+'</div></div><div class="card-right"><span class="badge badge-muted">'+(days[ins.day]||ins.day)+' '+ins.time+'</span></div></div></div>';
     }).join('');
     el.innerHTML = html;
   }
@@ -639,6 +655,24 @@
     document.getElementById('detailPoStatus').className = 'badge badge-'+s[1];
     document.getElementById('detailQty').textContent = po.qty.toLocaleString();
     document.getElementById('detailDate').textContent = new Date(po.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    document.getElementById('detailCat').textContent = (CAT_ICONS[po.cat]||'')+' '+po.cat;
+    document.getElementById('detailFactory').textContent = po.factory+' · '+(COUNTRIES[po.country]||po.country);
+    var stylesEl = document.getElementById('detailStyles');
+    if (po.styles && po.styles.length) {
+      document.getElementById('detailStylesLabel').style.display = '';
+      stylesEl.innerHTML = po.styles.map(function(st){
+        return '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px">'
+          +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600;font-size:14px">'+st.name+'</span><span style="font-family:var(--font-mono);font-size:12px;color:var(--fg-muted)">'+st.sku+'</span></div>'
+          +'<div style="display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--fg-muted)">'
+          +'<span style="background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:10px">'+st.colors.join(', ')+'</span>'
+          +'<span style="background:var(--bg-dim);padding:2px 8px;border-radius:10px">'+st.sizes+'</span>'
+          +'<span style="background:var(--warm-soft);color:var(--warm);padding:2px 8px;border-radius:10px">'+st.pcs.toLocaleString()+' pcs</span>'
+          +'</div></div>';
+      }).join('');
+    } else {
+      document.getElementById('detailStylesLabel').style.display = 'none';
+      stylesEl.innerHTML = '';
+    }
     var tl = document.getElementById('detailTimeline');
     tl.innerHTML = TIMELINE_STEPS.map(function(s){
       var cls = s.done?'done':s.current?'current':'pending';
