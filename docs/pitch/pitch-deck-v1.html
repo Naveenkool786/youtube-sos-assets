@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QMS Pitch Deck</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #12121a;
+  --surface-light: #1a1a24;
+  --border: #27272f;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-subtle: #64748b;
+  --primary: #818cf8;
+  --primary-glow: rgba(129, 140, 248, 0.4);
+  --accent: #a78bfa;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --info: #60a5fa;
+}
+:root:not([data-theme="dark"]) {
+  @media (prefers-color-scheme: light) {
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --surface-light: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --text-muted: #475569;
+    --text-subtle: #94a3b8;
+    --primary: #4f46e5;
+    --primary-glow: rgba(79, 70, 229, 0.3);
+    --accent: #7c3aed;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #0ea5e9;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f8fafc;
+  --surface-light: #ffffff;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --text-subtle: #94a3b8;
+  --primary: #4f46e5;
+  --primary-glow: rgba(79, 70, 229, 0.3);
+  --accent: #7c3aed;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #0ea5e9;
+}
+html, body { height: 100%; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+}
+.slide {
+  position: absolute;
+  inset: 0;
+  padding: 48px 64px;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.slide.active { opacity: 1; pointer-events: auto; }
+.slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-width: 1100px; width: 100%; margin: 0 auto; }
+.watermark {
+  position: fixed; bottom: 12px; right: 16px;
+  font-size: 10px; color: var(--text-subtle);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  opacity: 0.6; z-index: 100;
+}
+.slide-nav {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface-light); border: 1px solid var(--border);
+  padding: 8px 16px; border-radius: 999px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  z-index: 100;
+}
+.nav-btn {
+  width: 28px; height: 28px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: transparent; color: var(--text); cursor: pointer;
+  border: none; transition: background 0.15s;
+}
+.nav-btn:hover { background: var(--border); }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.slide-counter { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; min-width: 50px; text-align: center; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px;
+  font-size: 11px; font-weight: 500;
+  background: var(--surface-light); border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.chip-primary { background: var(--primary-glow); color: var(--primary); border-color: var(--primary); }
+.card {
+  background: var(--surface-light); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px;
+}
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.glow {
+  box-shadow: 0 0 60px -10px var(--primary-glow);
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.pulse { animation: pulse 2s ease-in-out infinite; }
+@keyframes bg-shift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -20px) scale(1.1); }
+}
+.bg-orb {
+  position: absolute; width: 400px; height: 400px;
+  border-radius: 50%; filter: blur(80px); opacity: 0.25;
+  pointer-events: none; animation: bg-shift 15s ease-in-out infinite;
+}
+.theme-toggle {
+  position: fixed; top: 16px; right: 16px;
+  background: var(--surface-light); border: 1px solid var(--border);
+  padding: 6px 10px; border-radius: 8px; cursor: pointer;
+  z-index: 100; font-size: 14px;
+}
+.scrollbar::-webkit-scrollbar { width: 6px; }
+.scrollbar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+<div id="deck" style="position: relative; width: 100vw; height: 100vh;">
+  <!-- orbs -->
+  <div class="bg-orb" style="background: var(--primary); top: -100px; right: -100px; animation-delay: 0s;"></div>
+  <div class="bg-orb" style="background: var(--accent); bottom: -100px; left: -100px; animation-delay: 7s;"></div>
+
+  <!-- ========== SLIDE 1: TITLE ========== -->
+  <section class="slide active" data-slide="1">
+    <div class="slide-content items-center text-center">
+      <div class="chip chip-primary mb-6">✦ Series Seed · Confidential</div>
+      <div class="mb-8">
+        <div class="inline-block" style="padding: 20px 32px; border: 2px solid var(--primary); border-radius: 20px; background: rgba(79,70,229,0.08);">
+          <div style="font-size: 14px; letter-spacing: 0.3em; color: var(--primary); font-weight: 600;">[ COMPANY NAME ]</div>
+        </div>
+      </div>
+      <h1 class="text-6xl font-bold mb-4 leading-tight">
+        The <span class="gradient-text">quality nervous system</span><br/>
+        for the apparel supply chain.
+      </h1>
+      <p class="text-xl mb-10" style="color: var(--text-muted); max-width: 720px;">
+        One platform connecting Brands, Factories, and 3rd-Party Inspectors — replacing email, Excel, and WhatsApp with a mobile-first, offline-ready QMS.
+      </p>
+      <div class="flex items-center gap-6 text-sm" style="color: var(--text-muted);">
+        <div>Naveen Kool · Founder & CEO</div>
+        <div style="width: 1px; height: 16px; background: var(--border);"></div>
+        <div>October 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SLIDE 2: PROBLEM ========== -->
+  <section class="slide" data-slide="2">
+    <div class="slide-content">
+      <div class="chip mb-6">01 / The Problem</div>
+      <h2 class="text-5xl font-bold mb-8">
+        Apparel quality control runs on <span style="color: var(--danger);">email, Excel, and WhatsApp.</span>
+      </h2>
+      <div class="grid grid-cols-3 gap-6 mb-10">
+        <div class="card">
+          <div class="text-5xl font-bold mb-2" style="color: var(--danger);">$247B</div>
+          <div class="text-sm mb-2 font-semibold">Lost annually to poor quality</div>
+          <div class="text-xs" style="color: var(--text-muted);">Returns, rework, warranty, markdowns — 7–15% of global apparel revenue vanishes to quality failures.</div>
+        </div>
+        <div class="card">
+          <div class="text-5xl font-bold mb-2" style="color: var(--warning);">3</div>
+          <div class="text-sm mb-2 font-semibold">Parties, zero shared truth</div>
+          <div class="text-xs" style="color: var(--text-muted);">Brand, Factory, and 3rd-Party Inspector each work in their own siloed systems. Data flows through hundreds of emails per PO.</div>
+        </div>
+        <div class="card">
+          <div class="text-5xl font-bold mb-2" style="color: var(--info);">7–12</div>
+          <div class="text-sm mb-2 font-semibold">Days to resolve one NCR</div>
+          <div class="text-xs" style="color: var(--text-muted);">Non-Conformance Reports lose a week in email ping-pong between parties. Shipments ship late or defective.</div>
+        </div>
+      </div>
+      <div class="card" style="background: rgba(248,113,113,0.08); border-color: var(--danger);">
+        <div class="text-xs font-semibold mb-2" style="color: var(--danger);">THE PAIN, CONCRETELY</div>
+        <div class="text-lg">
+          A single Zara-scale brand ships 450M garments/year across 1,800 factories, using 50+ inspection firms. Every PO generates 200+ documents. There is no single source of truth.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SLIDE 3: SOLUTION ========== -->
+  <section class="slide" data-slide="3">
+    <div class="slide-content">
+      <div class="chip mb-6">02 / The Solution</div>
+      <h2 class="text-5xl font-bold mb-8">
+        One platform. <span class="gradient-text">Three parties. Zero silos.</span>
+      </h2>
+      <div class="grid grid-cols-2 gap-8 mb-8">
+        <div>
+          <div class="relative" style="height: 280px;">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 card w-48 text-center" style="background: var(--primary); color: white; border: none;">
+              <div class="text-xs opacity-80 mb-1">PLATFORM</div>
+              <div class="font-bold text-lg">QMS</div>
+              <div class="text-xs opacity-80">Shared SaaS</div>
+            </div>
+            <svg class="absolute inset-0 w-full h-full" style="pointer-events: none;" viewBox="0 0 400 280">
+              <line x1="200" y1="85" x2="80" y2="220" stroke="var(--primary)" stroke-width="2" stroke-dasharray="4"/>
+              <line x1="200" y1="85" x2="200" y2="220" stroke="var(--primary)" stroke-width="2" stroke-dasharray="4"/>
+              <line x1="200" y1="85" x2="320" y2="220" stroke="var(--primary)" stroke-width="2" stroke-dasharray="4"/>
+            </svg>
+            <div class="absolute bottom-0 left-0 card w-32 text-center" style="padding: 12px;">
+              <div class="text-xs mb-1" style="color: var(--text-muted);">Brand</div>
+              <div class="text-sm font-semibold">Buyers</div>
+            </div>
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 card w-32 text-center" style="padding: 12px;">
+              <div class="text-xs mb-1" style="color: var(--text-muted);">Factory</div>
+              <div class="text-sm font-semibold">Makers</div>
+            </div>
+            <div class="absolute bottom-0 right-0 card w-32 text-center" style="padding: 12px;">
+              <div class="text-xs mb-1" style="color: var(--text-muted);">3P Inspector</div>
+              <div class="text-sm font-semibold">Verifiers</div>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <div class="font-semibold mb-1 flex items-center gap-2">
+              <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--primary);"></span>
+              Mobile-first field inspection
+            </div>
+            <div class="text-sm" style="color: var(--text-muted);">Inspectors work offline for 48 hours in factory basements. GPS check-in, encrypted photos, AQL auto-scoring.</div>
+          </div>
+          <div>
+            <div class="font-semibold mb-1 flex items-center gap-2">
+              <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--primary);"></span>
+              Live Factory Floor Twin
+            </div>
+            <div class="text-sm" style="color: var(--text-muted);">Executives see their factories as animated real-time scenes — not spreadsheets. Industry-first.</div>
+          </div>
+          <div>
+            <div class="font-semibold mb-1 flex items-center gap-2">
+              <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--primary);"></span>
+              AI-powered defect classification
+            </div>
+            <div class="text-sm" style="color: var(--text-muted);">Claude-powered photo classifier + natural-language analytics ("show me Q3 defects for shirts").</div>
+          </div>
+          <div>
+            <div class="font-semibold mb-1 flex items-center gap-2">
+              <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--primary);"></span>
+              Cost of Quality visibility
+            </div>
+            <div class="text-sm" style="color: var(--text-muted);">Every dollar lost to defects, warranties, rework — attributed to Style, Factory, Line, Operator.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SLIDE 4: WHY NOW ========== -->
+  <section class="slide" data-slide="4">
+    <div class="slide-content">
+      <div class="chip mb-6">03 / Why Now</div>
+      <h2 class="text-5xl font-bold mb-10">
+        Four forces converging <span class="gradient-text">in 2026.</span>
+      </h2>
+      <div class="grid grid-cols-2 gap-6">
+        <div class="card">
+          <div class="text-3xl mb-3">🌍</div>
+          <div class="font-semibold text-lg mb-2">ESG & Compliance Mandates</div>
+          <div class="text-sm" style="color: var(--text-muted);">EU Digital Product Passport (2027), Uyghur Forced Labor Act, Germany LkSG. Brands must prove supply-chain visibility — or face bans.</div>
+        </div>
+        <div class="card">
+          <div class="text-3xl mb-3">📱</div>
+          <div class="font-semibold text-lg mb-2">Mobile Factory Workforce</div>
+          <div class="text-sm" style="color: var(--text-muted);">Smartphone penetration crossed 85% in Bangladesh, 92% in Vietnam, 76% in India. Factory ops teams are now mobile-native.</div>
+        </div>
+        <div class="card">
+          <div class="text-3xl mb-3">🤖</div>
+          <div class="font-semibold text-lg mb-2">AI Inflection</div>
+          <div class="text-sm" style="color: var(--text-muted);">Claude/GPT-4 class models make defect classification + NL analytics commercially viable for first time. Was impossible in 2022.</div>
+        </div>
+        <div class="card">
+          <div class="text-3xl mb-3">⚠️</div>
+          <div class="font-semibold text-lg mb-2">Legacy Software Aging Out</div>
+          <div class="text-sm" style="color: var(--text-muted);">ETQ, MasterControl (life-sciences origin) feel 20 years old. No apparel-native, three-party, mobile-first competitor exists.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SLIDE 5: PRODUCT ========== -->
+  <section class="slide" data-slide="5">
+    <div class="slide-content">
+      <div class="chip mb-6">04 / The Product</div>
+      <h2 class="text-5xl font-bold mb-6">
+        <span class="gradient-text">Clickable prototype</span> live today.
+      </h2>
+      <p class="text-base mb-8" style="color: var(--text-muted);">10 screens, 3 personas, fully navigable. Not mockups — a working interactive demo.</p>
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="card" style="padding: 16px;">
+          <div class="text-xs font-semibold mb-1" style="color: var(--primary);">BRAND PORTAL</div>
+          <div class="font-semibold mb-1 text-sm">Executive Dashboard</div>
+          <div class="text-xs mb-3" style="color: var(--text-muted);">Live CoQ, supplier scorecard, open NCRs, shipment tracking.</div>
+          <div style="height: 100px; border-radius: 8px; background: linear-gradient(135deg, var(--primary-glow), transparent); border: 1px solid var(--border); display: grid; place-items: center;">
+            <div class="text-xs" style="color: var(--primary);">[dashboard mock]</div>
+          </div>
+        </div>
+        <div class="card" style="padding: 16px;">
+          <div class="text-xs font-semibold mb-1" style="color: var(--success);">FACTORY</div>
+          <div class="font-semibold mb-1 text-sm">PO Kanban Board</div>
+          <div class="text-xs mb-3" style="color: var(--text-muted);">6-column PO lifecycle, in-production progress, inspection booking.</div>
+          <div style="height: 100px; border-radius: 8px; background: linear-gradient(135deg, rgba(52,211,153,0.2), transparent); border: 1px solid var(--border); display: grid; place-items: center;">
+            <div class="text-xs" style="color: var(--success);">[kanban mock]</div>
+          </div>
+        </div>
+        <div class="card" style="padding: 16px;">
+          <div class="text-xs font-semibold mb-1" style="color: var(--warning);">3P INSPECTOR</div>
+          <div class="font-semibold mb-1 text-sm">Mobile Field App</div>
+          <div class="text-xs mb-3" style="color: var(--text-muted);">Offline-capable inspection, photos, GPS check-in, sync queue.</div>
+          <div style="height: 100px; border-radius: 8px; background: linear-gradient(135deg, rgba(251,191,36,0.2), transparent); border: 1px solid var(--border); display: grid; place-items: center;">
+            <div class="text-xs" style="color: var(--warning);">[mobile mock]</div>
+          </div>
+        </div>
+        <div class="card" style="padding: 16px;">
+          <div class="text-xs font-semibold mb-1" style="color: var(--accent);">FLAGSHIP</div>
+          <div class="font-semibold mb-1 text-sm">Live Factory Floor Twin</div>
+          <div class="text-xs mb-3" style="color: var(--text-muted);">Real-time animated factory view — workers, lines, defects.</div>
+          <div style="height: 100px; border-radius: 8px; background: linear-gradient(135deg, var(--primary-glow), transparent); border: 1px solid var(--border); display: grid; place-items: center;">
+            <div class="text-xs" style="color: var(--accent);">[floor twin mock]</div>
+          </div>
+        </div>
+        <div class="card" style="padding: 16px;">
+          <div class="text-xs font-semibold mb-1" style="color: var(--info);">HERO SCENE</div>
+          <div class="font-semibold mb-1 text-sm">Cost of Quality Visualization</div>
+          <div class="text-xs mb-3" style="color: var(--text-muted);">Interactive split-screen prevention vs failure costs.</div>
+          <div style="height: 100px; border-radius: 8px; background: linear-gradient(135deg, rgba(96,165,250,0.2), transparent); border: 1px solid var(--border); display: grid; place-items: center;">
+            <div class="text-xs" style="color: var(--info);">[CoQ scene mock]</div>
+          </div>
+        </div>
+        <div class="card" style="padding: 16px;">
+          <div class="text-xs font-semibold mb-1" style="color: var(--danger);">AI</div>
+          <div class="font-semibold mb-1 text-sm">Defect Classifier</div>
+          <div class="text-xs mb-3" style="color: var(--text-muted);">Claude-powered photo → defect category + confidence score.</div>
+          <div style="height: 100px; border-radius: 8px; background: linear-gradient(135deg, rgba(248,113,113,0.2), transparent); border: 1px solid var(--border); display: grid; place-items: center;">
+            <div class="text-xs" style="color: var(--danger);">[AI classifier mock]</div>
+          </div>
+        </div>
+      </div>
+      <div class="card text-center" style="background: var(--primary-glow);">
+        <div class="text-sm font-semibold" style="color: var(--primary);">
+          🔗 Live prototype — ask for private share link
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SLIDE 6: MARKET ========== -->
+  <section class="slide" data-slide="6">
+    <div class="slide-content">
+      <div class="chip mb-6">05 / Market Size</div>
+      <h2 class="text-5xl font-bold mb-10">
+        A <span class="gradient-text">$3B software opportunity</span> inside a $1.5T industry.
+      </h2>
+      <div class="relative" style="height: 400px;">
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div style="width: 450px; height: 450px; border-radius: 50%; background: rgba(129,140,248,0.15); border: 1px solid var(--primary); display: flex; align-items: center; justify-content: center;">
+            <div style="width: 300px; height: 300px; border-radius: 50%; background: rgba(167,139,250,0.2); border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center;">
+              <div style="width: 150px; height: 150px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center;">
+                <div class="text-center text-white">
+                  <div class="text-xs opacity-80">SOM</div>
+                  <div class="text-2xl font-bold">$350M</div>
+                  <div class="text-xs opacity-80">First 500 brands</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="absolute top-4 left-8">
+          <div class="text-xs font-semibold" style="color: var(--primary);">TAM — Total Addressable Market</div>
+          <div class="text-3xl font-bold">$3B/yr</div>
+          <div class="text-xs" style="color: var(--text-muted);">Global apparel QMS/QA software spend</div>
+        </div>
+        <div class="absolute top-32 right-8 text-right">
+          <div class="text-xs font-semibold" style="color: var(--accent);">SAM — Serviceable Market</div>
+          <div class="text-2xl font-bold">$1.2B/yr</div>
+          <div class="text-xs" style="color: var(--text-muted);">Mid-market + enterprise brands (~15,000 globally)</div>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-4 mt-6 text-sm" style="color: var(--text-muted);">
+        <div><strong style="color: var(--text);">Growing 11% CAGR</strong> — ESG pressure accelerates adoption</div>
+        <div><strong style="color: var(--text);">Fragmented</strong> — No single player holds > 8% share</div>
+        <div><strong style="color: var(--text);">Underserved</strong> — Nothing apparel-native + 3-party</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SLIDE 7: BUSINESS MODEL ========== -->
+  <section class="slide" data-slide="7">
+    <div class="slide-content">
+      <div class="chip mb-6">06 / Business Model</div>
+      <h2 class="text-5xl font-bold mb-8">
+        <span class="gradient-text">Brand-sponsored</span> SaaS. Three revenue streams.
+      </h2>
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="card" style="border-color: var(--primary);">
+          <div class="chip chip-primary mb-3">PRIMARY</div>
+          <div class="font-bold text-lg mb-1">Brand Tier</div>
+          <div class="text-3xl font-bold mb-2 gradient-text">$499 — $50k/mo</div>
+          <div class="text-xs mb-4" style="color: var(--text-muted);">Per-seat + volume. Starter, Growth, Enterprise plans.</div>
+          <ul class="text-xs space-y-1" style="color: var(--text-muted);">
+            <li>✓ Platform sponsorship (free for invited parties)</li>
+            <li>✓ Full feature access</li>
+            <li>✓ Add-ons: SAP, Centric PLM, CSM</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="chip mb-3">SECONDARY</div>
+          <div class="font-bold text-lg mb-1">Factory Upgrade</div>
+          <div class="text-3xl font-bold mb-2">$299 — $999/mo</div>
+          <div class="text-xs mb-4" style="color: var(--text-muted);">Factories pay only for cross-brand analytics.</div>
+          <ul class="text-xs space-y-1" style="color: var(--text-muted);">
+            <li>✓ Sponsored by Brand = $0 (base)</li>
+            <li>✓ Upgrade for own CoQ, benchmarking</li>
+            <li>✓ Multi-brand Factory tier at $999</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="chip mb-3">USAGE</div>
+          <div class="font-bold text-lg mb-1">3P Inspection</div>
+          <div class="text-3xl font-bold mb-2">$3 — $5 /insp</div>
+          <div class="text-xs mb-4" style="color: var(--text-muted);">Per-inspection + $299-$999 base.</div>
+          <ul class="text-xs space-y-1" style="color: var(--text-muted);">
+            <li>✓ Volume breaks at 500, 2000, 10k</li>
+            <li>✓ Platform transaction fee (5%)</li>
+            <li>✓ Enterprise 3Ps (SGS scale): negotiated</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card" style="background: linear-gradient(135deg, rgba(79,70,229,0.08), rgba(167,139,250,0.08));">
+        <div class="grid grid-cols-4 gap-6">
+          <div>
+            <div class="text-xs font-semibold" style="color: var(--text-muted);">YEAR 1 ARR TARGET</div>
+            <div class="text-2xl font-bold gradient-text">$3.6M</div>
+          </div>
+          <div>
+            <div class="text-xs font-semibold" style="color: var(--text-muted);">YEAR 3 ARR TARGET</div>
+            <div class="text-2xl font-bold gradient-text">$25M</div>
+          </div>
+          <div>
+            <div class="text-xs font-semibold" style="color: var(--text-muted);">GROSS MARGIN</div>
+            <div class="text-2xl font-bold">78%</div>
+          </div>
+          <div>
+            <div class="text-xs font-semibold" style="color: var(--text-muted);">NET REV RETENTION</div>
+            <div class="text-2xl font-bold">125%+</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SLIDE 8: COMPETITION ========== -->
+  <section class="slide" data-slide="8">
+    <div class="slide-content">
+      <div class="chip mb-6">07 / Competition</div>
+      <h2 class="text-5xl font-bold mb-8">
+        No one owns <span style="color: var(--danger);">apparel + three-party + mobile.</span>
+      </h2>
+      <div class="card mb-6">
+        <table class="w-full text-sm">
+          <thead>
+            <tr style="color: var(--text-muted); font-size: 11px;">
+              <th class="text-left pb-3 font-semibold">COMPETITOR</th>
+              <th class="text-center pb-3 font-semibold">APPAREL-NATIVE</th>
+              <th class="text-center pb-3 font-semibold">3-PARTY</th>
+              <th class="text-center pb-3 font-semibold">MOBILE OFFLINE</th>
+              <th class="text-center pb-3 font-semibold">AI-FIRST</th>
+              <th class="text-center pb-3 font-semibold">LIVE TWIN</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-top: 1px solid var(--border);">
+              <td class="py-3"><strong>ETQ Reliance</strong><div class="text-xs" style="color: var(--text-muted);">Legacy enterprise QMS</div></td>
+              <td class="text-center py-3">❌</td>
+              <td class="text-center py-3">⚠️</td>
+              <td class="text-center py-3">❌</td>
+              <td class="text-center py-3">❌</td>
+              <td class="text-center py-3">❌</td>
+            </tr>
+            <tr style="border-top: 1px solid var(--border);">
+              <td class="py-3"><strong>MasterControl</strong><div class="text-xs" style="color: var(--text-muted);">Life-sciences origin</div></td>
+              <td class="text-center py-3">❌</td>
+              <td class="text-center py-3">❌</td>
+              <td class="text-center py-3">❌</td>
+              <td class="text-center py-3">❌</td>
+              <td class="text-center py-3">❌</td>
+            </tr>
+            <tr style="border-top: 1px solid var(--border);">
+              <td class="py-3"><strong>Qualio</strong><div class="text-xs" style="color: var(--text-muted);">Modern, life-sciences</div></td>
+              <td class="text-center py-3">❌</td>
+              <td class="text-center py-3">❌</td>
+              <td class="text-center py-3">❌</td>
+              <td class="text-center py-3">⚠️</td>
+              <td class="text-center py-3">❌</td>
+            </tr>
+            <tr style="border-top: 1px solid var(--border);">
+              <td class="py-3"><strong>Centric QMS</strong><div class="text-xs" style="color: var(--text-muted);">PLM-anchored add-on</div></td>
+              <td class="text-center py-3">✓</td>
+              <td class="text-center py-3">⚠️</td>
+              <td class="text-center py-3">❌</td>
+              <td class="text-center py-3">❌</td>
+              <td class="text-center py-3">❌</td>
+            </tr>
+            <tr style="border-top: 1px solid var(--border);">
+              <td class="py-3"><strong>Inspectorio</strong><div class="text-xs" style="color: var(--text-muted);">Closest competitor</div></td>
+              <td class="text-center py-3">✓</td>
+              <td class="text-center py-3">✓</td>
+              <td class="text-center py-3">⚠️</td>
+              <td class="text-center py-3">⚠️</td>
+              <td class="text-center py-3">❌</td>
+            </tr>
+            <tr style="border-top: 2px solid var(--primary); background: var(--primary-glow);">
+              <td class="py-3"><strong style="color: var(--primary);">[US]</strong><div class="text-xs" style="color: var(--text-muted);">Mobile-first + AI + Twin</div></td>
+              <td class="text-center py-3">✅</td>
+              <td class="text-center py-3">✅</td>
+              <td class="text-center py-3">✅</td>
+              <td class="text-center py-3">✅</td>
+              <td class="text-center py-3">✅</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="text-sm text-center" style="color: var(--text-muted);">
+        Our wedge: <strong style="color: var(--text);">Apparel-native from day 1, three-party by design, mobile-offline for field reality, AI-powered for scale.</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SLIDE 9: TRACTION & ROADMAP ========== -->
+  <section class="slide" data-slide="9">
+    <div class="slide-content">
+      <div class="chip mb-6">08 / Traction & Roadmap</div>
+      <h2 class="text-5xl font-bold mb-8">
+        <span class="gradient-text">Blueprint locked. Prototype live.</span> Scaling now.
+      </h2>
+      <div class="relative">
+        <div style="position: absolute; left: 20px; top: 20px; bottom: 20px; width: 2px; background: var(--border);"></div>
+        <div class="space-y-5">
+          <div class="flex gap-6">
+            <div style="width: 44px; height: 44px; border-radius: 999px; background: var(--success); display: grid; place-items: center; color: white; font-size: 11px; font-weight: 700; z-index: 1;">✓</div>
+            <div class="flex-1">
+              <div class="text-xs font-semibold mb-1" style="color: var(--success);">Q4 2026 — NOW · DONE</div>
+              <div class="font-semibold mb-1">Blueprint v1 + clickable prototype shipped</div>
+              <div class="text-xs" style="color: var(--text-muted);">190-entity data model, 12 locked topics, 10-screen interactive demo</div>
+            </div>
+          </div>
+          <div class="flex gap-6">
+            <div style="width: 44px; height: 44px; border-radius: 999px; background: var(--primary); display: grid; place-items: center; color: white; font-size: 11px; font-weight: 700; z-index: 1;">Q1</div>
+            <div class="flex-1">
+              <div class="text-xs font-semibold mb-1" style="color: var(--primary);">Q1 2027</div>
+              <div class="font-semibold mb-1">Seed close, CTO hire, anchor customer LOI</div>
+              <div class="text-xs" style="color: var(--text-muted);">$3–5M seed. CTO + 3 engineers. Figma design system. 1 Brand pilot committed.</div>
+            </div>
+          </div>
+          <div class="flex gap-6">
+            <div style="width: 44px; height: 44px; border-radius: 999px; background: var(--surface-light); border: 1px solid var(--border); display: grid; place-items: center; font-size: 11px; font-weight: 700; z-index: 1;">Q2</div>
+            <div class="flex-1">
+              <div class="text-xs font-semibold mb-1" style="color: var(--text-muted);">Q2 2027</div>
+              <div class="font-semibold mb-1">Alpha with 3 customers</div>
+              <div class="text-xs" style="color: var(--text-muted);">Core QMS live (PO + inspection + NCR/CAPA). 1 Brand × 3 Factories × 1 3P.</div>
+            </div>
+          </div>
+          <div class="flex gap-6">
+            <div style="width: 44px; height: 44px; border-radius: 999px; background: var(--surface-light); border: 1px solid var(--border); display: grid; place-items: center; font-size: 11px; font-weight: 700; z-index: 1;">Q4</div>
+            <div class="flex-1">
+              <div class="text-xs font-semibold mb-1" style="color: var(--text-muted);">Q4 2027 — Public Launch</div>
+              <div class="font-semibold mb-1">V1 GA · $500k ARR · 10 Brand tenants</div>
+              <div class="text-xs" style="color: var(--text-muted);">Live Floor Twin, AI classifier, 8 languages, 4 regions.</div>
+            </div>
+          </div>
+          <div class="flex gap-6">
+            <div style="width: 44px; height: 44px; border-radius: 999px; background: var(--surface-light); border: 1px solid var(--border); display: grid; place-items: center; font-size: 11px; font-weight: 700; z-index: 1;">28</div>
+            <div class="flex-1">
+              <div class="text-xs font-semibold mb-1" style="color: var(--text-muted);">End of 2028 — Series A trigger</div>
+              <div class="font-semibold mb-1">$8M ARR · 75 Brand tenants · raise Series A</div>
+              <div class="text-xs" style="color: var(--text-muted);">Expand to adjacent verticals (footwear, home textiles).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SLIDE 10: TEAM ========== -->
+  <section class="slide" data-slide="10">
+    <div class="slide-content">
+      <div class="chip mb-6">09 / Team</div>
+      <h2 class="text-5xl font-bold mb-10">
+        Founder-led, <span class="gradient-text">team scaling.</span>
+      </h2>
+      <div class="grid grid-cols-3 gap-5 mb-6">
+        <div class="card text-center">
+          <div style="width: 80px; height: 80px; border-radius: 999px; background: linear-gradient(135deg, var(--primary), var(--accent)); margin: 0 auto 12px; display: grid; place-items: center; font-size: 32px; font-weight: 700; color: white;">N</div>
+          <div class="font-bold">Naveen Kool</div>
+          <div class="text-xs mb-2" style="color: var(--primary);">Founder & CEO</div>
+          <div class="text-xs" style="color: var(--text-muted);">[Add 2–3 lines of your background: apparel/supply chain experience, prior products, deep industry knowledge]</div>
+        </div>
+        <div class="card text-center" style="border-style: dashed;">
+          <div style="width: 80px; height: 80px; border-radius: 999px; background: var(--border); margin: 0 auto 12px; display: grid; place-items: center; font-size: 32px; color: var(--text-muted);">?</div>
+          <div class="font-bold" style="color: var(--text-muted);">CTO</div>
+          <div class="text-xs mb-2" style="color: var(--text-muted);">Searching (Q1 2027)</div>
+          <div class="text-xs" style="color: var(--text-subtle);">SaaS platform experience, mobile + multi-tenant, 10+ yrs</div>
+        </div>
+        <div class="card text-center" style="border-style: dashed;">
+          <div style="width: 80px; height: 80px; border-radius: 999px; background: var(--border); margin: 0 auto 12px; display: grid; place-items: center; font-size: 32px; color: var(--text-muted);">?</div>
+          <div class="font-bold" style="color: var(--text-muted);">Head of Quality (SME)</div>
+          <div class="text-xs mb-2" style="color: var(--text-muted);">Advisor path (Q1 2027)</div>
+          <div class="text-xs" style="color: var(--text-subtle);">Ex-SGS / ex-Nike QA / ex-garment supply chain</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="font-semibold mb-3 text-sm">Scaling Plan — 17 FTE by end of V1 build</div>
+        <div class="grid grid-cols-5 gap-2 text-xs" style="color: var(--text-muted);">
+          <div>Backend × 2</div>
+          <div>Web FE × 2</div>
+          <div>Mobile RN × 2</div>
+          <div>Integrations × 2</div>
+          <div>DevOps × 1</div>
+          <div>QA × 1</div>
+          <div>Full-stack (billing) × 1</div>
+          <div>Motion designer × 1</div>
+          <div>Product designer × 1</div>
+          <div>Product manager × 1</div>
+          <div>Domain SME × 1</div>
+          <div>CS/Onboarding × 1</div>
+          <div>CEO + CTO</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SLIDE 11: THE ASK ========== -->
+  <section class="slide" data-slide="11">
+    <div class="slide-content">
+      <div class="chip mb-6">10 / The Ask</div>
+      <h2 class="text-6xl font-bold mb-8">
+        Raising <span class="gradient-text">$3–5M seed</span>
+      </h2>
+      <p class="text-xl mb-10" style="color: var(--text-muted);">18-month runway to Series A triggers: $8M ARR, 75 Brand tenants, repeatable sales motion.</p>
+      <div class="grid grid-cols-2 gap-6 mb-8">
+        <div class="card">
+          <div class="font-semibold mb-4 text-sm" style="color: var(--text-muted);">USE OF FUNDS</div>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div style="width: 10px; height: 10px; border-radius: 999px; background: var(--primary);"></div>
+                <span>Team (17 FTE)</span>
+              </div>
+              <span class="font-semibold">60%</span>
+            </div>
+            <div style="height: 6px; border-radius: 3px; background: var(--border); overflow: hidden;">
+              <div style="width: 60%; height: 100%; background: var(--primary);"></div>
+            </div>
+            <div class="flex items-center justify-between pt-2">
+              <div class="flex items-center gap-3">
+                <div style="width: 10px; height: 10px; border-radius: 999px; background: var(--accent);"></div>
+                <span>Infrastructure (4 regions, Snowflake)</span>
+              </div>
+              <span class="font-semibold">20%</span>
+            </div>
+            <div style="height: 6px; border-radius: 3px; background: var(--border); overflow: hidden;">
+              <div style="width: 20%; height: 100%; background: var(--accent);"></div>
+            </div>
+            <div class="flex items-center justify-between pt-2">
+              <div class="flex items-center gap-3">
+                <div style="width: 10px; height: 10px; border-radius: 999px; background: var(--info);"></div>
+                <span>GTM (sales + marketing)</span>
+              </div>
+              <span class="font-semibold">15%</span>
+            </div>
+            <div style="height: 6px; border-radius: 3px; background: var(--border); overflow: hidden;">
+              <div style="width: 15%; height: 100%; background: var(--info);"></div>
+            </div>
+            <div class="flex items-center justify-between pt-2">
+              <div class="flex items-center gap-3">
+                <div style="width: 10px; height: 10px; border-radius: 999px; background: var(--warning);"></div>
+                <span>Legal + Compliance + Translations</span>
+              </div>
+              <span class="font-semibold">5%</span>
+            </div>
+            <div style="height: 6px; border-radius: 3px; background: var(--border); overflow: hidden;">
+              <div style="width: 5%; height: 100%; background: var(--warning);"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="font-semibold mb-4 text-sm" style="color: var(--text-muted);">MILESTONES TO SERIES A</div>
+          <div class="space-y-3 text-sm">
+            <div class="flex items-start gap-3">
+              <div style="width: 24px; height: 24px; border-radius: 999px; background: var(--primary-glow); color: var(--primary); display: grid; place-items: center; flex-shrink: 0; font-size: 12px; font-weight: 700;">1</div>
+              <div>
+                <div class="font-semibold">V1 Platform Live</div>
+                <div class="text-xs" style="color: var(--text-muted);">All 12 modules shipped, 4 regions, 8 languages</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div style="width: 24px; height: 24px; border-radius: 999px; background: var(--primary-glow); color: var(--primary); display: grid; place-items: center; flex-shrink: 0; font-size: 12px; font-weight: 700;">2</div>
+              <div>
+                <div class="font-semibold">75 Brand Tenants · $8M ARR</div>
+                <div class="text-xs" style="color: var(--text-muted);">Enterprise + SMB mix, 125% NRR</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div style="width: 24px; height: 24px; border-radius: 999px; background: var(--primary-glow); color: var(--primary); display: grid; place-items: center; flex-shrink: 0; font-size: 12px; font-weight: 700;">3</div>
+              <div>
+                <div class="font-semibold">Repeatable Sales Motion</div>
+                <div class="text-xs" style="color: var(--text-muted);">Self-serve for Starter/Growth, named AE for Enterprise</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div style="width: 24px; height: 24px; border-radius: 999px; background: var(--primary-glow); color: var(--primary); display: grid; place-items: center; flex-shrink: 0; font-size: 12px; font-weight: 700;">4</div>
+              <div>
+                <div class="font-semibold">SOC 2 Type I Complete</div>
+                <div class="text-xs" style="color: var(--text-muted);">Enterprise security-ready for mega-brands</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SLIDE 12: CLOSING ========== -->
+  <section class="slide" data-slide="12">
+    <div class="slide-content items-center text-center">
+      <div class="chip chip-primary mb-6">✦ Let's Talk</div>
+      <h2 class="text-6xl font-bold mb-6 leading-tight">
+        The next <span class="gradient-text">decade of apparel</span><br/>
+        will be measured, not guessed.
+      </h2>
+      <p class="text-xl mb-10 max-w-2xl" style="color: var(--text-muted);">
+        Join us in building the quality nervous system for the world's largest consumer industry.
+      </p>
+      <div class="card inline-flex items-center gap-6 px-8 py-5 glow">
+        <div class="text-left">
+          <div class="text-xs" style="color: var(--text-muted);">Founder & CEO</div>
+          <div class="font-bold text-lg">Naveen Kool</div>
+        </div>
+        <div style="width: 1px; height: 40px; background: var(--border);"></div>
+        <div class="text-left">
+          <div class="text-xs" style="color: var(--text-muted);">Email</div>
+          <div class="font-mono text-sm">naveenkool786@gmail.com</div>
+        </div>
+      </div>
+      <div class="mt-10 text-xs" style="color: var(--text-subtle);">
+        🔒 CONFIDENTIAL · Not for distribution without signed NDA · © 2026
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Navigation -->
+<div class="slide-nav">
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)">←</button>
+  <div class="slide-counter"><span id="curSlide">1</span> / <span id="totalSlides">12</span></div>
+  <button class="nav-btn" id="nextBtn" onclick="go(1)">→</button>
+</div>
+
+<div class="watermark">Confidential · Pre-seed · 2026</div>
+
+<script>
+let current = 1;
+const total = document.querySelectorAll('.slide').length;
+document.getElementById('totalSlides').textContent = total;
+
+function go(dir) {
+  const next = current + dir;
+  if (next < 1 || next > total) return;
+  document.querySelector(`.slide[data-slide="${current}"]`).classList.remove('active');
+  current = next;
+  document.querySelector(`.slide[data-slide="${current}"]`).classList.add('active');
+  document.getElementById('curSlide').textContent = current;
+  document.getElementById('prevBtn').disabled = current === 1;
+  document.getElementById('nextBtn').disabled = current === total;
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(1); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(-1); }
+  if (e.key === 'Home') { while (current > 1) go(-1); }
+  if (e.key === 'End') { while (current < total) go(1); }
+});
+document.getElementById('prevBtn').disabled = true;
+
+function toggleTheme() {
+  const curr = document.documentElement.getAttribute('data-theme');
+  const next = curr === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  document.querySelector('.theme-toggle').textContent = next === 'light' ? '🌙' : '☀️';
+}
+// Default to dark theme
+document.documentElement.setAttribute('data-theme', 'dark');
+</script>
+</body>
+</html>
