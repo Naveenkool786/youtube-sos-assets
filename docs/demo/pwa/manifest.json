@@ -1,0 +1,14 @@
+{
+  "name": "FABRIQ - FashionHub",
+  "short_name": "FABRIQ",
+  "description": "Quality Management for Apparel Supply Chains",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F4238",
+  "theme_color": "#0F4238",
+  "icons": [
+    { "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" },
+    { "src": "/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml" }
+  ]
+}
