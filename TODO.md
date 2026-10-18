@@ -69,11 +69,16 @@
 - [ ] 🟢 Target: offer extended to #1 by month 2-3
 - [ ] 🟢 CTO signed + started by month 3-4
 
-### Advisor Board (per blueprint open questions)
-- [ ] 🟡 Draft target advisor profiles (ex-SGS, ex-Nike QA, ex-garment supply chain)
-- [ ] 🟡 Craft advisor pitch (what you want: time, intros, domain insight)
-- [ ] 🟡 Equity grant structure (0.1-0.5% per advisor, 2-yr vest, monthly cliff)
-- [ ] 🟢 Recruit 3-5 advisors by end of Q1 2027
+### Advisor Board (see `docs/hiring/advisor-board-plan.md`)
+- [ ] 🔴 Download FAST template from fi.co/fast; lawyer review ($200-500)
+- [ ] 🔴 Build target list of 50 advisor candidates (10 per type)
+- [ ] 🟡 Send 10 warm intro requests to existing network (incl. 2 friends)
+- [ ] 🟡 Send 20 cold outreaches to Tier A advisor targets
+- [ ] 🟡 Conduct 5-10 first calls, decide YES/NO within 72 hours each
+- [ ] 🟡 Prioritize: 1) Apparel Domain, 2) Vertical SaaS GTM, 3) Technical
+- [ ] 🟢 Target: 5 advisors signed by end of Q1 2027 (3 months)
+- [ ] 🟢 Monthly 1:1s with each signed advisor
+- [ ] 🟢 Monthly advisor update email (1st of each month)
 
 ---
 
@@ -193,10 +198,10 @@ Mark these as DONE as I ship them to you.
 - [x] ~~Customer Discovery Package (interview scripts + 95 targets)~~ ✅
 - [x] ~~Enterprise One-Pager (print-ready)~~ ✅
 - [x] ~~Founder To-Do Tracker (this doc)~~ ✅
+- [x] ~~Advisor Board Recruitment Plan~~ ✅
 
 ### Potential Next Session Deliverables (ask me)
 - [ ] Legal entity setup guide (Delaware vs India vs Singapore comparison)
-- [ ] Advisor board recruitment plan (profiles + templates + equity math)
 - [ ] Investor target list + outreach templates
 - [ ] Prototype v1 (polished screens based on discovery feedback)
 - [ ] Marketing landing page (post-naming)
@@ -288,6 +293,7 @@ Mark DONE as you decide each. These unblock multiple other items.
 | Financial Model (CSV) | `docs/finance/financial-model.csv` | GitHub |
 | Customer Discovery | `docs/discovery/customer-discovery-package.md` | GitHub |
 | Enterprise One-Pager | `docs/sales/enterprise-one-pager.html` | [Artifact](https://claude.ai/artifact/AoYJVz6MV9i6baqYPbyP12) |
+| Advisor Board Plan | `docs/hiring/advisor-board-plan.md` | GitHub |
 | **This To-Do Tracker** | `TODO.md` | GitHub |
 
 ---
