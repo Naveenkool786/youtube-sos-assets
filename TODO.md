@@ -218,6 +218,7 @@ Mark these as DONE as I ship them to you.
 - [x] ~~Advisor Board Recruitment Plan~~ ✅
 - [x] ~~Legal Entity Setup Guide~~ ✅
 - [x] ~~Investor Target List + Outreach Package~~ ✅
+- [x] ~~90-Day Execution Roadmap~~ ✅
 
 ### Potential Next Session Deliverables (ask me)
 - [ ] Investor target list + outreach templates
@@ -314,6 +315,7 @@ Mark DONE as you decide each. These unblock multiple other items.
 | Advisor Board Plan | `docs/hiring/advisor-board-plan.md` | GitHub |
 | Legal Entity Guide | `docs/legal/entity-setup-guide.md` | GitHub |
 | Investor Target List | `docs/fundraising/investor-target-list.md` | GitHub |
+| **90-Day Execution Roadmap** | `docs/execution/90-day-roadmap.md` | GitHub ⭐ Weekly rhythm doc |
 | **This To-Do Tracker** | `TODO.md` | GitHub |
 
 ---

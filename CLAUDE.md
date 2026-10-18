@@ -11,9 +11,10 @@ A **three-party Quality Management System (QMS)** platform connecting:
 - **3rd Party Inspection Companies** (SGS, Bureau Veritas, Intertek)
 
 ## The Master Blueprint & To-Do Tracker
-**👉 ALWAYS READ THESE TWO FILES FIRST** when starting any new session:
+**👉 ALWAYS READ THESE THREE FILES FIRST** when starting any new session:
 1. `TODO.md` — Current founder action items + session status
-2. `docs/qms-blueprint.md` — Master plan (single source of truth)
+2. `docs/execution/90-day-roadmap.md` — Weekly rhythm, workstream time budget
+3. `docs/qms-blueprint.md` — Master plan (single source of truth)
 
 That document is the single source of truth. It contains:
 - All 12 topic decisions (Data Model, Standards, Workflows, Notifications, Mobile, Offline, Analytics, Reporting, Animated Scenes, Integrations, Billing, i18n)
