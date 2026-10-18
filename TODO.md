@@ -112,13 +112,23 @@ See `docs/discovery/customer-discovery-package.md` for the full playbook.
 
 ## ⚖️ Legal & Entity Setup (Next 2 Months)
 
-### Legal Entity (per blueprint open questions)
-- [ ] 🟡 Decide entity structure: Delaware C-Corp vs India PLC vs Singapore
-- [ ] 🟡 Reserve company name once decided
-- [ ] 🟡 File incorporation with chosen jurisdiction
-- [ ] 🟡 Set up business banking (Mercury, Brex for US; HDFC/ICICI for IN)
-- [ ] 🟡 Set up Stripe account for future billing
-- [ ] 🟡 Set up accounting (QuickBooks / Xero / Pilot)
+### Legal Entity (see `docs/legal/entity-setup-guide.md`)
+- [ ] 🔴 Answer the 7 personal questions in Section 20 of entity guide
+- [ ] 🔴 Decide: Delaware+India (recommended) vs Singapore+India vs India-only
+- [ ] 🔴 Budget check — $12-17k year 1 for DE+IN hybrid
+- [ ] 🟡 Engage Delaware startup lawyer (Cooley / GD / Latham free initial)
+- [ ] 🟡 Engage India CA/CS firm (reputable local)
+- [ ] 🟡 Engage cross-border tax advisor ($3k, prevents 7-figure surprises)
+- [ ] 🟡 File Delaware C-Corp via Clerky ($625)
+- [ ] 🟡 **CRITICAL: File 83(b) election within 30 days of stock issuance**
+- [ ] 🟡 Reserve company name once chosen
+- [ ] 🟡 Open Mercury US bank account
+- [ ] 🟡 Open Indian subsidiary + ICICI/HDFC current account
+- [ ] 🟡 Set up Stripe + QuickBooks + Zoho Books (US + India accounting)
+- [ ] 🟡 Draft transfer pricing study with cross-border advisor
+- [ ] 🟡 File DPIIT startup recognition (India)
+- [ ] 🟡 Buy D&O + E&O insurance ($3-5k/yr)
+- [ ] 🟢 Target full operational setup within 90 days of decision
 
 ### Legal Templates & Contracts
 - [ ] 🔴 Mutual NDA template (Y Combinator free; have lawyer review once, $300-500)
@@ -199,9 +209,9 @@ Mark these as DONE as I ship them to you.
 - [x] ~~Enterprise One-Pager (print-ready)~~ ✅
 - [x] ~~Founder To-Do Tracker (this doc)~~ ✅
 - [x] ~~Advisor Board Recruitment Plan~~ ✅
+- [x] ~~Legal Entity Setup Guide~~ ✅
 
 ### Potential Next Session Deliverables (ask me)
-- [ ] Legal entity setup guide (Delaware vs India vs Singapore comparison)
 - [ ] Investor target list + outreach templates
 - [ ] Prototype v1 (polished screens based on discovery feedback)
 - [ ] Marketing landing page (post-naming)
@@ -294,6 +304,7 @@ Mark DONE as you decide each. These unblock multiple other items.
 | Customer Discovery | `docs/discovery/customer-discovery-package.md` | GitHub |
 | Enterprise One-Pager | `docs/sales/enterprise-one-pager.html` | [Artifact](https://claude.ai/artifact/AoYJVz6MV9i6baqYPbyP12) |
 | Advisor Board Plan | `docs/hiring/advisor-board-plan.md` | GitHub |
+| Legal Entity Guide | `docs/legal/entity-setup-guide.md` | GitHub |
 | **This To-Do Tracker** | `TODO.md` | GitHub |
 
 ---
