@@ -1,0 +1,843 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Weftly Demo Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* Design plan — Demo walkthrough: warm cream, deep forest teal, copper accent; editorial doc feel with inline mock screens */
+  :root {
+    --bg: #FAF7F1;
+    --bg-elev: #FFFFFF;
+    --bg-dim: #F2EDE2;
+    --bg-ink: #0F1512;
+    --fg: #171A17;
+    --fg-muted: #5A635C;
+    --accent: #0F4238;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #D8E3DF;
+    --warm: #C67952;
+    --warm-ink: #FFFFFF;
+    --warm-soft: #F3E2D4;
+    --border: #E6DFCF;
+    --divider: #ECE4D1;
+    --radius: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 2px 6px rgba(23,26,23,0.05), 0 10px 30px rgba(23,26,23,0.06);
+    --shadow-lg: 0 2px 6px rgba(23,26,23,0.06), 0 24px 60px rgba(23,26,23,0.1);
+    --font-display: "DM Serif Display", Georgia, serif;
+    --font-body: "Inter", -apple-system, system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0D1512; --bg-elev: #152220; --bg-dim: #0A1210; --bg-ink: #FAF7F1;
+      --fg: #F0ECE2; --fg-muted: #9EA89E;
+      --accent: #4DBEA2; --accent-ink: #0D1512; --accent-soft: #163830;
+      --warm: #E39670; --warm-ink: #0D1512; --warm-soft: #2A1F17;
+      --border: #253330; --divider: #1E2A27;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0D1512; --bg-elev: #152220; --bg-dim: #0A1210; --bg-ink: #FAF7F1;
+    --fg: #F0ECE2; --fg-muted: #9EA89E;
+    --accent: #4DBEA2; --accent-ink: #0D1512; --accent-soft: #163830;
+    --warm: #E39670; --warm-ink: #0D1512; --warm-soft: #2A1F17;
+    --border: #253330; --divider: #1E2A27;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0 0 auto;
+    height: env(safe-area-inset-top, 0px);
+    z-index: 100; background: var(--bg); pointer-events: none;
+  }
+
+  .shell {
+    width: 100%;
+    max-width: 920px;
+    margin: 0 auto;
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+    padding-block: 56px 72px;
+  }
+  @media (max-width: 600px) { .shell { padding-block: 40px 48px; } }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  /* ---- HEADER ---- */
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    color: var(--fg);
+    text-decoration: none;
+    margin-bottom: 24px;
+  }
+  .brand:hover { text-decoration: none; }
+  .brand-mark { width: 28px; height: 28px; color: var(--accent); }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+
+  .lede {
+    font-size: 1.08rem;
+    color: var(--fg-muted);
+    margin: 0 0 32px;
+    max-width: 640px;
+    line-height: 1.55;
+  }
+
+  .meta-row {
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    padding-block: 20px;
+    border-top: 1px solid var(--divider);
+    border-bottom: 1px solid var(--divider);
+    margin-bottom: 48px;
+    font-size: 0.86rem;
+    color: var(--fg-muted);
+  }
+  .meta-item { display: inline-flex; align-items: center; gap: 6px; }
+  .meta-item strong { color: var(--fg); font-weight: 600; }
+
+  /* ---- CTA BAR ---- */
+  .cta-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 56px;
+  }
+  @media (max-width: 600px) { .cta-bar { grid-template-columns: 1fr; } }
+  .cta-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    text-decoration: none;
+    color: var(--fg);
+    transition: border-color .15s ease, transform .15s ease;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .cta-card:hover { border-color: var(--accent); transform: translateY(-2px); text-decoration: none; }
+  .cta-card.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .cta-card.primary:hover { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .cta-icon {
+    width: 42px; height: 42px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+  .cta-card.primary .cta-icon { background: rgba(255,255,255,0.15); color: var(--accent-ink); }
+  .cta-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .cta-text strong { font-weight: 600; font-size: 1rem; }
+  .cta-text span { font-size: 0.84rem; opacity: 0.8; }
+
+  /* ---- STEPS ---- */
+  .steps-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    font-weight: 500;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 3vw, 2.2rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+  h2 em { font-style: italic; color: var(--accent); }
+
+  .step {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 32px;
+    margin-bottom: 56px;
+    align-items: start;
+  }
+  @media (max-width: 720px) {
+    .step { grid-template-columns: 1fr; gap: 16px; }
+  }
+  .step-num-outer {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px);
+  }
+  @media (max-width: 720px) { .step-num-outer { position: static; flex-direction: row; } }
+  .step-num {
+    width: 56px; height: 56px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 400;
+    flex-shrink: 0;
+    box-shadow: var(--shadow);
+  }
+  .step-min {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--fg-muted);
+    letter-spacing: 0.05em;
+    text-align: center;
+  }
+  @media (max-width: 720px) { .step-min { align-self: center; } }
+
+  .step-body h3 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 0 0 10px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .step-task {
+    font-size: 1rem;
+    color: var(--fg);
+    margin: 0 0 20px;
+  }
+  .step-task strong { color: var(--accent); font-weight: 600; }
+
+  .step-blocks { display: flex; flex-direction: column; gap: 14px; }
+  .note {
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+  }
+  .note strong { color: var(--accent); font-weight: 600; }
+  .note.warm { border-left-color: var(--warm); background: var(--warm-soft); }
+  .note.warm strong { color: var(--warm); }
+  .note .label {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .note.warm .label { color: var(--warm); }
+
+  /* ---- MOCK SCREENS ---- */
+  .mock {
+    background: var(--bg-ink);
+    color: #FAF7F1;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: var(--shadow-lg);
+    margin-top: 6px;
+  }
+  :root:not([data-theme="light"]) .mock { background: #0A1210; border-color: var(--border); }
+  :root[data-theme="dark"] .mock { background: #0A1210; border-color: var(--border); }
+  .mock-head {
+    background: #152220;
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  :root:not([data-theme="light"]) .mock-head { background: #152220; }
+  .mock-dots { display: flex; gap: 5px; }
+  .mock-dots span { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.15); }
+  .mock-url {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: #9EA89E;
+    margin-left: 6px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .mock-body { padding: 20px 22px; min-height: 160px; font-size: 0.88rem; }
+
+  .mock-section-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .mock-title {
+    font-family: var(--font-display);
+    font-size: 1rem; font-weight: 400;
+    color: #F0ECE2;
+  }
+  .mock-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(77,190,162,0.15);
+    color: #4DBEA2;
+  }
+  .mock-badge.warm { background: rgba(227,150,112,0.15); color: #E39670; }
+  .mock-badge.bad { background: rgba(217,96,96,0.15); color: #E68080; }
+
+  .mock-row {
+    display: grid;
+    grid-template-columns: 20px 1fr 80px 50px;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.08);
+    align-items: center;
+    font-size: 0.78rem;
+  }
+  .mock-row:last-child { border-bottom: none; }
+  .mock-icon { color: #4DBEA2; font-family: var(--font-mono); font-size: 0.68rem; text-align: center; }
+  .mock-name { color: #F0ECE2; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mock-val { color: #BDC4BE; text-align: right; font-family: var(--font-mono); font-size: 0.72rem; }
+  .mock-pill {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 2px 7px;
+    border-radius: 999px;
+    text-align: center;
+  }
+  .mock-pill.ok { background: rgba(77,190,162,0.18); color: #4DBEA2; }
+  .mock-pill.warn { background: rgba(227,150,112,0.18); color: #E39670; }
+  .mock-pill.bad { background: rgba(217,96,96,0.18); color: #E68080; }
+
+  .mock-kpi {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    margin-top: 14px;
+  }
+  .mock-kpi-card {
+    background: rgba(255,255,255,0.03);
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .mock-kpi-label { font-family: var(--font-mono); font-size: 0.62rem; color: #9EA89E; letter-spacing: 0.05em; }
+  .mock-kpi-val {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: #F0ECE2;
+    line-height: 1;
+    margin-top: 4px;
+  }
+  .mock-kpi-val.ok { color: #4DBEA2; }
+  .mock-kpi-val.warn { color: #E39670; }
+
+  .mock-phone {
+    background: #0A1210;
+    border-radius: 20px;
+    padding: 12px;
+    max-width: 280px;
+    margin: 0 auto;
+    border: 8px solid #152220;
+    box-shadow: var(--shadow-lg);
+  }
+  .mock-phone-head {
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: #BDC4BE;
+    padding: 2px 4px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .mock-defect {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.1);
+    font-size: 0.76rem;
+  }
+  .mock-defect-icon {
+    width: 32px; height: 32px;
+    background: rgba(227,150,112,0.12);
+    border-radius: 8px;
+    color: #E39670;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+  .mock-defect-text { flex: 1; color: #F0ECE2; min-width: 0; }
+  .mock-defect-count {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: #E39670;
+    font-weight: 600;
+  }
+
+  /* ---- MOM TEST SECTION ---- */
+  .mom-section {
+    margin-top: 72px;
+    padding: 40px;
+    background: var(--bg-ink);
+    color: #FAF7F1;
+    border-radius: var(--radius-lg);
+  }
+  @media (max-width: 600px) { .mom-section { padding: 28px 24px; } }
+  .mom-section .eyebrow {
+    background: rgba(255,255,255,0.1);
+    color: #F3E2D4;
+  }
+  .mom-section h2 { color: #FAF7F1; }
+  .mom-section h2 em { color: #F3E2D4; }
+  .mom-section .lede { color: #BDC4BE; }
+  .mom-q-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+  @media (max-width: 720px) { .mom-q-list { grid-template-columns: 1fr; } }
+  .mom-q {
+    padding: 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius);
+  }
+  .mom-q-num {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: #E39670;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .mom-q-text {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.3;
+    margin: 0 0 8px;
+    color: #FAF7F1;
+  }
+  .mom-q-why {
+    font-size: 0.85rem;
+    color: #9EA89E;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* ---- FINAL ---- */
+  .final {
+    margin-top: 56px;
+    padding: 32px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+  .final h3 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+  .final p {
+    color: var(--accent);
+    margin: 0 0 20px;
+    opacity: 0.85;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    cursor: pointer;
+    background: var(--accent);
+    color: var(--accent-ink);
+    transition: transform .12s ease, background .15s ease;
+    border: 1px solid var(--accent);
+  }
+  .btn:hover { transform: translateY(-1px); background: var(--fg); border-color: var(--fg); text-decoration: none; }
+  .btn-arrow::after { content: "→"; transition: transform .15s ease; }
+  .btn-arrow:hover::after { transform: translateX(4px); }
+
+  /* ---- FOOTER ---- */
+  footer {
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    font-size: 0.84rem;
+    color: var(--fg-muted);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .confidential-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--warm);
+    background: var(--warm-soft);
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-weight: 500;
+  }
+</style>
+
+<div class="shell">
+
+  <a class="brand" href="https://claude.ai/artifact/8BqLj8k5cQWe7xWbgRvL5q" target="_blank" rel="noopener">
+    <svg class="brand-mark" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+      <rect x="3" y="3" width="24" height="24" rx="6" fill="currentColor" opacity="0.08"/>
+      <path d="M7 10 L15 6 L23 10 L15 14 Z" fill="currentColor" opacity="0.9"/>
+      <path d="M7 15 L15 11 L23 15 L15 19 Z" fill="currentColor" opacity="0.6"/>
+      <path d="M7 20 L15 16 L23 20 L15 24 Z" fill="currentColor" opacity="0.3"/>
+    </svg>
+    <span>Weftly</span>
+  </a>
+
+  <div class="eyebrow">15-minute demo walkthrough</div>
+  <h1>A guided tour through <em>all three portals.</em></h1>
+  <p class="lede">
+    This guide walks you through the Weftly prototype step by step — what to click, what to look for, what to think about. Takes 15 minutes end to end. No signup. Works on phone or desktop.
+  </p>
+
+  <div class="meta-row">
+    <span class="meta-item">⏱ <strong>15 min</strong> walkthrough</span>
+    <span class="meta-item">👆 <strong>8 steps</strong></span>
+    <span class="meta-item">📱 <strong>Phone or desktop</strong></span>
+    <span class="meta-item">🔒 <strong>No account needed</strong></span>
+  </div>
+
+  <!-- CTA BAR -->
+  <div class="cta-bar">
+    <a class="cta-card primary" href="https://claude.ai/artifact/Xa7viYB9VjeSGuynzpD9yx" target="_blank" rel="noopener">
+      <div class="cta-icon">▶</div>
+      <div class="cta-text"><strong>Open the live demo</strong><span>Follow along in a second tab</span></div>
+    </a>
+    <a class="cta-card" href="https://claude.ai/artifact/3aB6poxu2R9KKkwDXQdQG9" target="_blank" rel="noopener">
+      <div class="cta-icon">✎</div>
+      <div class="cta-text"><strong>Feedback form</strong><span>Share your thoughts in 5 min</span></div>
+    </a>
+  </div>
+
+  <div class="steps-header">
+    <div>
+      <div class="section-eyebrow">The walkthrough</div>
+      <h2>Pick your path — <em>Brand first</em>, then switch roles.</h2>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-num-outer">
+      <div class="step-num">1</div>
+      <div class="step-min">1 min</div>
+    </div>
+    <div class="step-body">
+      <h3>Open the demo and sign in as a Brand buyer</h3>
+      <p class="step-task">Click <strong>"Brand buyer"</strong> on the login screen. You'll land on the Brand dashboard.</p>
+      <div class="step-blocks">
+        <div class="note">
+          <span class="label">What to look for</span>
+          A clean overview of your Purchase Orders (POs), live Cost of Quality numbers, and factory performance across your supplier base.
+        </div>
+        <div class="mock">
+          <div class="mock-head">
+            <div class="mock-dots"><span></span><span></span><span></span></div>
+            <div class="mock-url">weftly · Brand Portal · Dashboard</div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-section-head">
+              <div class="mock-title">Welcome back, Priya</div>
+              <div class="mock-badge">12 ACTIVE POs</div>
+            </div>
+            <div class="mock-kpi">
+              <div class="mock-kpi-card"><div class="mock-kpi-label">COQ THIS MONTH</div><div class="mock-kpi-val ok">$247k</div></div>
+              <div class="mock-kpi-card"><div class="mock-kpi-label">OPEN NCRs</div><div class="mock-kpi-val warn">3</div></div>
+              <div class="mock-kpi-card"><div class="mock-kpi-label">PASS RATE</div><div class="mock-kpi-val ok">94%</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-num-outer">
+      <div class="step-num">2</div>
+      <div class="step-min">2 min</div>
+    </div>
+    <div class="step-body">
+      <h3>Create a new Purchase Order</h3>
+      <p class="step-task">Click <strong>"New PO"</strong>. Fill in style, factory, quantity, inspector. Submit.</p>
+      <div class="step-blocks">
+        <div class="note">
+          <span class="label">What to look for</span>
+          How many clicks to create a PO. Can you understand each field without training? Does the inspection schedule auto-generate correctly based on quantity?
+        </div>
+        <div class="mock">
+          <div class="mock-head">
+            <div class="mock-dots"><span></span><span></span><span></span></div>
+            <div class="mock-url">weftly · New Purchase Order</div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-section-head"><div class="mock-title">Create Purchase Order</div><div class="mock-badge warm">DRAFT</div></div>
+            <div class="mock-row"><span class="mock-icon">◇</span><span class="mock-name">Style: SS26-SH-001 Chambray Shirt</span><span class="mock-val">—</span><span></span></div>
+            <div class="mock-row"><span class="mock-icon">▲</span><span class="mock-name">Factory: Dhaka Textiles Ltd</span><span class="mock-val">BD</span><span></span></div>
+            <div class="mock-row"><span class="mock-icon">●</span><span class="mock-name">Inspector: Bureau Veritas</span><span class="mock-val">3P</span><span></span></div>
+            <div class="mock-row"><span class="mock-icon">#</span><span class="mock-name">Quantity: 12,000 pcs</span><span class="mock-val">AQL II</span><span class="mock-pill ok">OK</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-num-outer">
+      <div class="step-num">3</div>
+      <div class="step-min">1 min</div>
+    </div>
+    <div class="step-body">
+      <h3>Switch to Factory view</h3>
+      <p class="step-task">Log out. Log back in as <strong>"Factory QC"</strong>. You'll see the same PO — but from the factory's side.</p>
+      <div class="step-blocks">
+        <div class="note">
+          <span class="label">What to look for</span>
+          The factory sees exactly the PO details they need to produce against — no more, no less. Notice the "awaiting inspection" status at the top.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-num-outer">
+      <div class="step-num">4</div>
+      <div class="step-min">2 min</div>
+    </div>
+    <div class="step-body">
+      <h3>Log an in-line defect from mobile</h3>
+      <p class="step-task">On the Factory dashboard, click <strong>"Log defect"</strong>. Pick a defect type from the pictorial library. Tap submit.</p>
+      <div class="step-blocks">
+        <div class="note warm">
+          <span class="label">Why this matters</span>
+          Factory line workers often aren't fluent in English. The pictorial defect library + 3-tap workflow is designed for sub-5-second entry at the line, by anyone, on any device.
+        </div>
+        <div class="mock">
+          <div class="mock-head">
+            <div class="mock-dots"><span></span><span></span><span></span></div>
+            <div class="mock-url">weftly · Factory · Mobile Kiosk</div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-phone">
+              <div class="mock-phone-head"><span>9:42 AM</span><span>●●● 100%</span></div>
+              <div style="padding: 10px 2px 6px;">
+                <div style="font-family: var(--font-display); font-size: 0.95rem; color: #F0ECE2; margin-bottom: 4px;">Log a defect</div>
+                <div style="font-family: var(--font-mono); font-size: 0.65rem; color: #9EA89E; letter-spacing: 0.05em;">LINE 3 · OPERATOR 1127</div>
+              </div>
+              <div class="mock-defect"><div class="mock-defect-icon">◇</div><div class="mock-defect-text">Stitching uneven</div><div class="mock-defect-count">3</div></div>
+              <div class="mock-defect"><div class="mock-defect-icon">▲</div><div class="mock-defect-text">Fabric hole</div><div class="mock-defect-count">1</div></div>
+              <div class="mock-defect"><div class="mock-defect-icon">⬢</div><div class="mock-defect-text">Oil stain</div><div class="mock-defect-count">2</div></div>
+              <div class="mock-defect"><div class="mock-defect-icon">◉</div><div class="mock-defect-text">Button loose</div><div class="mock-defect-count">0</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-num-outer">
+      <div class="step-num">5</div>
+      <div class="step-min">3 min</div>
+    </div>
+    <div class="step-body">
+      <h3>Switch to Inspector view · run an AQL inspection</h3>
+      <p class="step-task">Log in as <strong>"3P Inspector"</strong>. Open the assigned inspection. Pull your AQL sample. Log 2-3 defects with the type library.</p>
+      <div class="step-blocks">
+        <div class="note">
+          <span class="label">What to look for</span>
+          Auto-generated AQL sampling plan (ISO 2859-1 Level II). Major/minor/critical thresholds. Photo attachment per defect. One-tap digital signature when done.
+        </div>
+        <div class="mock">
+          <div class="mock-head">
+            <div class="mock-dots"><span></span><span></span><span></span></div>
+            <div class="mock-url">weftly · Inspection #INS-2611-DT-001</div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-section-head"><div class="mock-title">AQL Sampling · Level II</div><div class="mock-badge warm">IN PROGRESS</div></div>
+            <div class="mock-row"><span class="mock-icon">S</span><span class="mock-name">Sample size (per AQL)</span><span class="mock-val">200 / 12000</span><span class="mock-pill ok">OK</span></div>
+            <div class="mock-row"><span class="mock-icon">△</span><span class="mock-name">Major defects (allowed 10)</span><span class="mock-val">4</span><span class="mock-pill ok">PASS</span></div>
+            <div class="mock-row"><span class="mock-icon">△</span><span class="mock-name">Minor defects (allowed 14)</span><span class="mock-val">9</span><span class="mock-pill ok">PASS</span></div>
+            <div class="mock-row"><span class="mock-icon">▲</span><span class="mock-name">Critical defects (allowed 0)</span><span class="mock-val">0</span><span class="mock-pill ok">PASS</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-num-outer">
+      <div class="step-num">6</div>
+      <div class="step-min">2 min</div>
+    </div>
+    <div class="step-body">
+      <h3>Back to the Brand portal · see the live CoQ dashboard update</h3>
+      <p class="step-task">Switch back to <strong>Brand buyer</strong>. Watch the Cost of Quality dashboard update with the defects you just logged.</p>
+      <div class="step-blocks">
+        <div class="note">
+          <span class="label">The reveal</span>
+          Everything you've entered flows together. The brand sees aggregate pass rates per factory, defect categories across the season, Cost of Quality tracked in real dollars. No spreadsheet lag. No missing data.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-num-outer">
+      <div class="step-num">7</div>
+      <div class="step-min">2 min</div>
+    </div>
+    <div class="step-body">
+      <h3>Raise an NCR — see the workflow in action</h3>
+      <p class="step-task">On the Brand dashboard, click a failing PO. Click <strong>"Raise NCR"</strong>. Watch the state machine route it to the factory.</p>
+      <div class="step-blocks">
+        <div class="note warm">
+          <span class="label">The state machine</span>
+          Issued → Assigned → Root cause → Corrective action → Verified → Closed. Every state logged, every actor timestamped. No more lost emails or forgotten follow-ups.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step">
+    <div class="step-num-outer">
+      <div class="step-num">8</div>
+      <div class="step-min">2 min</div>
+    </div>
+    <div class="step-body">
+      <h3>Try the AI assistant</h3>
+      <p class="step-task">Click the <strong>floating purple AI button</strong> (bottom right). Ask: "Show me our highest defect rates this month." Or: "Which factories had critical issues?"</p>
+      <div class="step-blocks">
+        <div class="note">
+          <span class="label">What to look for</span>
+          Natural-language querying against your real data. No report builder, no SQL, no filter chains. Just ask what you want to know.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOM TEST SECTION -->
+  <section class="mom-section">
+    <div class="eyebrow">Interview the demo-taker</div>
+    <h2>If you're showing this to someone else — <em>ask these questions.</em></h2>
+    <p class="lede">
+      These are the Mom Test questions. They surface real pain points instead of polite agreement. Each one asks about past behavior, not hypothetical future actions.
+    </p>
+
+    <div class="mom-q-list">
+      <div class="mom-q">
+        <div class="mom-q-num">Q1</div>
+        <h4 class="mom-q-text">"How do you handle quality issues today?"</h4>
+        <p class="mom-q-why">Reveals the current workflow and tools. Listen for spreadsheets, WhatsApp, email, specific software names.</p>
+      </div>
+      <div class="mom-q">
+        <div class="mom-q-num">Q2</div>
+        <h4 class="mom-q-text">"Tell me about the last time quality went wrong."</h4>
+        <p class="mom-q-why">Specific story. Specific pain. Numbers. "Last month we had to air-freight 10,000 units because…" is gold.</p>
+      </div>
+      <div class="mom-q">
+        <div class="mom-q-num">Q3</div>
+        <h4 class="mom-q-text">"What's the hardest part of your quality work?"</h4>
+        <p class="mom-q-why">Lets them name their own biggest pain, in their own words. Builds the vocabulary we use in sales calls.</p>
+      </div>
+      <div class="mom-q">
+        <div class="mom-q-num">Q4</div>
+        <h4 class="mom-q-text">"If this worked exactly as shown — would it replace what you use today?"</h4>
+        <p class="mom-q-why">Direct test. Watch for hesitation. "Only if…" tells you the real barrier.</p>
+      </div>
+      <div class="mom-q">
+        <div class="mom-q-num">Q5</div>
+        <h4 class="mom-q-text">"Who else should we talk to?"</h4>
+        <p class="mom-q-why">Great referral prompt. Even negative demo responses lead to great introductions.</p>
+      </div>
+      <div class="mom-q">
+        <div class="mom-q-num">Q6</div>
+        <h4 class="mom-q-text">"What would you expect to pay for something like this?"</h4>
+        <p class="mom-q-why">Specific numbers reveal perceived value. "A few hundred a month" vs "it's priceless" means very different things.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <div class="final">
+    <h3>Done? Share your feedback.</h3>
+    <p>5 minutes. 10 questions. Goes straight to the founder.</p>
+    <a class="btn btn-arrow" href="https://claude.ai/artifact/3aB6poxu2R9KKkwDXQdQG9" target="_blank" rel="noopener">Open feedback form</a>
+  </div>
+
+  <footer>
+    <div>© 2026 Weftly — working name · Naveen Kool, Founder</div>
+    <div><span class="confidential-tag">● Confidential</span></div>
+  </footer>
+
+</div>
+
+<script>
+  (function(){
+    try {
+      const stored = localStorage.getItem('weftly-theme');
+      if (stored === 'dark' || stored === 'light') {
+        document.documentElement.setAttribute('data-theme', stored);
+      }
+    } catch(_) {}
+  })();
+</script>

@@ -183,7 +183,13 @@ See `docs/discovery/customer-discovery-package.md` for the full playbook.
 - [x] ~~Clickable prototype~~ ✅
 - [x] ~~Pitch deck v1~~ ✅
 - [x] ~~Enterprise one-pager~~ ✅
-- [ ] 🟡 Marketing landing page (once named + domain owned)
+- [x] ~~Product demo website (Weftly branded)~~ ✅
+- [x] ~~Feedback form (interactive, email-based)~~ ✅
+- [x] ~~Demo guide (15-min walkthrough)~~ ✅
+- [x] ~~Prototype v2 Supabase deployment package~~ ✅
+- [x] ~~Demo kit (email templates + sharing timeline)~~ ✅
+- [ ] 🔴 **ACTIVATE SHARING** — Open each artifact → Share menu → "Anyone with link"
+- [ ] 🟡 Buy custom domain `weftly.app` or similar (post-naming decision)
 - [ ] 🟡 Waitlist signup for interested Brands/Factories/3Ps
 - [ ] 🟢 LinkedIn Company Page (post-naming)
 - [ ] 🟢 Content calendar (industry insights, QMS best practices)
@@ -222,15 +228,18 @@ Mark these as DONE as I ship them to you.
 - [x] ~~Prototype v1 (working, persistent, AI-powered)~~ ✅
 - [x] ~~AI Coding Playbook~~ ✅
 - [x] ~~Term Sheet Negotiation Deep-Dive~~ ✅
+- [x] ~~Product Demo Website (Weftly branded)~~ ✅
+- [x] ~~Interactive Feedback Form (artifact)~~ ✅
+- [x] ~~Demo Guide (15-min walkthrough + Mom Test)~~ ✅
+- [x] ~~Prototype v2 Supabase/Next.js code package (deployment-ready)~~ ✅
+- [x] ~~Demo Kit (email templates + sharing timeline)~~ ✅
 
 ### Potential Next Session Deliverables (ask me)
-- [ ] Investor target list + outreach templates
-- [ ] Prototype v1 (polished screens based on discovery feedback)
-- [ ] Marketing landing page (post-naming)
-- [ ] 90-day execution roadmap (weekly cadence)
 - [ ] Monthly founder operating cadence (what to track, when, how)
-- [ ] Term sheet negotiation guide (for seed round)
 - [ ] Hiring JDs for first 3 engineers (post-CTO)
+- [ ] First engineer onboarding guide (post-hire)
+- [ ] PR / press launch plan (post-launch)
+- [ ] Quarterly board meeting template (post-funding)
 
 ---
 
@@ -322,6 +331,11 @@ Mark DONE as you decide each. These unblock multiple other items.
 | **90-Day Execution Roadmap** | `docs/execution/90-day-roadmap.md` | GitHub ⭐ Weekly rhythm doc |
 | **AI Coding Playbook** | `docs/execution/ai-coding-playbook.md` | GitHub ⭐ Build-it-yourself guide |
 | Prototype v1 (with AI) | `docs/prototype/qms-prototype-v1.html` | [Artifact](https://claude.ai/artifact/Xa7viYB9VjeSGuynzpD9yx) |
+| **Product Demo Website** | `docs/marketing/weftly-demo-site.html` | [Artifact](https://claude.ai/artifact/8BqLj8k5cQWe7xWbgRvL5q) ⭐ Share FIRST with everyone |
+| **Demo Guide (walkthrough)** | `docs/demo/weftly-demo-guide.html` | [Artifact](https://claude.ai/artifact/9RDdQG2VA2fpTSKvkZxoue) ⭐ Pre-demo prep |
+| **Feedback Form** | `docs/demo/weftly-feedback-form.html` | [Artifact](https://claude.ai/artifact/3aB6poxu2R9KKkwDXQdQG9) ⭐ Post-demo |
+| **Demo Kit (email templates)** | `docs/demo/demo-kit-package.md` | GitHub ⭐ How-to for sharing |
+| **Prototype v2 (Supabase)** | `docs/prototype-v2/` | GitHub ⭐ Deployment-ready code |
 | **This To-Do Tracker** | `TODO.md` | GitHub |
 
 ---
@@ -338,4 +352,4 @@ I'll re-save this file each time it changes and commit it to the repo so you hav
 
 ---
 
-*Last update: 2026-10-18 — session ending status: 10 deliverables shipped, prototype validated by 2 users, next focus = name decision + discovery sprint + CTO search*
+*Last update: 2026-10-18 — session ending status: 23 deliverables shipped, demo kit complete, next focus = ACTIVATE SHARING on all artifacts + name decision + discovery sprint + CTO search*

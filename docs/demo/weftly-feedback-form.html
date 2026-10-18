@@ -1,0 +1,895 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Weftly Feedback</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* Design plan — Feedback form for apparel QMS demo: warm cream, deep forest teal, copper accent, serif display + grotesque body, Typeform-adjacent flow */
+  :root {
+    --bg: #FAF7F1;
+    --bg-elev: #FFFFFF;
+    --bg-dim: #F2EDE2;
+    --fg: #171A17;
+    --fg-muted: #5A635C;
+    --accent: #0F4238;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #D8E3DF;
+    --warm: #C67952;
+    --warm-ink: #FFFFFF;
+    --warm-soft: #F3E2D4;
+    --border: #E6DFCF;
+    --divider: #ECE4D1;
+    --input-bg: #FFFFFF;
+    --input-border: #DED3BC;
+    --radius: 10px;
+    --radius-lg: 18px;
+    --shadow: 0 2px 6px rgba(23,26,23,0.04), 0 10px 30px rgba(23,26,23,0.06);
+    --font-display: "DM Serif Display", Georgia, serif;
+    --font-body: "Inter", -apple-system, system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0D1512;
+      --bg-elev: #152220;
+      --bg-dim: #0A1210;
+      --fg: #F0ECE2;
+      --fg-muted: #9EA89E;
+      --accent: #4DBEA2;
+      --accent-ink: #0D1512;
+      --accent-soft: #163830;
+      --warm: #E39670;
+      --warm-ink: #0D1512;
+      --warm-soft: #2A1F17;
+      --border: #253330;
+      --divider: #1E2A27;
+      --input-bg: #0A1210;
+      --input-border: #2D3D38;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0D1512; --bg-elev: #152220; --bg-dim: #0A1210;
+    --fg: #F0ECE2; --fg-muted: #9EA89E;
+    --accent: #4DBEA2; --accent-ink: #0D1512; --accent-soft: #163830;
+    --warm: #E39670; --warm-ink: #0D1512; --warm-soft: #2A1F17;
+    --border: #253330; --divider: #1E2A27;
+    --input-bg: #0A1210; --input-border: #2D3D38;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0 0 auto;
+    height: env(safe-area-inset-top, 0px);
+    z-index: 100; background: var(--bg); pointer-events: none;
+  }
+
+  .shell {
+    width: 100%; max-width: 760px; margin: 0 auto;
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+    padding-block: 48px 64px;
+    flex: 1;
+  }
+  @media (max-width: 500px) { .shell { padding-block: 32px 48px; } }
+
+  /* ---- HEADER ---- */
+  header.form-head {
+    margin-bottom: 40px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: var(--fg);
+    text-decoration: none;
+    margin-bottom: 24px;
+  }
+  .brand-mark {
+    width: 28px; height: 28px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  .lede {
+    font-size: 1.05rem;
+    color: var(--fg-muted);
+    margin: 0 0 24px;
+    max-width: 580px;
+    line-height: 1.55;
+  }
+
+  /* ---- PROGRESS ---- */
+  .progress-wrap {
+    margin-bottom: 32px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-dim);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width .3s ease;
+  }
+  .progress-label {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--fg-muted);
+    letter-spacing: 0.05em;
+    min-width: 50px;
+    text-align: right;
+  }
+
+  /* ---- SECTIONS ---- */
+  .section {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  @media (max-width: 500px) { .section { padding: 20px; } }
+  .section-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+  }
+  .section-num {
+    width: 32px; height: 32px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 400;
+    margin: 0;
+    line-height: 1.2;
+    color: var(--fg);
+  }
+
+  /* ---- QUESTIONS ---- */
+  .q { margin-bottom: 22px; }
+  .q:last-child { margin-bottom: 0; }
+  .q-label {
+    display: block;
+    font-weight: 500;
+    font-size: 0.98rem;
+    margin-bottom: 10px;
+    color: var(--fg);
+  }
+  .q-label .req { color: var(--warm); margin-left: 4px; }
+  .q-hint {
+    display: block;
+    font-size: 0.84rem;
+    color: var(--fg-muted);
+    margin-top: -4px;
+    margin-bottom: 10px;
+  }
+
+  input[type="text"], input[type="email"], textarea, select {
+    width: 100%;
+    padding: 11px 14px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--fg);
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius);
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  textarea {
+    min-height: 90px;
+    resize: vertical;
+    line-height: 1.5;
+    font-family: var(--font-body);
+  }
+
+  /* ---- RADIO / CHECKBOX GROUPS ---- */
+  .choices {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .choice {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    background: var(--input-bg);
+    transition: border-color .12s ease, background .12s ease;
+    font-size: 0.94rem;
+  }
+  .choice:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .choice input {
+    margin: 2px 0 0 0;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .choice input:checked ~ .choice-content { font-weight: 500; }
+  .choice:has(input:checked) {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .choice-content { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .choice-sub {
+    font-size: 0.82rem;
+    color: var(--fg-muted);
+    font-weight: 400;
+  }
+
+  /* ---- SLIDER ---- */
+  .slider-wrap {
+    display: flex; align-items: center; gap: 16px;
+    padding: 8px 2px 0;
+  }
+  .slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: var(--bg-dim);
+    border-radius: 999px;
+    outline: none;
+  }
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 3px solid var(--bg-elev);
+    box-shadow: 0 2px 6px rgba(23,26,23,0.15);
+  }
+  .slider::-moz-range-thumb {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 3px solid var(--bg-elev);
+  }
+  .slider-value {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--accent);
+    min-width: 48px;
+    text-align: center;
+    line-height: 1;
+  }
+  .slider-markers {
+    display: flex; justify-content: space-between;
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--fg-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ---- SUBMIT ---- */
+  .actions {
+    margin-top: 32px;
+    padding: 28px;
+    background: var(--bg-dim);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+  .actions h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 0 0 10px;
+    line-height: 1.2;
+  }
+  .actions p {
+    color: var(--fg-muted);
+    margin: 0 0 20px;
+    font-size: 0.95rem;
+  }
+  .btn-row {
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 24px;
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform .12s ease, background .15s ease, color .15s ease, border-color .15s ease;
+    white-space: nowrap;
+    color: inherit;
+  }
+  .btn:hover:not(:disabled) { transform: translateY(-1px); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover:not(:disabled) { background: var(--fg); color: var(--bg); }
+  .btn-ghost { background: transparent; color: var(--fg); border-color: var(--border); }
+  .btn-ghost:hover:not(:disabled) { background: var(--bg-elev); border-color: var(--fg-muted); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ---- THANK YOU ---- */
+  .thanks {
+    text-align: center;
+    padding: 56px 24px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+  }
+  .thanks .check-circle {
+    width: 64px; height: 64px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 24px;
+  }
+  .thanks h2 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 400;
+    margin: 0 0 12px;
+    line-height: 1.1;
+  }
+  .thanks h2 em { font-style: italic; color: var(--accent); }
+  .thanks p {
+    color: var(--fg-muted);
+    margin: 0 0 24px;
+    font-size: 1.02rem;
+    max-width: 440px; margin-left: auto; margin-right: auto;
+  }
+  .summary-box {
+    text-align: left;
+    background: var(--bg-dim);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin: 20px 0;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--fg);
+    line-height: 1.6;
+    max-height: 280px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* ---- ERROR ---- */
+  .err {
+    color: var(--warm);
+    font-size: 0.82rem;
+    margin-top: 6px;
+  }
+  .field-invalid input, .field-invalid textarea, .field-invalid select {
+    border-color: var(--warm);
+  }
+
+  /* ---- FOOTER ---- */
+  footer {
+    text-align: center;
+    padding-block: 24px;
+    color: var(--fg-muted);
+    font-size: 0.82rem;
+    border-top: 1px solid var(--border);
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+  }
+  .confidential-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--warm);
+    background: var(--warm-soft);
+    padding: 3px 8px;
+    border-radius: 999px;
+    margin-left: 10px;
+    font-weight: 500;
+  }
+
+  /* ---- UTIL ---- */
+  [hidden] { display: none !important; }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+  .toast {
+    position: fixed;
+    left: 50%; bottom: 24px;
+    transform: translateX(-50%);
+    background: var(--fg);
+    color: var(--bg);
+    padding: 12px 20px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+</style>
+
+<div class="shell">
+  <header class="form-head">
+    <a class="brand" href="https://claude.ai/artifact/8BqLj8k5cQWe7xWbgRvL5q" target="_blank" rel="noopener">
+      <svg class="brand-mark" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+        <rect x="3" y="3" width="24" height="24" rx="6" fill="currentColor" opacity="0.08"/>
+        <path d="M7 10 L15 6 L23 10 L15 14 Z" fill="currentColor" opacity="0.9"/>
+        <path d="M7 15 L15 11 L23 15 L15 19 Z" fill="currentColor" opacity="0.6"/>
+        <path d="M7 20 L15 16 L23 20 L15 24 Z" fill="currentColor" opacity="0.3"/>
+      </svg>
+      <span>Weftly</span>
+    </a>
+    <div class="eyebrow">Pilot feedback · ~5 minutes</div>
+    <h1>You've tried the demo. <em>What did we miss?</em></h1>
+    <p class="lede">
+      Your honest feedback shapes what we build next. 10 questions, mostly tap-to-answer. Your response goes straight to the founder — nothing public, nothing shared.
+    </p>
+  </header>
+
+  <div class="progress-wrap" aria-hidden="true">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-label" id="progressLabel">0%</div>
+  </div>
+
+  <form id="feedbackForm">
+
+    <!-- SECTION 1: Experience -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">1</span>
+        <h2 class="section-title">Your demo experience</h2>
+      </div>
+
+      <div class="q" data-q>
+        <label class="q-label">Which role did you try FIRST in the demo?<span class="req">*</span></label>
+        <div class="choices" role="radiogroup" aria-label="First role tried">
+          <label class="choice"><input type="radio" name="first_role" value="brand" required><div class="choice-content"><strong>Brand buyer</strong><span class="choice-sub">Create POs, see dashboards</span></div></label>
+          <label class="choice"><input type="radio" name="first_role" value="factory"><div class="choice-content"><strong>Factory QC</strong><span class="choice-sub">Log defects, respond to NCRs</span></div></label>
+          <label class="choice"><input type="radio" name="first_role" value="inspector"><div class="choice-content"><strong>3P inspector</strong><span class="choice-sub">Sample, inspect, sign reports</span></div></label>
+          <label class="choice"><input type="radio" name="first_role" value="3p_admin"><div class="choice-content"><strong>3P admin</strong><span class="choice-sub">Schedule inspections, manage roster</span></div></label>
+        </div>
+      </div>
+
+      <div class="q" data-q>
+        <label class="q-label" for="score">How intuitive did the flow feel?<span class="req">*</span></label>
+        <span class="q-hint">1 = totally confusing. 10 = perfectly clear.</span>
+        <div class="slider-wrap">
+          <input type="range" id="score" name="score" min="1" max="10" value="7" class="slider" required>
+          <div class="slider-value" id="scoreValue">7</div>
+        </div>
+        <div class="slider-markers"><span>1 CONFUSING</span><span>5 OK</span><span>10 PERFECT</span></div>
+      </div>
+
+      <div class="q" data-q>
+        <label class="q-label" for="best_feature">Which feature was MOST useful?</label>
+        <span class="q-hint">One sentence is enough. E.g., "the live CoQ dashboard" or "the mobile defect logging"</span>
+        <textarea id="best_feature" name="best_feature" placeholder="The feature that stood out to me was…"></textarea>
+      </div>
+
+      <div class="q" data-q>
+        <label class="q-label" for="confusing">What was most CONFUSING or needs improvement?</label>
+        <span class="q-hint">Be brutal. We can only fix what we hear.</span>
+        <textarea id="confusing" name="confusing" placeholder="What tripped me up was…"></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Context -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">2</span>
+        <h2 class="section-title">Your work · your context</h2>
+      </div>
+
+      <div class="q" data-q>
+        <label class="q-label">Your role in the apparel supply chain<span class="req">*</span></label>
+        <div class="choices" role="radiogroup" aria-label="Your role">
+          <label class="choice"><input type="radio" name="your_role" value="brand_qa" required><div class="choice-content"><strong>Brand — QA / sourcing / compliance</strong></div></label>
+          <label class="choice"><input type="radio" name="your_role" value="brand_merch"><div class="choice-content"><strong>Brand — merchandising / design</strong></div></label>
+          <label class="choice"><input type="radio" name="your_role" value="factory_qc"><div class="choice-content"><strong>Factory — QC head / line supervisor</strong></div></label>
+          <label class="choice"><input type="radio" name="your_role" value="factory_mgmt"><div class="choice-content"><strong>Factory — operations / general management</strong></div></label>
+          <label class="choice"><input type="radio" name="your_role" value="inspector"><div class="choice-content"><strong>3P inspection firm — inspector / manager</strong></div></label>
+          <label class="choice"><input type="radio" name="your_role" value="investor"><div class="choice-content"><strong>Investor / advisor</strong></div></label>
+          <label class="choice"><input type="radio" name="your_role" value="friend"><div class="choice-content"><strong>Friend of Naveen · student · other</strong></div></label>
+        </div>
+      </div>
+
+      <div class="q" data-q>
+        <label class="q-label" for="biggest_problem">The biggest quality problem you (or someone you know) faces today?</label>
+        <span class="q-hint">Think about a real moment, not a generic complaint. "Last week, we had to…"</span>
+        <textarea id="biggest_problem" name="biggest_problem" placeholder="The hardest part of apparel quality work right now is…"></textarea>
+      </div>
+
+      <div class="q" data-q>
+        <label class="q-label" for="handle_today">How do you (or people you know) handle this today?</label>
+        <span class="q-hint">Spreadsheets, WhatsApp, email, specific software — tell us the real stack.</span>
+        <textarea id="handle_today" name="handle_today" placeholder="Today we use…"></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 3: What you need -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">3</span>
+        <h2 class="section-title">What you need next</h2>
+      </div>
+
+      <div class="q" data-q>
+        <label class="q-label">Would your company (or you personally) use something like this?<span class="req">*</span></label>
+        <div class="choices" role="radiogroup" aria-label="Would use">
+          <label class="choice"><input type="radio" name="would_use" value="yes_now" required><div class="choice-content"><strong>Yes — needed yesterday</strong><span class="choice-sub">I'd pay for this today if it worked</span></div></label>
+          <label class="choice"><input type="radio" name="would_use" value="yes_pilot"><div class="choice-content"><strong>Yes — if we could pilot it</strong><span class="choice-sub">Interested in co-building with you</span></div></label>
+          <label class="choice"><input type="radio" name="would_use" value="maybe"><div class="choice-content"><strong>Maybe — depends</strong><span class="choice-sub">Would need to see more / solve X first</span></div></label>
+          <label class="choice"><input type="radio" name="would_use" value="no"><div class="choice-content"><strong>No — not for us</strong><span class="choice-sub">We solve this differently / don't need it</span></div></label>
+          <label class="choice"><input type="radio" name="would_use" value="na"><div class="choice-content"><strong>Not applicable — not in apparel</strong></div></label>
+        </div>
+      </div>
+
+      <div class="q" data-q>
+        <label class="q-label" for="price">What would be a fair monthly price per brand user?</label>
+        <span class="q-hint">Rough range is fine. E.g., "$200-400 / user / mo" or "we spend ~$5k/mo on quality tools today".</span>
+        <input type="text" id="price" name="price" placeholder="e.g., $200-400 per user per month, or $20k annual">
+      </div>
+
+      <div class="q" data-q>
+        <label class="q-label" for="intro">Who else should we show this to? (introductions welcome!)</label>
+        <span class="q-hint">Name, company, their role. We'll mention you referred us.</span>
+        <textarea id="intro" name="intro" placeholder="You should talk to…"></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Follow-up -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">4</span>
+        <h2 class="section-title">Follow-up (optional)</h2>
+      </div>
+
+      <div class="q" data-q>
+        <label class="q-label" for="name">Your name</label>
+        <input type="text" id="name" name="name" placeholder="How should the founder address you?">
+      </div>
+
+      <div class="q" data-q>
+        <label class="q-label" for="email">Email · if we can follow up</label>
+        <span class="q-hint">Optional. Only the founder sees it, never shared.</span>
+        <input type="email" id="email" name="email" placeholder="you@company.com">
+      </div>
+
+      <div class="q" data-q>
+        <label class="q-label" for="other">Anything else?</label>
+        <textarea id="other" name="other" placeholder="One more thing…"></textarea>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="actions">
+      <h2>Ready to send?</h2>
+      <p>Your answers are packaged into one message to the founder. No account needed.</p>
+      <div class="btn-row">
+        <button type="button" class="btn btn-primary" id="submitEmail">Email the response</button>
+        <button type="button" class="btn btn-ghost" id="submitCopy">Copy to clipboard</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- THANK YOU -->
+  <div class="thanks" id="thanks" hidden>
+    <div class="check-circle" aria-hidden="true">✓</div>
+    <h2>Thank you. <em>Really.</em></h2>
+    <p>Your response will shape what we build next. If you shared your email, expect to hear from Naveen within 48 hours.</p>
+    <div class="summary-box" id="summaryBox"></div>
+    <div class="btn-row">
+      <button type="button" class="btn btn-ghost" id="copyAgain">Copy response</button>
+      <a class="btn btn-primary" href="https://claude.ai/artifact/8BqLj8k5cQWe7xWbgRvL5q" target="_blank" rel="noopener">Back to Weftly</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2026 Weftly — working name · Naveen Kool, Founder
+  <span class="confidential-tag">● Confidential</span>
+</footer>
+
+<div class="toast" id="toast" aria-live="polite" role="status"></div>
+
+<script>
+  (function(){
+    try {
+      const stored = localStorage.getItem('weftly-theme');
+      if (stored === 'dark' || stored === 'light') {
+        document.documentElement.setAttribute('data-theme', stored);
+      }
+    } catch(_) {}
+
+    const FOUNDER_EMAIL = 'naveenkool786@gmail.com';
+    const form = document.getElementById('feedbackForm');
+    const progressBar = document.getElementById('progressBar');
+    const progressLabel = document.getElementById('progressLabel');
+    const scoreInput = document.getElementById('score');
+    const scoreValue = document.getElementById('scoreValue');
+    const submitEmail = document.getElementById('submitEmail');
+    const submitCopy = document.getElementById('submitCopy');
+    const copyAgain = document.getElementById('copyAgain');
+    const summaryBox = document.getElementById('summaryBox');
+    const thanks = document.getElementById('thanks');
+    const toastEl = document.getElementById('toast');
+
+    // Restore draft from localStorage
+    try {
+      const draft = JSON.parse(localStorage.getItem('weftly-feedback-draft') || '{}');
+      Object.entries(draft).forEach(([k, v]) => {
+        if (!v) return;
+        const el = form.elements[k];
+        if (!el) return;
+        if (el.type === 'radio' || el.length) {
+          const radios = form.querySelectorAll('[name="' + k + '"]');
+          radios.forEach(r => { if (r.value === v) r.checked = true; });
+        } else {
+          el.value = v;
+        }
+      });
+    } catch(_) {}
+
+    function updateScore() { scoreValue.textContent = scoreInput.value; }
+    scoreInput.addEventListener('input', updateScore);
+    updateScore();
+
+    function updateProgress() {
+      const required = form.querySelectorAll('[required]');
+      let filled = 0;
+      const seenGroups = new Set();
+      required.forEach(el => {
+        if (el.type === 'radio') {
+          if (seenGroups.has(el.name)) return;
+          seenGroups.add(el.name);
+          if (form.querySelector('[name="' + el.name + '"]:checked')) filled++;
+        } else if (el.value && el.value.trim()) {
+          filled++;
+        }
+      });
+      const totalRequired = seenGroups.size + required.length - Array.from(required).filter(r=>r.type==='radio').length;
+      // simpler: count unique radio groups + non-radio required
+      const nonRadio = Array.from(required).filter(r=>r.type!=='radio').length;
+      const total = seenGroups.size + nonRadio;
+      const pct = total > 0 ? Math.round((filled / total) * 100) : 0;
+      progressBar.style.width = pct + '%';
+      progressLabel.textContent = pct + '%';
+    }
+    form.addEventListener('input', () => { updateProgress(); saveDraft(); });
+    form.addEventListener('change', () => { updateProgress(); saveDraft(); });
+    updateProgress();
+
+    function saveDraft() {
+      try {
+        const data = {};
+        Array.from(form.elements).forEach(el => {
+          if (!el.name) return;
+          if (el.type === 'radio') { if (el.checked) data[el.name] = el.value; }
+          else data[el.name] = el.value;
+        });
+        localStorage.setItem('weftly-feedback-draft', JSON.stringify(data));
+      } catch(_) {}
+    }
+
+    function getData() {
+      const data = {};
+      Array.from(form.elements).forEach(el => {
+        if (!el.name) return;
+        if (el.type === 'radio') { if (el.checked) data[el.name] = el.value; }
+        else data[el.name] = (el.value || '').trim();
+      });
+      return data;
+    }
+
+    const ROLE_LABELS = {
+      brand: 'Brand buyer',
+      factory: 'Factory QC',
+      inspector: '3P inspector',
+      '3p_admin': '3P admin',
+      brand_qa: 'Brand — QA / sourcing / compliance',
+      brand_merch: 'Brand — merchandising / design',
+      factory_qc: 'Factory — QC head / line supervisor',
+      factory_mgmt: 'Factory — operations / general management',
+      investor: 'Investor / advisor',
+      friend: 'Friend · student · other',
+      yes_now: 'Yes — needed yesterday',
+      yes_pilot: 'Yes — if we could pilot it',
+      maybe: 'Maybe — depends',
+      no: 'No — not for us',
+      na: 'Not applicable — not in apparel'
+    };
+    const L = v => ROLE_LABELS[v] || v || '—';
+
+    function buildSummary(d) {
+      const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+      return [
+        'WEFTLY — PILOT FEEDBACK',
+        '────────────────────────────',
+        'Submitted: ' + stamp + ' UTC',
+        '',
+        'FROM: ' + (d.name || '(no name)') + (d.email ? '  <' + d.email + '>' : ''),
+        'ROLE: ' + L(d.your_role),
+        '',
+        '─── DEMO EXPERIENCE ───',
+        'First role tried: ' + L(d.first_role),
+        'Intuitiveness (1-10): ' + (d.score || '—'),
+        '',
+        'Most useful feature:',
+        '  ' + (d.best_feature || '—'),
+        '',
+        'Most confusing:',
+        '  ' + (d.confusing || '—'),
+        '',
+        '─── WORK & CONTEXT ───',
+        'Biggest quality problem:',
+        '  ' + (d.biggest_problem || '—'),
+        '',
+        'How handled today:',
+        '  ' + (d.handle_today || '—'),
+        '',
+        '─── FUTURE USE ───',
+        'Would use: ' + L(d.would_use),
+        'Fair price: ' + (d.price || '—'),
+        '',
+        'Introductions:',
+        '  ' + (d.intro || '—'),
+        '',
+        '─── OTHER ───',
+        'Anything else:',
+        '  ' + (d.other || '—'),
+        '',
+        '────────────────────────────',
+        'Sent from the Weftly feedback form'
+      ].join('\n');
+    }
+
+    function validate(d) {
+      const missing = [];
+      if (!d.first_role) missing.push('first role tried');
+      if (!d.score) missing.push('intuitiveness score');
+      if (!d.your_role) missing.push('your role');
+      if (!d.would_use) missing.push('would you use');
+      // mark fields
+      form.querySelectorAll('.q').forEach(q => q.classList.remove('field-invalid'));
+      if (missing.length) {
+        // highlight first missing
+        const first = form.querySelector('[required]:invalid, [required]:not(:checked)');
+        if (first) {
+          first.closest('.q').classList.add('field-invalid');
+          first.closest('.q').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      return missing;
+    }
+
+    function showToast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      setTimeout(() => toastEl.classList.remove('show'), 2200);
+    }
+
+    function copyText(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(
+          () => showToast('Copied to clipboard'),
+          () => fallbackCopy(text)
+        );
+      } else { fallbackCopy(text); }
+    }
+    function fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); showToast('Copied to clipboard'); }
+      catch (_) { showToast('Could not copy — select text manually'); }
+      finally { document.body.removeChild(ta); }
+    }
+
+    function showThankYou(summary) {
+      summaryBox.textContent = summary;
+      form.hidden = true;
+      document.querySelector('.progress-wrap').hidden = true;
+      thanks.hidden = false;
+      thanks.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      try { localStorage.removeItem('weftly-feedback-draft'); } catch(_) {}
+    }
+
+    submitEmail.addEventListener('click', () => {
+      const d = getData();
+      const missing = validate(d);
+      if (missing.length) {
+        showToast('Please answer: ' + missing[0]);
+        return;
+      }
+      const summary = buildSummary(d);
+      const subject = encodeURIComponent('Weftly feedback — ' + (d.name || 'anonymous'));
+      const body = encodeURIComponent(summary);
+      const mailto = 'mailto:' + FOUNDER_EMAIL + '?subject=' + subject + '&body=' + body;
+      copyText(summary);
+      // Try to open mail client; may silently fail — the copy already succeeded.
+      setTimeout(() => { window.location.href = mailto; }, 400);
+      showThankYou(summary);
+    });
+
+    submitCopy.addEventListener('click', () => {
+      const d = getData();
+      const missing = validate(d);
+      if (missing.length) {
+        showToast('Please answer: ' + missing[0]);
+        return;
+      }
+      const summary = buildSummary(d);
+      copyText(summary);
+      showThankYou(summary);
+    });
+
+    copyAgain.addEventListener('click', () => copyText(summaryBox.textContent || ''));
+  })();
+</script>
