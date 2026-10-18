@@ -229,8 +229,8 @@
   .milestone-modal.show { opacity:1; pointer-events:auto; }
   .milestone-sheet { background:var(--bg); border-radius:20px 20px 0 0; width:100%; max-width:420px; padding:24px 20px calc(24px + env(safe-area-inset-bottom)); transform:translateY(100%); transition:transform 0.3s cubic-bezier(0.16,1,0.3,1); }
   .milestone-modal.show .milestone-sheet { transform:translateY(0); }
-  .notif-bell { position:relative; width:40px; height:40px; border:none; background:none; color:var(--accent-ink); cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; margin-left:auto; -webkit-tap-highlight-color:transparent; }
-  .notif-bell:active { background:rgba(255,255,255,0.15); }
+  .notif-bell { position:relative; width:40px; height:40px; border:none; background:none; color:var(--fg); cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; -webkit-tap-highlight-color:transparent; }
+  .notif-bell:active { background:var(--accent-glow); }
   .notif-badge { position:absolute; top:4px; right:4px; min-width:18px; height:18px; background:var(--bad); color:#fff; font-size:11px; font-weight:700; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 5px; font-family:var(--font-body); animation:notif-pop 0.3s cubic-bezier(0.34,1.56,0.64,1); }
   @keyframes notif-pop { 0%{transform:scale(0)} 100%{transform:scale(1)} }
   @keyframes notif-shake { 0%,100%{transform:rotate(0)} 15%{transform:rotate(14deg)} 30%{transform:rotate(-12deg)} 45%{transform:rotate(8deg)} 60%{transform:rotate(-6deg)} 75%{transform:rotate(2deg)} }
@@ -240,7 +240,8 @@
   .notif-panel-header { display:flex; align-items:center; justify-content:space-between; padding:14px 20px 8px; position:sticky; top:0; background:var(--bg); z-index:1; }
   .notif-clear { border:none; background:none; color:var(--accent); font-size:13px; font-weight:600; cursor:pointer; font-family:var(--font-body); }
   .notif-list { padding:0 12px 12px; }
-  .notif-item { display:flex; gap:10px; padding:10px 8px; border-radius:var(--radius-sm); transition:background 0.15s; }
+  .notif-item { display:flex; gap:10px; padding:10px 8px; border-radius:var(--radius-sm); transition:background 0.15s; cursor:pointer; }
+  .notif-item:active { background:var(--bg-dim); }
   .notif-item:not(:last-child) { border-bottom:1px solid var(--divider); }
   .notif-item.unread { background:var(--accent-glow); }
   .notif-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:4px; }
@@ -397,11 +398,13 @@
       </div>
       <span class="app-logo-name">FABRIQ</span>
     </div>
-    <span class="app-header-badge" id="portalBadge">Brand</span>
-    <button class="notif-bell" id="notifBell" onclick="toggleNotifPanel()">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-      <span class="notif-badge" id="notifBadge" style="display:none">0</span>
-    </button>
+    <div style="display:flex;align-items:center;gap:2px;margin-left:auto">
+      <button class="notif-bell" id="notifBell" onclick="toggleNotifPanel()">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+      </button>
+      <span class="app-header-badge" id="portalBadge">Brand</span>
+    </div>
   </header>
 
   <div class="notif-panel" id="notifPanel">
@@ -487,6 +490,14 @@
         <div class="divider-label" style="padding:0 0 8px">Tap a milestone to update</div>
       </div>
       <div class="section-pad" style="padding-top:0"><div class="timeline" id="fmTimeline"></div></div>
+      <div class="divider-label">Messages &amp; Replies</div>
+      <div class="section-pad" style="padding-top:8px">
+        <div id="fmComments"></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <input type="text" class="form-input" id="fmCommentInput" placeholder="Reply to brand or inspector..." onkeydown="if(event.key==='Enter')addFactoryComment()" style="flex:1;padding:10px 14px;border-radius:var(--radius-pill);border:1.5px solid var(--border);background:var(--bg-card);color:var(--fg);font-size:14px;font-family:var(--font-body);outline:none">
+          <button class="btn-send" onclick="addFactoryComment()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+        </div>
+      </div>
     </div>
 
     <div class="screen" id="factory-defect">
@@ -579,12 +590,12 @@
     <div style="font-family:var(--font-display);font-size:18px;margin-bottom:4px" id="msLabel">Milestone</div>
     <div style="font-size:13px;color:var(--fg-muted);margin-bottom:16px" id="msSub"></div>
     <div class="form-group">
-      <label class="form-label">Completion Date</label>
-      <input type="date" class="form-select" id="msDate" style="font-family:var(--font-body)">
+      <label class="form-label">Notes / Evidence (DC, Challan, Remarks)</label>
+      <textarea class="form-textarea" id="msNotes" rows="2" placeholder="e.g. DC #4521 — 12 rolls received, challan attached"></textarea>
     </div>
     <div class="form-group">
-      <label class="form-label">Notes / Evidence</label>
-      <textarea class="form-textarea" id="msNotes" rows="2" placeholder="e.g. Delivery challan #DC-4521, 12 rolls received"></textarea>
+      <label class="form-label">Completion Date</label>
+      <input type="date" class="form-select" id="msDate" style="font-family:var(--font-body)">
     </div>
     <div class="form-group">
       <label class="form-label">Attach Document (optional)</label>
@@ -1008,7 +1019,7 @@
   window.capturePhoto = function(){ document.getElementById('photoThumb1').textContent='📸'; document.getElementById('photoThumb1').style.display='flex'; showToast('Photo captured'); };
   window.submitDefect = function(){
     showToast('Defect report submitted');
-    pushNotif('<strong>New defect reported</strong> at Dhaka Textiles — severity flagged by production floor. Review required.', 'red', 'alert');
+    pushNotif('<strong>New defect reported</strong> at Dhaka Textiles — severity flagged by production floor. Review required.', 'red', 'alert', {type:'factory-milestone',id:'PO-2611-AW-001'});
     setTimeout(function(){ showScreen('factory-home'); },600);
   };
   window.submitInspection = function(){
@@ -1021,11 +1032,11 @@
     var po = ins?ins.po:'PO';
     showToast('Inspection '+result+' ('+passed+' pass, '+failed+' fail)');
     if (result==='REJECTED') {
-      pushNotif('<strong>Inspection REJECTED</strong> — '+inspId+' at '+factory+' ('+po+'). '+failed+' of '+CHECKS.length+' checks failed. NCR auto-raised.', 'red', 'alert');
+      pushNotif('<strong>Inspection REJECTED</strong> — '+inspId+' at '+factory+' ('+po+'). '+failed+' of '+CHECKS.length+' checks failed. NCR auto-raised.', 'red', 'alert', {type:'po',id:po});
     } else if (result==='ACCEPTED') {
-      pushNotif('<strong>Inspection ACCEPTED with remarks</strong> — '+inspId+' at '+factory+' ('+po+'). '+passed+' pass, '+failed+' minor fail.', 'orange', 'info');
+      pushNotif('<strong>Inspection ACCEPTED with remarks</strong> — '+inspId+' at '+factory+' ('+po+'). '+passed+' pass, '+failed+' minor fail.', 'orange', 'info', {type:'po',id:po});
     } else {
-      pushNotif('<strong>Inspection PASSED</strong> — '+inspId+' at '+factory+' ('+po+'). All '+CHECKS.length+' checks passed. AQL Level II.', 'green', 'success');
+      pushNotif('<strong>Inspection PASSED</strong> — '+inspId+' at '+factory+' ('+po+'). All '+CHECKS.length+' checks passed. AQL Level II.', 'green', 'success', {type:'po',id:po});
     }
     setTimeout(function(){ showScreen('inspector-home'); },800);
   };
@@ -1057,10 +1068,10 @@
       osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.2);
     }
   }
-  function pushNotif(msg, color, sound) {
+  function pushNotif(msg, color, sound, nav) {
     var now = new Date();
     var time = now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-    notifications.unshift({ msg:msg, color:color||'blue', time:time, unread:true });
+    notifications.unshift({ msg:msg, color:color||'blue', time:time, unread:true, nav:nav||null });
     updateNotifBadge();
     renderNotifList();
     if (sound) playSound(sound);
@@ -1079,17 +1090,32 @@
   function renderNotifList() {
     var el = document.getElementById('notifList');
     if (!notifications.length) { el.innerHTML = '<div style="text-align:center;color:var(--fg-faint);font-size:13px;padding:24px 0">No notifications yet</div>'; return; }
-    el.innerHTML = notifications.map(function(n){
-      return '<div class="notif-item'+(n.unread?' unread':'')+'"><div class="notif-dot '+n.color+'"></div><div class="notif-item-text"><div class="notif-msg">'+n.msg+'</div><div class="notif-time">'+n.time+'</div></div></div>';
+    el.innerHTML = notifications.map(function(n, idx){
+      return '<div class="notif-item'+(n.unread?' unread':'')+'" onclick="navigateNotif('+idx+')"><div class="notif-dot '+n.color+'"></div><div class="notif-item-text"><div class="notif-msg">'+n.msg+'</div><div class="notif-time">'+n.time+'</div></div><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--fg-faint)" stroke-width="2" style="flex-shrink:0;margin-top:2px"><path d="M9 18l6-6-6-6"/></svg></div>';
     }).join('');
   }
+  window.navigateNotif = function(idx) {
+    var n = notifications[idx]; if (!n) return;
+    n.unread = false;
+    updateNotifBadge();
+    document.getElementById('notifPanel').classList.remove('show');
+    if (n.nav) {
+      if (n.nav.type==='po') { switchPortal('brand'); showPoDetail(n.nav.id); }
+      else if (n.nav.type==='factory-milestone') { switchPortal('factory'); showFactoryMilestone(n.nav.id); }
+      else if (n.nav.type==='inspection') { switchPortal('inspector'); showInspection(n.nav.id); }
+    }
+    renderNotifList();
+  };
+  var notifAutoCloseTimer = null;
   window.toggleNotifPanel = function() {
     var panel = document.getElementById('notifPanel');
+    if (notifAutoCloseTimer) { clearTimeout(notifAutoCloseTimer); notifAutoCloseTimer=null; }
     var showing = panel.classList.toggle('show');
     if (showing) {
       notifications.forEach(function(n){ n.unread=false; });
       updateNotifBadge();
       renderNotifList();
+      notifAutoCloseTimer = setTimeout(function(){ panel.classList.remove('show'); notifAutoCloseTimer=null; }, 5000);
     }
   };
   window.clearNotifs = function() {
@@ -1101,12 +1127,12 @@
   // Seed initial notifications so brand portal isn't empty
   (function(){
     var seed = [
-      { msg:'<strong>Dhaka Textiles</strong> updated milestone: <strong>Bulk Cutting Started</strong> on PO-2611-AW-001', color:'green', time:'8:45 AM', unread:true },
-      { msg:'<strong>Inspection PASSED</strong> — INS-2611-PP-001 at Phnom Penh Garments (PO-2611-BB-001). AQL Level II, 1.2% defect rate.', color:'green', time:'4:30 PM Yesterday', unread:true },
-      { msg:'<strong>Inspection REJECTED</strong> — INS-2611-DT-004 at Dhaka Textiles (PO-2611-BB-002). Back yoke stitching failure, 8% defect rate. NCR raised.', color:'red', time:'3:10 PM Yesterday', unread:true },
-      { msg:'<strong>Sialkot Sports</strong> updated milestone: <strong>PP Sample Approved</strong> on PO-2611-AW-006', color:'green', time:'11:20 AM Yesterday', unread:false },
-      { msg:'<strong>Material QC FAILED</strong> — Fabric lot #F-4821 at Istanbul Konfeksiyon (PO-2611-BB-003). Pilling grade 2 (min 4 required). Lot rejected.', color:'red', time:'9:05 AM Yesterday', unread:false },
-      { msg:'<strong>Addis Ababa Garments</strong> updated milestone: <strong>In-line Inspection</strong> completed on PO-2611-BB-004', color:'blue', time:'2:00 PM Oct 16', unread:false },
+      { msg:'<strong>Dhaka Textiles</strong> updated milestone: <strong>Bulk Cutting Started</strong> on PO-2611-AW-001', color:'green', time:'8:45 AM', unread:true, nav:{type:'po',id:'PO-2611-AW-001'} },
+      { msg:'<strong>Inspection PASSED</strong> — INS-2611-PP-001 at Phnom Penh Garments (PO-2611-BB-001). AQL Level II, 1.2% defect rate.', color:'green', time:'4:30 PM Yesterday', unread:true, nav:{type:'po',id:'PO-2611-BB-001'} },
+      { msg:'<strong>Inspection REJECTED</strong> — INS-2611-DT-004 at Dhaka Textiles (PO-2611-BB-002). Back yoke stitching failure, 8% defect rate. NCR raised.', color:'red', time:'3:10 PM Yesterday', unread:true, nav:{type:'po',id:'PO-2611-BB-002'} },
+      { msg:'<strong>Sialkot Sports</strong> updated milestone: <strong>PP Sample Approved</strong> on PO-2611-AW-006', color:'green', time:'11:20 AM Yesterday', unread:false, nav:{type:'po',id:'PO-2611-AW-006'} },
+      { msg:'<strong>Material QC FAILED</strong> — Fabric lot #F-4821 at Istanbul Konfeksiyon (PO-2611-BB-003). Pilling grade 2 (min 4 required). Lot rejected.', color:'red', time:'9:05 AM Yesterday', unread:false, nav:{type:'po',id:'PO-2611-BB-003'} },
+      { msg:'<strong>Addis Ababa Garments</strong> updated milestone: <strong>In-line Inspection</strong> completed on PO-2611-BB-004', color:'blue', time:'2:00 PM Oct 16', unread:false, nav:{type:'po',id:'PO-2611-BB-004'} },
     ];
     notifications = seed;
     updateNotifBadge();
@@ -1117,6 +1143,32 @@
   // --- Factory milestone update ---
   var currentFmPo = null;
   var currentMsIdx = null;
+  function renderFactoryComments(poId) {
+    var el = document.getElementById('fmComments');
+    var msgs = COMMENTS[poId] || [];
+    if (!msgs.length) {
+      el.innerHTML = '<div style="text-align:center;color:var(--fg-faint);font-size:13px;padding:12px 0">No messages yet. Communicate with brand or inspector here.</div>';
+      return;
+    }
+    var factoryName = currentFmPo ? currentFmPo.factory : '';
+    el.innerHTML = '<div class="comment-thread">' + msgs.map(function(c){
+      var isMe = c.role && c.role.indexOf('Factory')>=0;
+      return '<div class="comment-bubble '+(isMe?'me':'them')+'"><div class="comment-sender">'+c.from+' <span style="font-weight:400">· '+c.role+'</span></div><div>'+c.msg+'</div><div class="comment-time">'+c.time+'</div></div>';
+    }).join('') + '</div>';
+    el.scrollTop = el.scrollHeight;
+  }
+  window.addFactoryComment = function() {
+    var input = document.getElementById('fmCommentInput');
+    var msg = input.value.trim(); if (!msg || !currentFmPo) return;
+    if (!COMMENTS[currentFmPo.id]) COMMENTS[currentFmPo.id] = [];
+    var now = new Date();
+    var timeStr = now.toLocaleDateString('en-US',{month:'short',day:'numeric'})+', '+now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    COMMENTS[currentFmPo.id].push({ from:'Rahim Khan', role:'Factory — '+currentFmPo.factory, msg:msg, time:timeStr, me:false });
+    input.value = '';
+    renderFactoryComments(currentFmPo.id);
+    showToast('Reply sent — brand notified');
+    pushNotif('<strong>'+currentFmPo.factory+'</strong> replied on '+currentFmPo.id+': "'+msg.substring(0,60)+(msg.length>60?'...':'')+'"', 'blue', 'info', {type:'po',id:currentFmPo.id});
+  };
   window.showFactoryMilestone = function(poId) {
     var po = POS.find(function(p){ return p.id===poId; }); if(!po) return;
     currentFmPo = po;
@@ -1135,6 +1187,7 @@
       var icon = st.done?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>':st.ncr?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 8v4M12 16h.01"/></svg>':(st.current?'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor" opacity="0.3"><circle cx="12" cy="12" r="3"/></svg>');
       return '<div class="timeline-item'+(tappable?' tappable':'')+'" '+(tappable?'onclick="openMilestoneModal('+idx+')"':'')+'><div class="timeline-dot '+cls+'">'+icon+'</div><div class="timeline-text"><div class="timeline-label">'+st.label+(tappable?' <span style="color:var(--accent);font-size:11px">TAP TO UPDATE</span>':'')+'</div>'+(st.sub?'<div style="font-size:11px;color:var(--fg-faint);margin-top:1px">'+st.sub+'</div>':'')+(st.date?'<div class="timeline-date">'+st.date+'</div>':'')+'</div></div>';
     }).join('');
+    renderFactoryComments(po.id);
     showScreen('factory-milestone');
   };
   window.openMilestoneModal = function(idx) {
@@ -1158,6 +1211,8 @@
     var steps = TIMELINES[currentFmPo.id];
     if (!steps) return;
     var st = steps[currentMsIdx];
+    var notesVal = document.getElementById('msNotes').value.trim();
+    if (notesVal) { st.sub = notesVal; }
     var dateVal = document.getElementById('msDate').value;
     if (dateVal) {
       var d = new Date(dateVal);
@@ -1173,7 +1228,7 @@
     document.getElementById('milestoneModal').classList.remove('show');
     showFactoryMilestone(currentFmPo.id);
     showToast('Milestone updated — brand notified');
-    pushNotif('<strong>'+currentFmPo.factory+'</strong> updated milestone: <strong>'+st.label+'</strong> on '+currentFmPo.id, 'green', 'success');
+    pushNotif('<strong>'+currentFmPo.factory+'</strong> updated milestone: <strong>'+st.label+'</strong> on '+currentFmPo.id, 'green', 'success', {type:'po',id:currentFmPo.id});
   };
 
   // --- Brand comment thread ---
