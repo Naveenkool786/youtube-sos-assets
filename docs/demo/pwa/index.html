@@ -209,6 +209,7 @@
   .timeline-dot { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
   .timeline-dot.done { background: var(--ok-soft); color: var(--ok); }
   .timeline-dot.current { background: var(--accent); color: var(--accent-ink); }
+  .timeline-dot.ncr { background: var(--bad-soft); color: var(--bad); }
   .timeline-dot.pending { background: var(--bg-dim); color: var(--fg-faint); }
   .timeline-dot svg { width: 12px; height: 12px; }
   .timeline-text { padding-top: 2px; }
@@ -569,14 +570,66 @@
     'Packaging per buyer instructions',
     'AQL defect count within acceptance'
   ];
-  var TIMELINE_STEPS = [
-    { label:'PO Created', date:'Oct 5, 2026', done:true },
-    { label:'Factory Accepted', date:'Oct 8, 2026', done:true },
-    { label:'In Production', date:'Oct 15, 2026', current:true },
-    { label:'Inspection Scheduled', date:'Nov 20, 2026', pending:true },
-    { label:'Quality Released', date:'', pending:true },
-    { label:'Shipped', date:'', pending:true },
-  ];
+  var TIMELINES = {
+    'PO-2611-AW-001': [
+      { label:'PO Created', date:'Aug 12, 2026', done:true },
+      { label:'Factory Accepted', date:'Aug 15, 2026', done:true },
+      { label:'Material Ordered', sub:'Fabric + trims sourced', date:'Aug 20, 2026', done:true },
+      { label:'Materials In-House', sub:'Fabric, zippers, labels received', date:'Sep 18, 2026', done:true },
+      { label:'Material QC Passed', sub:'GSM, shrinkage, color fastness OK', date:'Sep 22, 2026', done:true },
+      { label:'PP Sample Approved', sub:'Pre-production sample signed off by buyer', date:'Sep 30, 2026', done:true },
+      { label:'Bulk Cutting Started', date:'Oct 5, 2026', done:true },
+      { label:'Bulk Production', sub:'Sewing, finishing, pressing', date:'Oct 12, 2026', current:true },
+      { label:'In-line Inspection', date:'Nov 10, 2026', pending:true },
+      { label:'Final Inspection (AQL)', date:'Dec 1, 2026', pending:true },
+      { label:'Quality Released', date:'', pending:true },
+      { label:'Shipped', date:'Dec 15, 2026', pending:true },
+    ],
+    'PO-2611-AW-002': [
+      { label:'PO Created', date:'Jul 20, 2026', done:true },
+      { label:'Factory Accepted', date:'Jul 23, 2026', done:true },
+      { label:'Material Ordered', sub:'Shell fabric, insulation, DWR coating', date:'Jul 28, 2026', done:true },
+      { label:'Materials In-House', date:'Aug 25, 2026', done:true },
+      { label:'Material QC Passed', sub:'Waterproof rating + down fill power tested', date:'Aug 30, 2026', done:true },
+      { label:'PP Sample Approved', date:'Sep 10, 2026', done:true },
+      { label:'Bulk Cutting Started', date:'Sep 15, 2026', done:true },
+      { label:'Bulk Production', date:'Sep 22, 2026', done:true },
+      { label:'In-line Inspection', date:'Oct 15, 2026', done:true },
+      { label:'Final Inspection (AQL)', sub:'Awaiting 3P inspector', date:'Nov 20, 2026', current:true },
+      { label:'Quality Released', date:'', pending:true },
+      { label:'Shipped', date:'Nov 28, 2026', pending:true },
+    ],
+    'PO-2611-BB-002': [
+      { label:'PO Created', date:'Jul 5, 2026', done:true },
+      { label:'Factory Accepted', date:'Jul 8, 2026', done:true },
+      { label:'Material Ordered', sub:'Raw denim, rivets, buttons', date:'Jul 12, 2026', done:true },
+      { label:'Materials In-House', date:'Aug 10, 2026', done:true },
+      { label:'Material QC Passed', sub:'Denim weight OK, wash test passed', date:'Aug 15, 2026', done:true },
+      { label:'PP Sample Approved', date:'Aug 25, 2026', done:true },
+      { label:'Bulk Cutting Started', date:'Sep 1, 2026', done:true },
+      { label:'Bulk Production', date:'Sep 8, 2026', done:true },
+      { label:'In-line Inspection', date:'Oct 5, 2026', done:true },
+      { label:'Final Inspection (AQL)', date:'Oct 20, 2026', done:true },
+      { label:'NCR Raised', sub:'Broken stitching on back yoke — 8% defect rate', date:'Oct 22, 2026', current:true, ncr:true },
+      { label:'Rework / Re-inspection', date:'', pending:true },
+      { label:'Quality Released', date:'', pending:true },
+      { label:'Shipped', date:'Dec 1, 2026', pending:true },
+    ],
+    '_default': [
+      { label:'PO Created', done:true },
+      { label:'Factory Accepted', done:true },
+      { label:'Material Ordered', sub:'Fabric, trims, accessories sourced', done:true },
+      { label:'Materials In-House', sub:'All materials received at factory', done:true },
+      { label:'Material QC', sub:'Lab tests: GSM, shrinkage, color fastness', pending:true },
+      { label:'PP Sample Approval', sub:'Pre-production sample buyer sign-off', pending:true },
+      { label:'Bulk Cutting', pending:true },
+      { label:'Bulk Production', sub:'Sewing, finishing, pressing', pending:true },
+      { label:'In-line Inspection', pending:true },
+      { label:'Final Inspection (AQL)', pending:true },
+      { label:'Quality Released', pending:true },
+      { label:'Shipped', pending:true },
+    ]
+  };
 
   var checkStates = CHECKS.map(function(){ return 'none'; });
 
@@ -674,10 +727,12 @@
       stylesEl.innerHTML = '';
     }
     var tl = document.getElementById('detailTimeline');
-    tl.innerHTML = TIMELINE_STEPS.map(function(s){
+    var steps = TIMELINES[po.id] || TIMELINES['_default'];
+    tl.innerHTML = steps.map(function(s){
       var cls = s.done?'done':s.current?'current':'pending';
-      var icon = s.done?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>':s.current?'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor" opacity="0.3"><circle cx="12" cy="12" r="3"/></svg>';
-      return '<div class="timeline-item"><div class="timeline-dot '+cls+'">'+icon+'</div><div class="timeline-text"><div class="timeline-label">'+s.label+'</div>'+(s.date?'<div class="timeline-date">'+s.date+'</div>':'')+'</div></div>';
+      if (s.ncr) cls = 'ncr';
+      var icon = s.done?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>':s.ncr?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 8v4M12 16h.01"/></svg>':(s.current?'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor" opacity="0.3"><circle cx="12" cy="12" r="3"/></svg>');
+      return '<div class="timeline-item"><div class="timeline-dot '+cls+'">'+icon+'</div><div class="timeline-text"><div class="timeline-label">'+s.label+'</div>'+(s.sub?'<div style="font-size:11px;color:var(--fg-faint);margin-top:1px">'+s.sub+'</div>':'')+(s.date?'<div class="timeline-date">'+s.date+'</div>':'')+'</div></div>';
     }).join('');
     showScreen('brand-detail');
   };
