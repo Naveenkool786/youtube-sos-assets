@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FABRIQ — QMS Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #FAF7F1;
+  --bg-card: #FFFFFF;
+  --bg-dim: #F2EDE2;
+  --bg-ink: #0F1512;
+  --fg: #171A17;
+  --fg-muted: #5A635C;
+  --fg-faint: #8A918B;
+  --accent: #0F4238;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #D8E3DF;
+  --accent-glow: rgba(15,66,56,0.08);
+  --warm: #C67952;
+  --warm-ink: #FFFFFF;
+  --warm-soft: #F3E2D4;
+  --ok: #1B7A4E;
+  --ok-soft: #D4EDDF;
+  --warn: #B8860B;
+  --warn-soft: #FFF3CD;
+  --bad: #C0392B;
+  --bad-soft: #FADBD8;
+  --border: #E6DFCF;
+  --divider: #ECE4D1;
+  --shadow-sm: 0 1px 2px rgba(23,26,23,0.04);
+  --shadow: 0 2px 8px rgba(23,26,23,0.06);
+  --shadow-lg: 0 4px 20px rgba(23,26,23,0.1);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --radius-pill: 100px;
+  --font-display: "DM Serif Display", Georgia, serif;
+  --font-body: "Inter", -apple-system, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --sidebar-w: 220px;
+  --topbar-h: 56px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1512; --bg-card: #152220; --bg-dim: #0A1210; --bg-ink: #FAF7F1;
+    --fg: #F0ECE2; --fg-muted: #9EA89E; --fg-faint: #6B756C;
+    --accent: #4DBEA2; --accent-ink: #0D1512; --accent-soft: #163830;
+    --accent-glow: rgba(77,190,162,0.1);
+    --warm: #E39670; --warm-ink: #0D1512; --warm-soft: #2A1F17;
+    --ok: #3EC786; --ok-soft: #132E20;
+    --warn: #D4A017; --warn-soft: #2A2310;
+    --bad: #E74C3C; --bad-soft: #2E1515;
+    --border: #253330; --divider: #1E2A27;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1512; --bg-card: #152220; --bg-dim: #0A1210; --bg-ink: #FAF7F1;
+  --fg: #F0ECE2; --fg-muted: #9EA89E; --fg-faint: #6B756C;
+  --accent: #4DBEA2; --accent-ink: #0D1512; --accent-soft: #163830;
+  --accent-glow: rgba(77,190,162,0.1);
+  --warm: #E39670; --warm-ink: #0D1512; --warm-soft: #2A1F17;
+  --ok: #3EC786; --ok-soft: #132E20;
+  --warn: #D4A017; --warn-soft: #2A2310;
+  --bad: #E74C3C; --bad-soft: #2E1515;
+  --border: #253330; --divider: #1E2A27;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+.layout { display: flex; height: 100%; }
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-w);
+  background: #0B3028;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 30;
+  transition: transform 0.3s ease;
+}
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-logo-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+}
+.sidebar-logo-icon svg { width: 18px; height: 18px; }
+.sidebar-logo-name { font-family: var(--font-display); font-size: 22px; }
+
+.sidebar-portals {
+  display: flex;
+  gap: 4px;
+  padding: 12px 12px 8px;
+}
+.portal-btn {
+  flex: 1;
+  padding: 6px 4px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.portal-btn:hover { color: rgba(255,255,255,0.8); }
+.portal-btn.active {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 8px 12px;
+  overflow-y: auto;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: rgba(255,255,255,0.6);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 2px;
+}
+.nav-item:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); }
+.nav-item.active { background: rgba(255,255,255,0.15); color: #fff; font-weight: 600; }
+.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.7; }
+.nav-item.active svg { opacity: 1; }
+
+.sidebar-footer {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+}
+
+/* Main area */
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+/* Top bar */
+.topbar {
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--divider);
+  flex-shrink: 0;
+}
+.topbar-title { font-family: var(--font-display); font-size: 22px; color: var(--fg); }
+.topbar-spacer { flex: 1; }
+.topbar-search {
+  width: 260px;
+  padding: 8px 14px 8px 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--bg-card);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.topbar-search:focus { border-color: var(--accent); }
+.topbar-search-wrap { position: relative; }
+.topbar-search-wrap svg {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; color: var(--fg-faint); pointer-events: none;
+}
+
+.notif-bell {
+  position: relative;
+  width: 38px; height: 38px;
+  border: none;
+  background: var(--bg-dim);
+  color: var(--fg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+.notif-bell:hover { background: var(--accent-soft); }
+.notif-badge {
+  position: absolute; top: 2px; right: 2px;
+  min-width: 18px; height: 18px;
+  background: var(--bad); color: #fff;
+  font-size: 11px; font-weight: 700;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 5px;
+}
+.notif-dropdown {
+  position: absolute; top: calc(var(--topbar-h) + 4px); right: 24px;
+  width: 380px; max-height: 480px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  overflow-y: auto;
+  display: none;
+}
+.notif-dropdown.show { display: block; }
+.notif-dropdown-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--divider);
+  position: sticky; top: 0;
+  background: var(--bg-card);
+}
+.notif-dropdown-header span { font-weight: 700; font-size: 15px; }
+.notif-clear { border: none; background: none; color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); }
+.notif-item {
+  display: flex; gap: 10px; padding: 12px 16px;
+  border-bottom: 1px solid var(--divider);
+  cursor: pointer; transition: background 0.15s;
+}
+.notif-item:hover { background: var(--accent-glow); }
+.notif-item.unread { background: var(--accent-glow); }
+.notif-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.notif-dot.green { background: var(--ok); }
+.notif-dot.red { background: var(--bad); }
+.notif-dot.blue { background: var(--accent); }
+.notif-dot.orange { background: var(--warn); }
+.notif-msg { font-size: 13px; line-height: 1.4; color: var(--fg); }
+.notif-msg strong { font-weight: 600; }
+.notif-time { font-size: 11px; color: var(--fg-faint); margin-top: 2px; }
+
+.user-avatar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 12px 6px 6px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-dim);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.user-avatar:hover { background: var(--accent-soft); }
+.user-avatar-circle {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+}
+.user-avatar-name { font-size: 13px; font-weight: 500; color: var(--fg); }
+
+/* Content area */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* KPI Cards */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.kpi-label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--fg-muted); margin-bottom: 6px;
+}
+.kpi-value {
+  font-family: var(--font-display); font-size: 32px; line-height: 1.1;
+}
+.kpi-value.ok { color: var(--ok); }
+.kpi-value.warn { color: var(--warn); }
+.kpi-value.bad { color: var(--bad); }
+.kpi-value.accent { color: var(--accent); }
+.kpi-spark { display: flex; align-items: flex-end; gap: 2px; height: 24px; margin-top: 8px; }
+.kpi-spark-bar { flex: 1; border-radius: 2px; background: var(--accent-soft); min-height: 3px; }
+.progress-track { width: 100%; height: 6px; border-radius: 3px; background: var(--bg-dim); overflow: hidden; margin-top: 8px; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+
+/* Two-column layout */
+.dash-cols {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+}
+
+/* Table */
+.data-table-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.data-table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-muted);
+  background: var(--bg-dim);
+  border-bottom: 1px solid var(--divider);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+.data-table th:hover { color: var(--accent); }
+.data-table th .sort-icon { display: inline-block; margin-left: 4px; opacity: 0.4; }
+.data-table th.sorted .sort-icon { opacity: 1; color: var(--accent); }
+.data-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--divider);
+  vertical-align: middle;
+}
+.data-table tbody tr { cursor: pointer; transition: background 0.1s; }
+.data-table tbody tr:hover { background: var(--accent-glow); }
+.data-table tbody tr:last-child td { border-bottom: none; }
+
+.badge {
+  display: inline-flex; padding: 3px 10px; border-radius: var(--radius-pill);
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+}
+.badge-ok { background: var(--ok-soft); color: var(--ok); }
+.badge-warn { background: var(--warn-soft); color: var(--warn); }
+.badge-bad { background: var(--bad-soft); color: var(--bad); }
+.badge-accent { background: var(--accent-soft); color: var(--accent); }
+.badge-muted { background: var(--bg-dim); color: var(--fg-muted); }
+
+/* Activity feed */
+.activity-feed {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-height: 520px;
+  overflow-y: auto;
+}
+.activity-feed-header {
+  padding: 14px 16px;
+  font-weight: 700;
+  font-size: 14px;
+  border-bottom: 1px solid var(--divider);
+  position: sticky; top: 0;
+  background: var(--bg-card);
+}
+.activity-item {
+  display: flex; gap: 10px; padding: 12px 16px;
+  border-bottom: 1px solid var(--divider);
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+
+/* Detail panel (slide-in from right) */
+.detail-overlay {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(0,0,0,0.3);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s;
+}
+.detail-overlay.show { opacity: 1; pointer-events: auto; }
+.detail-panel {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: 480px; max-width: 90vw;
+  background: var(--bg);
+  box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+  z-index: 51;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+  display: flex; flex-direction: column;
+}
+.detail-overlay.show .detail-panel { transform: translateX(0); }
+.detail-panel-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--divider);
+  flex-shrink: 0;
+}
+.detail-panel-close {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: none; background: var(--bg-dim);
+  color: var(--fg); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+}
+.detail-panel-close:hover { background: var(--border); }
+.detail-panel-title { font-weight: 600; font-size: 16px; flex: 1; min-width: 0; }
+.detail-panel-body { flex: 1; overflow-y: auto; padding: 20px; }
+
+.section-label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--fg-faint); margin: 20px 0 10px;
+}
+.section-label:first-child { margin-top: 0; }
+
+/* Factory info card */
+.factory-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.factory-top { display: flex; gap: 14px; align-items: flex-start; }
+.factory-img {
+  width: 52px; height: 52px; border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; flex-shrink: 0;
+}
+.factory-badges {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid var(--divider);
+}
+
+/* Style cards */
+.style-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.style-card-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+}
+.style-name { font-weight: 600; font-size: 14px; }
+.style-sku { font-family: var(--font-mono); font-size: 12px; color: var(--fg-muted); }
+.style-meta { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; color: var(--fg-muted); margin-bottom: 8px; }
+
+.tl-toggle {
+  display: flex; align-items: center; gap: 6px;
+  border: none; background: var(--accent-soft); color: var(--accent);
+  padding: 6px 12px; border-radius: var(--radius-pill);
+  font-size: 12px; font-weight: 600; font-family: var(--font-body);
+  cursor: pointer; margin-top: 8px; transition: background 0.15s;
+}
+.tl-toggle:hover { background: var(--accent); color: var(--accent-ink); }
+.tl-toggle svg { width: 14px; height: 14px; transition: transform 0.25s ease; }
+.tl-toggle.open svg { transform: rotate(180deg); }
+.tl-body { max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.16,1,0.3,1); }
+.tl-body.open { max-height: 1200px; }
+
+/* Timeline */
+.timeline { padding: 12px 0 4px; }
+.timeline-item { display: flex; gap: 12px; padding-bottom: 16px; position: relative; }
+.timeline-item:not(:last-child)::after {
+  content: ""; position: absolute; left: 11px; top: 28px; bottom: 0;
+  width: 2px; background: var(--divider);
+}
+.timeline-dot {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.timeline-dot.done { background: var(--ok-soft); color: var(--ok); }
+.timeline-dot.current { background: var(--accent); color: var(--accent-ink); }
+.timeline-dot.ncr { background: var(--bad-soft); color: var(--bad); }
+.timeline-dot.pending { background: var(--bg-dim); color: var(--fg-faint); }
+.timeline-dot svg { width: 12px; height: 12px; }
+.timeline-label { font-weight: 600; font-size: 13px; }
+.timeline-sub { font-size: 11px; color: var(--fg-faint); margin-top: 1px; }
+.timeline-date { font-size: 12px; color: var(--fg-muted); }
+
+/* Comments */
+.comment-thread { display: flex; flex-direction: column; gap: 8px; }
+.comment-bubble {
+  padding: 10px 14px; border-radius: 14px;
+  font-size: 13px; line-height: 1.45;
+  max-width: 90%; position: relative;
+}
+.comment-bubble.them {
+  background: var(--bg-dim);
+  border: 1px solid var(--border);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+.comment-bubble.me {
+  background: var(--accent);
+  color: var(--accent-ink);
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+.comment-sender { font-size: 11px; font-weight: 600; margin-bottom: 3px; }
+.comment-bubble.them .comment-sender { color: var(--fg-muted); }
+.comment-bubble.me .comment-sender { color: rgba(255,255,255,0.7); }
+.comment-time { font-size: 10px; margin-top: 3px; opacity: 0.5; }
+.comment-mention { font-weight: 600; color: var(--accent); }
+.comment-bubble.me .comment-mention { color: rgba(255,255,255,0.9); text-decoration: underline; }
+.comment-input-row {
+  display: flex; gap: 8px; margin-top: 12px;
+}
+.comment-input {
+  flex: 1; padding: 10px 14px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  background: var(--bg-card); color: var(--fg);
+  font-size: 13px; font-family: var(--font-body);
+  outline: none;
+}
+.comment-input:focus { border-color: var(--accent); }
+.btn-send {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: none; background: var(--accent); color: var(--accent-ink);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+}
+.btn-send:hover { opacity: 0.9; }
+
+/* Inspector checklist */
+.check-list { display: flex; flex-direction: column; gap: 2px; }
+.check-item {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+  background: var(--bg-card); border-bottom: 1px solid var(--divider);
+  cursor: pointer; transition: background 0.1s;
+}
+.check-item:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+.check-item:last-child { border-radius: 0 0 var(--radius) var(--radius); border-bottom: none; }
+.check-item:hover { background: var(--accent-glow); }
+.check-box {
+  width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--border);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+}
+.check-item.checked .check-box { background: var(--ok); border-color: var(--ok); }
+.check-item.failed .check-box { background: var(--bad); border-color: var(--bad); }
+.check-box svg { width: 14px; height: 14px; color: #fff; opacity: 0; transition: opacity 0.1s; }
+.check-item.checked .check-box svg, .check-item.failed .check-box svg { opacity: 1; }
+.check-text { font-size: 14px; flex: 1; }
+
+/* Milestone modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  z-index: 200; display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.modal-overlay.show { opacity: 1; pointer-events: auto; }
+.modal-box {
+  background: var(--bg); border-radius: var(--radius);
+  width: 480px; max-width: 90vw; padding: 28px;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.modal-overlay.show .modal-box { transform: translateY(0); }
+.modal-title { font-family: var(--font-display); font-size: 20px; margin-bottom: 20px; }
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block; font-size: 12px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.04em; color: var(--fg-muted); margin-bottom: 6px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 10px 14px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg-card); color: var(--fg);
+  font-family: var(--font-body); font-size: 14px;
+  outline: none; transition: border-color 0.15s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+.form-textarea { resize: vertical; min-height: 70px; }
+.btn-primary {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 12px; border: none; border-radius: var(--radius);
+  background: var(--accent); color: var(--accent-ink);
+  font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer;
+}
+.btn-primary:hover { opacity: 0.95; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--bg-ink); color: var(--bg);
+  padding: 12px 24px; border-radius: var(--radius-pill);
+  font-size: 14px; font-weight: 500;
+  z-index: 300; opacity: 0;
+  transition: transform 0.3s, opacity 0.3s;
+  pointer-events: none; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* Mobile responsive */
+.hamburger {
+  display: none; width: 38px; height: 38px;
+  border: none; background: var(--bg-dim); border-radius: var(--radius-sm);
+  color: var(--fg); cursor: pointer;
+  align-items: center; justify-content: center;
+}
+.sidebar-close {
+  display: none; position: absolute; top: 16px; right: 12px;
+  width: 32px; height: 32px; border: none; background: rgba(255,255,255,0.1);
+  color: #fff; border-radius: 50%; cursor: pointer;
+  align-items: center; justify-content: center; font-size: 18px;
+}
+@media (max-width: 860px) {
+  .sidebar {
+    position: fixed; inset: 0; width: 260px;
+    transform: translateX(-100%); z-index: 100;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-close { display: flex; }
+  .hamburger { display: flex; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .dash-cols { grid-template-columns: 1fr; }
+  .detail-panel { width: 100%; max-width: 100vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <button class="sidebar-close" id="sidebarClose" onclick="toggleSidebar()">&times;</button>
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M4 8L12 4L20 8L12 12Z"/><path d="M4 12L12 16L20 12"/></svg>
+      </div>
+      <span class="sidebar-logo-name">FABRIQ</span>
+    </div>
+    <div class="sidebar-portals">
+      <button class="portal-btn active" data-portal="brand" onclick="switchPortal('brand')">Brand</button>
+      <button class="portal-btn" data-portal="factory" onclick="switchPortal('factory')">Factory</button>
+      <button class="portal-btn" data-portal="inspector" onclick="switchPortal('inspector')">Inspector</button>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav"></nav>
+    <div class="sidebar-footer">FABRIQ FashionHub &middot; QMS Platform</div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <header class="topbar">
+      <button class="hamburger" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+      <span class="topbar-title" id="pageTitle">Dashboard</span>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" class="topbar-search" placeholder="Search POs, factories, inspections..." id="searchInput">
+      </div>
+      <button class="notif-bell" id="notifBell" onclick="toggleNotifs()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+      </button>
+      <div class="user-avatar" id="userAvatar">
+        <div class="user-avatar-circle" id="userInitials">SC</div>
+        <span class="user-avatar-name" id="userName">Sarah Chen</span>
+      </div>
+    </header>
+    <div class="notif-dropdown" id="notifDropdown">
+      <div class="notif-dropdown-header">
+        <span>Notifications</span>
+        <button class="notif-clear" onclick="clearNotifs()">Clear all</button>
+      </div>
+      <div id="notifList">
+        <div style="text-align:center;color:var(--fg-faint);font-size:13px;padding:24px 0">No notifications yet</div>
+      </div>
+    </div>
+
+    <div class="content-area" id="contentArea">
+      <!-- BRAND DASHBOARD -->
+      <div class="page active" id="page-brand-dashboard">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Active POs</div><div class="kpi-value accent">12</div><div class="kpi-spark" id="spark1"></div></div>
+          <div class="kpi-card"><div class="kpi-label">Open NCRs</div><div class="kpi-value bad">4</div><div class="progress-track"><div class="progress-fill" style="width:67%;background:var(--ok)"></div></div></div>
+          <div class="kpi-card"><div class="kpi-label">Cost of Quality</div><div class="kpi-value warn">$14.2k</div><div class="kpi-spark" id="spark2"></div></div>
+          <div class="kpi-card"><div class="kpi-label">On-Time Rate</div><div class="kpi-value ok">87%</div><div class="progress-track"><div class="progress-fill" style="width:87%;background:var(--ok)"></div></div></div>
+        </div>
+        <div class="dash-cols">
+          <div>
+            <div class="data-table-wrap">
+              <table class="data-table" id="poTable">
+                <thead>
+                  <tr>
+                    <th data-col="id">PO # <span class="sort-icon">↕</span></th>
+                    <th data-col="style">Style <span class="sort-icon">↕</span></th>
+                    <th data-col="factory">Factory <span class="sort-icon">↕</span></th>
+                    <th data-col="country">Country <span class="sort-icon">↕</span></th>
+                    <th data-col="qty">Qty <span class="sort-icon">↕</span></th>
+                    <th data-col="status">Status <span class="sort-icon">↕</span></th>
+                    <th data-col="date">Ex-Factory <span class="sort-icon">↕</span></th>
+                  </tr>
+                </thead>
+                <tbody id="poTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div class="activity-feed" id="activityFeed">
+              <div class="activity-feed-header">Recent Activity</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BRAND PO LIST -->
+      <div class="page" id="page-brand-pos">
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>PO #</th><th>Brand</th><th>Styles</th><th>Factory</th><th>Country</th><th>Qty</th><th>Category</th><th>Status</th><th>Ex-Factory</th>
+              </tr>
+            </thead>
+            <tbody id="poFullTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- BRAND INSPECTIONS -->
+      <div class="page" id="page-brand-inspections">
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Inspection #</th><th>PO</th><th>Factory</th><th>Country</th><th>Type</th><th>Time</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="brandInsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- BRAND ANALYTICS -->
+      <div class="page" id="page-brand-analytics">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Total POs (YTD)</div><div class="kpi-value accent">12</div></div>
+          <div class="kpi-card"><div class="kpi-label">Factories Active</div><div class="kpi-value accent">9</div></div>
+          <div class="kpi-card"><div class="kpi-label">Avg Defect Rate</div><div class="kpi-value warn">3.2%</div></div>
+          <div class="kpi-card"><div class="kpi-label">Inspections Completed</div><div class="kpi-value ok">24</div></div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;text-align:center;color:var(--fg-muted)">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.3;margin-bottom:12px"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 6-6"/></svg>
+          <div style="font-size:15px;font-weight:600;margin-bottom:4px">Analytics Dashboard</div>
+          <div style="font-size:13px">Charts and trend analysis will be available in the full platform.</div>
+        </div>
+      </div>
+
+      <!-- FACTORY PORTAL -->
+      <div class="page" id="page-factory-floor">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">In Production</div><div class="kpi-value accent">3</div></div>
+          <div class="kpi-card"><div class="kpi-label">Defects Today</div><div class="kpi-value bad">7</div></div>
+          <div class="kpi-card"><div class="kpi-label">Efficiency</div><div class="kpi-value ok">92%</div><div class="progress-track"><div class="progress-fill" style="width:92%"></div></div></div>
+          <div class="kpi-card"><div class="kpi-label">Workers Active</div><div class="kpi-value" style="color:var(--fg)">47</div></div>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>PO #</th><th>Brand</th><th>Style</th><th>Qty</th><th>Progress</th><th>Status</th></tr></thead>
+            <tbody id="factoryTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="page" id="page-factory-orders">
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>PO #</th><th>Brand</th><th>Styles</th><th>Qty</th><th>Status</th><th>Ex-Factory</th></tr></thead>
+            <tbody id="factoryOrdersBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="page" id="page-factory-milestones">
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px" id="factoryMilestonesContent">
+          <p style="color:var(--fg-muted)">Select a PO from Active Orders to update milestones.</p>
+        </div>
+      </div>
+
+      <!-- INSPECTOR PORTAL -->
+      <div class="page" id="page-inspector-schedule">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Today's Inspections</div><div class="kpi-value accent">3</div></div>
+          <div class="kpi-card"><div class="kpi-label">This Week</div><div class="kpi-value" style="color:var(--fg)">8</div></div>
+          <div class="kpi-card"><div class="kpi-label">Pass Rate</div><div class="kpi-value ok">94%</div></div>
+          <div class="kpi-card"><div class="kpi-label">NCRs Raised</div><div class="kpi-value bad">4</div></div>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Inspection #</th><th>PO</th><th>Factory</th><th>Country</th><th>Type</th><th>Time</th><th>Day</th><th>Status</th></tr></thead>
+            <tbody id="inspectorTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="page" id="page-inspector-checklist">
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+          <div style="font-weight:700;font-size:15px;margin-bottom:4px">AQL Inspection Checklist</div>
+          <div style="font-size:13px;color:var(--fg-muted)">INS-2611-DT-001 &middot; Dhaka Textiles &middot; In-line Inspection</div>
+        </div>
+        <div class="check-list" id="checkList"></div>
+        <div style="margin-top:20px">
+          <button class="btn-primary" onclick="submitChecklist()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+            Submit Inspection Report
+          </button>
+        </div>
+      </div>
+
+      <div class="page" id="page-inspector-reports">
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;text-align:center;color:var(--fg-muted)">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.3;margin-bottom:12px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+          <div style="font-size:15px;font-weight:600;margin-bottom:4px">Inspection Reports</div>
+          <div style="font-size:13px">Past reports and export functionality will be available in the full platform.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail overlay + panel -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail()">
+  <div class="detail-panel" onclick="event.stopPropagation()">
+    <div class="detail-panel-header">
+      <button class="detail-panel-close" onclick="closeDetail()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="detail-panel-title" id="detailTitle">PO Detail</span>
+      <span class="badge" id="detailBadge"></span>
+    </div>
+    <div class="detail-panel-body" id="detailBody"></div>
+  </div>
+</div>
+
+<!-- Milestone modal -->
+<div class="modal-overlay" id="milestoneModal">
+  <div class="modal-box">
+    <div class="modal-title">Update Milestone</div>
+    <div class="form-group">
+      <label class="form-label">Milestone Step</label>
+      <select class="form-select" id="msStep"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes / Evidence (DC, Challan, Remarks)</label>
+      <textarea class="form-textarea" id="msNotes" rows="2" placeholder="e.g. DC #4521 — 12 rolls received, challan attached"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Completion Date</label>
+      <input type="date" class="form-input" id="msDate" style="font-family:var(--font-body)">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button class="btn-primary" style="background:var(--bg-dim);color:var(--fg)" onclick="closeMilestoneModal()">Cancel</button>
+      <button class="btn-primary" onclick="confirmMilestone()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+var POS = [
+  { id:'PO-2611-AW-001', cat:'Garments', styles:[{name:'Summer Tee V-Neck',sku:'TEE-VN-BLK',colors:['Black','White','Navy'],sizes:'S–XXL',pcs:2400},{name:'Summer Tee Crew',sku:'TEE-CR-GRY',colors:['Grey Marl','Olive'],sizes:'S–XL',pcs:1600},{name:'Summer Tee Henley',sku:'TEE-HN-BLU',colors:['Sky Blue'],sizes:'M–XL',pcs:1000}], factory:'Dhaka Textiles Ltd.', country:'BD', qty:5000, status:'in_production', date:'2026-12-15', brand:'ActiveWave' },
+  { id:'PO-2611-AW-002', cat:'Garments', styles:[{name:'Winter Parka Hooded',sku:'PRK-HD-BLK',colors:['Black','Charcoal'],sizes:'S–XXL',pcs:2000},{name:'Winter Parka Bomber',sku:'PRK-BM-NVY',colors:['Navy'],sizes:'M–XL',pcs:1000}], factory:'Saigon Stitch Co.', country:'VN', qty:3000, status:'awaiting_inspection', date:'2026-11-28', brand:'ActiveWave' },
+  { id:'PO-2611-AW-003', cat:'Garments', styles:[{name:'Hoodie Classic Pullover',sku:'HOD-PL-BLK',colors:['Black','Grey','Burgundy'],sizes:'S–XXL',pcs:5000},{name:'Hoodie Classic Zip',sku:'HOD-ZP-GRN',colors:['Forest Green','Stone'],sizes:'S–XL',pcs:3000}], factory:'Dhaka Textiles Ltd.', country:'BD', qty:8000, status:'in_production', date:'2027-01-10', brand:'ActiveWave' },
+  { id:'PO-2611-BB-001', cat:'Garments', styles:[{name:'Organic Jogger Slim',sku:'JOG-SL-KHK',colors:['Khaki','Black'],sizes:'S–XL',pcs:2500},{name:'Organic Jogger Relaxed',sku:'JOG-RX-NVY',colors:['Navy','Oat'],sizes:'M–XXL',pcs:1500}], factory:'Phnom Penh Garments', country:'KH', qty:4000, status:'inspected', date:'2026-11-20', brand:'Blueberry Threads' },
+  { id:'PO-2611-BB-002', cat:'Garments', styles:[{name:'Denim Jacket Trucker',sku:'DNM-TR-IND',colors:['Indigo','Light Wash'],sizes:'S–XL',pcs:1500},{name:'Denim Jacket Oversized',sku:'DNM-OV-BLK',colors:['Black'],sizes:'M–XL',pcs:1000}], factory:'Dhaka Textiles Ltd.', country:'BD', qty:2500, status:'ncr_open', date:'2026-12-01', brand:'Blueberry Threads' },
+  { id:'PO-2611-AW-004', cat:'Footwear', styles:[{name:'Canvas Sneaker Low',sku:'SNK-LO-WHT',colors:['White','Off-White','Black'],sizes:'EU 36–46',pcs:4000},{name:'Canvas Sneaker High',sku:'SNK-HI-NVY',colors:['Navy','Olive'],sizes:'EU 38–45',pcs:2000}], factory:'Guangzhou Yufeng Shoes', country:'CN', qty:6000, status:'accepted', date:'2027-02-15', brand:'ActiveWave' },
+  { id:'PO-2611-AW-005', cat:'Garments', styles:[{name:'Cargo Pant Slim Tapered',sku:'CRG-ST-KHK',colors:['Khaki','Olive','Black'],sizes:'28–38',pcs:3000},{name:'Cargo Pant Utility Wide',sku:'CRG-UW-STN',colors:['Stone','Charcoal'],sizes:'30–36',pcs:1500}], factory:'Tirupur Knits Pvt. Ltd.', country:'IN', qty:4500, status:'in_production', date:'2027-01-20', brand:'ActiveWave' },
+  { id:'PO-2611-BB-003', cat:'Garments', styles:[{name:'Wool Blend Overcoat',sku:'WOL-OC-CAM',colors:['Camel','Charcoal'],sizes:'S–XL',pcs:1200},{name:'Wool Blend Peacoat',sku:'WOL-PC-NVY',colors:['Navy'],sizes:'M–XL',pcs:800}], factory:'Istanbul Konfeksiyon A.S.', country:'TR', qty:2000, status:'ncr_open', date:'2026-12-10', brand:'Blueberry Threads' },
+  { id:'PO-2611-AW-006', cat:'Headwear', styles:[{name:'Performance Cap 6-Panel',sku:'CAP-6P-BLK',colors:['Black','White','Red','Navy'],sizes:'One Size',pcs:5000},{name:'Bucket Hat Reversible',sku:'BKT-RV-OLV',colors:['Olive/Tan','Navy/Sky'],sizes:'S/M, L/XL',pcs:2000}], factory:'Sialkot Sports Mfg.', country:'PK', qty:7000, status:'in_production', date:'2027-02-01', brand:'ActiveWave' },
+  { id:'PO-2611-BB-004', cat:'Accessories', styles:[{name:'Canvas Tote Large',sku:'TOT-LG-NAT',colors:['Natural','Black'],sizes:'One Size',pcs:6000},{name:'Canvas Crossbody',sku:'TOT-CB-TAN',colors:['Tan','Olive','Black'],sizes:'One Size',pcs:4000}], factory:'Addis Ababa Garments PLC', country:'ET', qty:10000, status:'awaiting_inspection', date:'2026-12-05', brand:'Blueberry Threads' },
+  { id:'PO-2611-AW-007', cat:'Gloves', styles:[{name:'Leather Work Glove',sku:'GLV-WK-BRN',colors:['Brown','Black'],sizes:'S–XXL',pcs:2000},{name:'Knit Liner Glove',sku:'GLV-KN-GRY',colors:['Grey','Black'],sizes:'M–XL',pcs:1500}], factory:'Sialkot Sports Mfg.', country:'PK', qty:3500, status:'ncr_open', date:'2026-12-20', brand:'ActiveWave' },
+  { id:'PO-2611-BB-005', cat:'Footwear', styles:[{name:'Leather Slide Sandal',sku:'SLD-LT-TAN',colors:['Tan','Black','White'],sizes:'EU 36–44',pcs:5000},{name:'EVA Sport Slide',sku:'SLD-EV-BLK',colors:['Black','Navy','Sage'],sizes:'EU 36–46',pcs:4000}], factory:'Shenzhen Footwear Co.', country:'CN', qty:9000, status:'ncr_open', date:'2027-01-05', brand:'Blueberry Threads' }
+];
+
+var COUNTRIES = {BD:'Bangladesh',VN:'Vietnam',KH:'Cambodia',CN:'China',IN:'India',TR:'Turkey',PK:'Pakistan',ET:'Ethiopia'};
+var COUNTRY_FLAGS = {BD:'\u{1F1E7}\u{1F1E9}',VN:'\u{1F1FB}\u{1F1F3}',KH:'\u{1F1F0}\u{1F1ED}',CN:'\u{1F1E8}\u{1F1F3}',IN:'\u{1F1EE}\u{1F1F3}',TR:'\u{1F1F9}\u{1F1F7}',PK:'\u{1F1F5}\u{1F1F0}',ET:'\u{1F1EA}\u{1F1F9}'};
+var FACTORIES = {
+  'Dhaka Textiles Ltd.':      { city:'Dhaka', country:'BD', audited:true, approved:true, active:true, img:'\u{1F3ED}' },
+  'Saigon Stitch Co.':        { city:'Ho Chi Minh City', country:'VN', audited:true, approved:true, active:true, img:'\u{1F3D7}' },
+  'Phnom Penh Garments':      { city:'Phnom Penh', country:'KH', audited:true, approved:true, active:true, img:'\u{1F9F5}' },
+  'Guangzhou Yufeng Shoes':   { city:'Guangzhou', country:'CN', audited:false, approved:false, active:true, img:'\u{1F45F}' },
+  'Tirupur Knits Pvt. Ltd.':  { city:'Tirupur', country:'IN', audited:true, approved:true, active:true, img:'\u{1F9F6}' },
+  'Istanbul Konfeksiyon A.S.':{ city:'Istanbul', country:'TR', audited:true, approved:true, active:true, img:'\u{1FAA1}' },
+  'Sialkot Sports Mfg.':     { city:'Sialkot', country:'PK', audited:true, approved:true, active:true, img:'⚽' },
+  'Addis Ababa Garments PLC': { city:'Addis Ababa', country:'ET', audited:false, approved:false, active:true, img:'\u{1F9E5}' },
+  'Shenzhen Footwear Co.':    { city:'Shenzhen', country:'CN', audited:true, approved:false, active:true, img:'\u{1F97E}' }
+};
+var CAT_ICONS = {Garments:'\u{1F9E5}',Footwear:'\u{1F45F}',Gloves:'\u{1F9E4}',Headwear:'\u{1F9E2}',Accessories:'\u{1F45C}'};
+var STATUSES = {
+  draft:['Draft','muted'], pending_factory:['Pending','muted'], accepted:['Accepted','accent'],
+  in_production:['In Production','accent'], awaiting_inspection:['Awaiting Inspection','warn'],
+  inspected:['Inspected','ok'], released:['Released','ok'], shipped:['Shipped','ok'],
+  ncr_open:['NCR Open','bad'], closed:['Closed','muted'], cancelled:['Cancelled','muted']
+};
+var COMMENTS = {
+  'PO-2611-AW-001': [
+    { from:'Sarah Chen', role:'Brand — ActiveWave', msg:'Can we get an update on fabric inward? Supplier was 3 days late last time.', time:'Oct 10, 9:15 AM', me:false },
+    { from:'Rahim Khan', role:'Factory — Dhaka Textiles', msg:'All fabric received Sep 18 on time. QC passed Sep 22. We are on track.', time:'Oct 10, 11:42 AM', me:false },
+    { from:'Sarah Chen', role:'Brand — ActiveWave', msg:'Great, thanks Rahim. <span class="comment-mention">@QualityFirst</span> please confirm in-line inspection for Nov 10?', time:'Oct 10, 2:08 PM', me:false },
+    { from:'Amit Verma', role:'Inspector — QualityFirst', msg:'Confirmed. Inspector Priya Sharma assigned for Nov 10 at Dhaka Textiles. AQL Level II.', time:'Oct 11, 8:30 AM', me:false }
+  ],
+  'PO-2611-BB-002': [
+    { from:'James Liu', role:'Brand — Blueberry Threads', msg:'NCR raised on back yoke stitching. 8% defect rate is unacceptable. What happened?', time:'Oct 22, 3:15 PM', me:false },
+    { from:'Rahim Khan', role:'Factory — Dhaka Textiles', msg:'Issue traced to machine #7 — needle plate was misaligned. Already recalibrated. We can rework affected pieces in 10 days.', time:'Oct 22, 5:30 PM', me:false },
+    { from:'James Liu', role:'Brand — Blueberry Threads', msg:'<span class="comment-mention">@QualityFirst</span> please schedule re-inspection after rework. Need this closed before Dec 1 ship date.', time:'Oct 23, 9:00 AM', me:false },
+    { from:'Amit Verma', role:'Inspector — QualityFirst', msg:'Re-inspection penciled for Nov 12. Will do 100% check on reworked pieces + fresh AQL on full lot.', time:'Oct 23, 11:15 AM', me:false }
+  ],
+  'PO-2611-AW-002': [
+    { from:'Sarah Chen', role:'Brand — ActiveWave', msg:'Final inspection overdue by 3 days. <span class="comment-mention">@Saigon Stitch</span> what is the status?', time:'Oct 18, 10:00 AM', me:false },
+    { from:'Linh Nguyen', role:'Factory — Saigon Stitch', msg:'Apologies — pressing line had a delay. All 3,000 pcs are packed and ready. Requesting inspection slot this week.', time:'Oct 18, 2:45 PM', me:false },
+    { from:'Sarah Chen', role:'Brand — ActiveWave', msg:'<span class="comment-mention">@QualityFirst</span> can you accommodate a final inspection Nov 20?', time:'Oct 18, 3:30 PM', me:false }
+  ]
+};
+var INSPECTIONS = [
+  { id:'INS-2611-DT-001', po:'PO-2611-AW-001', factory:'Dhaka Textiles', country:'BD', type:'In-line', time:'09:00', status:'scheduled', day:'today' },
+  { id:'INS-2611-SS-001', po:'PO-2611-AW-002', factory:'Saigon Stitch', country:'VN', type:'Final', time:'13:30', status:'scheduled', day:'today' },
+  { id:'INS-2611-PP-001', po:'PO-2611-BB-001', factory:'Phnom Penh Garments', country:'KH', type:'Pre-shipment', time:'16:00', status:'completed', day:'today' },
+  { id:'INS-2611-TK-001', po:'PO-2611-AW-005', factory:'Tirupur Knits', country:'IN', type:'In-line', time:'10:00', status:'scheduled', day:'wed' },
+  { id:'INS-2611-IK-001', po:'PO-2611-BB-003', factory:'Istanbul Konfeksiyon', country:'TR', type:'Final', time:'09:30', status:'scheduled', day:'wed' },
+  { id:'INS-2611-SK-001', po:'PO-2611-AW-006', factory:'Sialkot Sports', country:'PK', type:'In-line', time:'14:00', status:'scheduled', day:'thu' },
+  { id:'INS-2611-AA-001', po:'PO-2611-BB-004', factory:'Addis Ababa Garments', country:'ET', type:'Final', time:'11:00', status:'scheduled', day:'fri' },
+  { id:'INS-2611-GZ-001', po:'PO-2611-AW-004', factory:'Guangzhou Yufeng', country:'CN', type:'Pre-shipment', time:'15:30', status:'scheduled', day:'fri' }
+];
+var CHECKS = [
+  'Fabric weight within tolerance (GSM test)',
+  'Color fastness to washing (ISO 105-C06)',
+  'Dimensional stability after wash (<3%)',
+  'Seam strength > 15 N/cm',
+  'Needle detector test — all clear',
+  'Label placement per spec sheet',
+  'Packaging per buyer instructions',
+  'AQL defect count within acceptance'
+];
+var TIMELINES = {
+  'PO-2611-AW-001': [
+    { label:'PO Created', date:'Aug 12, 2026', done:true },
+    { label:'Factory Accepted', date:'Aug 15, 2026', done:true },
+    { label:'Material Ordered', sub:'Fabric + trims sourced', date:'Aug 20, 2026', done:true },
+    { label:'Materials In-House', sub:'Fabric, zippers, labels received', date:'Sep 18, 2026', done:true },
+    { label:'Material QC Passed', sub:'GSM, shrinkage, color fastness OK', date:'Sep 22, 2026', done:true },
+    { label:'PP Sample Approved', sub:'Pre-production sample signed off by buyer', date:'Sep 30, 2026', done:true },
+    { label:'Bulk Cutting Started', date:'Oct 5, 2026', done:true },
+    { label:'Bulk Production', sub:'Sewing, finishing, pressing', date:'Oct 12, 2026', current:true },
+    { label:'In-line Inspection', date:'Nov 10, 2026', pending:true },
+    { label:'Final Inspection (AQL)', date:'Dec 1, 2026', pending:true },
+    { label:'Quality Released', date:'Dec 8, 2026', pending:true },
+    { label:'Shipped', date:'Dec 15, 2026', pending:true }
+  ],
+  'PO-2611-AW-002': [
+    { label:'PO Created', date:'Jul 20, 2026', done:true },
+    { label:'Factory Accepted', date:'Jul 23, 2026', done:true },
+    { label:'Material Ordered', sub:'Shell fabric, insulation, DWR coating', date:'Jul 28, 2026', done:true },
+    { label:'Materials In-House', date:'Aug 25, 2026', done:true },
+    { label:'Material QC Passed', sub:'Waterproof rating + down fill power tested', date:'Aug 30, 2026', done:true },
+    { label:'PP Sample Approved', date:'Sep 10, 2026', done:true },
+    { label:'Bulk Cutting Started', date:'Sep 15, 2026', done:true },
+    { label:'Bulk Production', date:'Sep 22, 2026', done:true },
+    { label:'In-line Inspection', date:'Oct 15, 2026', done:true },
+    { label:'Final Inspection (AQL)', sub:'Awaiting 3P inspector', date:'Nov 20, 2026', current:true },
+    { label:'Quality Released', date:'Nov 24, 2026', pending:true },
+    { label:'Shipped', date:'Nov 28, 2026', pending:true }
+  ],
+  'PO-2611-BB-002': [
+    { label:'PO Created', date:'Jul 5, 2026', done:true },
+    { label:'Factory Accepted', date:'Jul 8, 2026', done:true },
+    { label:'Material Ordered', sub:'Raw denim, rivets, buttons', date:'Jul 12, 2026', done:true },
+    { label:'Materials In-House', date:'Aug 10, 2026', done:true },
+    { label:'Material QC Passed', sub:'Denim weight OK, wash test passed', date:'Aug 15, 2026', done:true },
+    { label:'PP Sample Approved', date:'Aug 25, 2026', done:true },
+    { label:'Bulk Cutting Started', date:'Sep 1, 2026', done:true },
+    { label:'Bulk Production', date:'Sep 8, 2026', done:true },
+    { label:'In-line Inspection', date:'Oct 5, 2026', done:true },
+    { label:'Final Inspection (AQL)', date:'Oct 20, 2026', done:true },
+    { label:'NCR Raised', sub:'Broken stitching on back yoke — 8% defect rate', date:'Oct 22, 2026', current:true, ncr:true },
+    { label:'Rework / Re-inspection', date:'Nov 5, 2026', pending:true },
+    { label:'Quality Released', date:'Nov 20, 2026', pending:true },
+    { label:'Shipped', date:'Dec 1, 2026', pending:true }
+  ]
+};
+var STYLE_TIMELINES = {
+  'TEE-VN-BLK': [
+    { label:'Material Ordered', sub:'Single jersey cotton 180GSM', date:'Aug 20, 2026', done:true },
+    { label:'Materials In-House', date:'Sep 15, 2026', done:true },
+    { label:'Material QC Passed', sub:'GSM OK, shrinkage 1.8%', date:'Sep 20, 2026', done:true },
+    { label:'PP Sample Approved', date:'Sep 28, 2026', done:true },
+    { label:'Bulk Cutting', date:'Oct 5, 2026', done:true },
+    { label:'Bulk Production', sub:'3 color runs: Black, White, Navy', date:'Oct 12, 2026', current:true },
+    { label:'In-line Inspection', date:'Nov 10, 2026', pending:true },
+    { label:'Final Inspection (AQL)', date:'Dec 1, 2026', pending:true }
+  ],
+  'TEE-CR-GRY': [
+    { label:'Material Ordered', sub:'Marl knit fabric + rib trim', date:'Aug 20, 2026', done:true },
+    { label:'Materials In-House', sub:'Fabric delayed — supplier short on Grey Marl yarn', date:'Oct 2, 2026', done:true },
+    { label:'Material QC Passed', sub:'GSM OK, color match within tolerance', date:'Oct 8, 2026', done:true },
+    { label:'PP Sample Approved', date:'Oct 14, 2026', done:true },
+    { label:'Bulk Cutting', date:'Oct 18, 2026', current:true },
+    { label:'Bulk Production', sub:'2 color runs: Grey Marl, Olive', date:'Oct 28, 2026', pending:true },
+    { label:'In-line Inspection', date:'Nov 20, 2026', pending:true },
+    { label:'Final Inspection (AQL)', date:'Dec 5, 2026', pending:true }
+  ],
+  'TEE-HN-BLU': [
+    { label:'Material Ordered', sub:'Henley placket buttons + jersey', date:'Aug 20, 2026', done:true },
+    { label:'Materials In-House', date:'Sep 18, 2026', done:true },
+    { label:'Material QC Passed', date:'Sep 22, 2026', done:true },
+    { label:'PP Sample Approved', date:'Sep 30, 2026', done:true },
+    { label:'Bulk Cutting', date:'Oct 3, 2026', done:true },
+    { label:'Bulk Production', sub:'Single color: Sky Blue', date:'Oct 10, 2026', done:true },
+    { label:'In-line Inspection', date:'Nov 5, 2026', current:true },
+    { label:'Final Inspection (AQL)', date:'Nov 28, 2026', pending:true }
+  ],
+  'PRK-HD-BLK': [
+    { label:'Material Ordered', sub:'Shell fabric, goose down, DWR coating', date:'Jul 28, 2026', done:true },
+    { label:'Materials In-House', date:'Aug 25, 2026', done:true },
+    { label:'Material QC Passed', sub:'Waterproof 10K, fill power 650+', date:'Aug 30, 2026', done:true },
+    { label:'PP Sample Approved', date:'Sep 10, 2026', done:true },
+    { label:'Bulk Cutting', date:'Sep 15, 2026', done:true },
+    { label:'Bulk Production', sub:'2 colors: Black, Charcoal', date:'Sep 22, 2026', done:true },
+    { label:'In-line Inspection', date:'Oct 15, 2026', done:true },
+    { label:'Final Inspection (AQL)', sub:'Awaiting inspector', date:'Nov 20, 2026', current:true }
+  ],
+  'PRK-BM-NVY': [
+    { label:'Material Ordered', sub:'Bomber shell, rib knit cuff, insulation', date:'Jul 28, 2026', done:true },
+    { label:'Materials In-House', sub:'Rib knit cuff delayed — capacity issue at trim supplier', date:'Sep 5, 2026', done:true },
+    { label:'Material QC Passed', date:'Sep 10, 2026', done:true },
+    { label:'PP Sample Approved', date:'Sep 18, 2026', done:true },
+    { label:'Bulk Cutting', date:'Sep 22, 2026', done:true },
+    { label:'Bulk Production', sub:'Single color: Navy', date:'Oct 1, 2026', done:true },
+    { label:'In-line Inspection', date:'Oct 20, 2026', done:true },
+    { label:'Final Inspection (AQL)', sub:'Awaiting inspector, combined with Hooded', date:'Nov 20, 2026', current:true }
+  ],
+  'HOD-PL-BLK': [
+    { label:'Material Ordered', sub:'Fleece 320GSM, drawcords, eyelets', date:'Sep 2, 2026', done:true },
+    { label:'Materials In-House', date:'Sep 28, 2026', done:true },
+    { label:'Material QC Passed', sub:'Pilling grade 4, GSM OK', date:'Oct 2, 2026', done:true },
+    { label:'PP Sample Approved', date:'Oct 10, 2026', done:true },
+    { label:'Bulk Cutting', date:'Oct 14, 2026', done:true },
+    { label:'Bulk Production', sub:'3 color runs: Black, Grey, Burgundy — high volume', date:'Oct 20, 2026', current:true },
+    { label:'In-line Inspection', date:'Nov 25, 2026', pending:true },
+    { label:'Final Inspection (AQL)', date:'Dec 20, 2026', pending:true }
+  ],
+  'HOD-ZP-GRN': [
+    { label:'Material Ordered', sub:'Fleece + YKK zippers + zip tape', date:'Sep 2, 2026', done:true },
+    { label:'Materials In-House', sub:'YKK zipper lot delayed by 10 days', date:'Oct 8, 2026', done:true },
+    { label:'Material QC Passed', sub:'Pilling OK, zipper pull strength OK', date:'Oct 12, 2026', done:true },
+    { label:'PP Sample Approved', date:'Oct 18, 2026', current:true },
+    { label:'Bulk Cutting', date:'Oct 24, 2026', pending:true },
+    { label:'Bulk Production', sub:'2 colors: Forest Green, Stone', date:'Nov 2, 2026', pending:true },
+    { label:'In-line Inspection', date:'Dec 5, 2026', pending:true },
+    { label:'Final Inspection (AQL)', date:'Dec 28, 2026', pending:true }
+  ],
+  'DNM-TR-IND': [
+    { label:'Material Ordered', sub:'14oz raw denim, rivets, tack buttons', date:'Jul 12, 2026', done:true },
+    { label:'Materials In-House', date:'Aug 10, 2026', done:true },
+    { label:'Material QC Passed', sub:'Denim weight, wash test OK', date:'Aug 15, 2026', done:true },
+    { label:'PP Sample Approved', date:'Aug 25, 2026', done:true },
+    { label:'Bulk Cutting', date:'Sep 1, 2026', done:true },
+    { label:'Bulk Production', sub:'2 colors: Indigo, Light Wash', date:'Sep 8, 2026', done:true },
+    { label:'In-line Inspection', date:'Oct 5, 2026', done:true },
+    { label:'Final Inspection (AQL)', date:'Oct 20, 2026', done:true },
+    { label:'NCR Raised', sub:'Back yoke stitching — 8% defect on Indigo', date:'Oct 22, 2026', current:true, ncr:true },
+    { label:'Rework / Re-inspection', date:'Nov 5, 2026', pending:true }
+  ],
+  'DNM-OV-BLK': [
+    { label:'Material Ordered', sub:'12oz stretch denim, oversized pattern', date:'Jul 12, 2026', done:true },
+    { label:'Materials In-House', date:'Aug 10, 2026', done:true },
+    { label:'Material QC Passed', date:'Aug 15, 2026', done:true },
+    { label:'PP Sample Approved', date:'Aug 28, 2026', done:true },
+    { label:'Bulk Cutting', date:'Sep 3, 2026', done:true },
+    { label:'Bulk Production', sub:'Single color: Black', date:'Sep 10, 2026', done:true },
+    { label:'In-line Inspection', date:'Oct 5, 2026', done:true },
+    { label:'Final Inspection (AQL)', sub:'Passed — no defects on this style', date:'Oct 20, 2026', done:true },
+    { label:'Quality Released', sub:'Held pending Trucker rework', date:'Oct 22, 2026', current:true }
+  ]
+};
+
+var checkStates = CHECKS.map(function(){ return 'none'; });
+var notifications = [];
+var currentPortal = 'brand';
+var currentPage = 'brand-dashboard';
+var currentMsPo = null;
+var sortCol = null;
+var sortAsc = true;
+
+var NAV_ITEMS = {
+  brand: [
+    { id:'brand-dashboard', label:'Dashboard', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>' },
+    { id:'brand-pos', label:'Purchase Orders', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>' },
+    { id:'brand-inspections', label:'Inspections', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>' },
+    { id:'brand-analytics', label:'Analytics', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 6-6"/></svg>' }
+  ],
+  factory: [
+    { id:'factory-floor', label:'Production Floor', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>' },
+    { id:'factory-orders', label:'Active Orders', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>' },
+    { id:'factory-milestones', label:'Milestones', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>' }
+  ],
+  inspector: [
+    { id:'inspector-schedule', label:'Schedule', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' },
+    { id:'inspector-checklist', label:'Checklist', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>' },
+    { id:'inspector-reports', label:'Reports', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>' }
+  ]
+};
+
+var USERS = {
+  brand: { name:'Sarah Chen', initials:'SC' },
+  factory: { name:'Rahim Khan', initials:'RK' },
+  inspector: { name:'Amit Verma', initials:'AV' }
+};
+
+var PAGE_TITLES = {
+  'brand-dashboard':'Dashboard',
+  'brand-pos':'Purchase Orders',
+  'brand-inspections':'Inspections',
+  'brand-analytics':'Analytics',
+  'factory-floor':'Production Floor',
+  'factory-orders':'Active Orders',
+  'factory-milestones':'Milestones',
+  'inspector-schedule':'Schedule',
+  'inspector-checklist':'AQL Checklist',
+  'inspector-reports':'Reports'
+};
+
+function init() {
+  renderSidebarNav();
+  renderPoTable();
+  renderActivityFeed();
+  renderFullPoTable();
+  renderBrandInsTable();
+  renderFactoryTable();
+  renderFactoryOrders();
+  renderInspectorTable();
+  renderChecklist();
+  buildSpark('spark1', [8,10,9,11,12,10,12]);
+  buildSpark('spark2', [9.2,10.1,11.5,12.8,13.1,14.0,14.2]);
+  pushNotif('Milestone confirmed: <strong>Bulk Cutting Started</strong> on PO-2611-AW-001','green',{type:'po',id:'PO-2611-AW-001'});
+  pushNotif('NCR raised on PO-2611-BB-002 — <strong>8% defect rate</strong> on back yoke stitching','red',{type:'po',id:'PO-2611-BB-002'});
+  pushNotif('Inspector <strong>Priya Sharma</strong> assigned for Nov 10 in-line at Dhaka Textiles','blue',{type:'inspection',id:'INS-2611-DT-001'});
+  pushNotif('Final inspection <strong>overdue</strong> on PO-2611-AW-002 — Saigon Stitch Co.','orange',{type:'po',id:'PO-2611-AW-002'});
+}
+
+function renderSidebarNav() {
+  var items = NAV_ITEMS[currentPortal] || [];
+  var nav = document.getElementById('sidebarNav');
+  nav.innerHTML = items.map(function(item) {
+    var active = currentPage === item.id ? ' active' : '';
+    return '<div class="nav-item'+active+'" data-page="'+item.id+'" onclick="navigateTo(\''+item.id+'\')">'+item.icon+'<span>'+item.label+'</span></div>';
+  }).join('');
+}
+
+function switchPortal(portal) {
+  currentPortal = portal;
+  document.querySelectorAll('.portal-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.portal === portal);
+  });
+  var user = USERS[portal];
+  document.getElementById('userName').textContent = user.name;
+  document.getElementById('userInitials').textContent = user.initials;
+  var firstPage = NAV_ITEMS[portal][0].id;
+  currentPage = firstPage;
+  renderSidebarNav();
+  showPage(firstPage);
+}
+
+function navigateTo(pageId) {
+  currentPage = pageId;
+  document.querySelectorAll('.nav-item').forEach(function(n) {
+    n.classList.toggle('active', n.dataset.page === pageId);
+  });
+  showPage(pageId);
+}
+
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  var el = document.getElementById('page-' + pageId);
+  if (el) el.classList.add('active');
+  document.getElementById('pageTitle').textContent = PAGE_TITLES[pageId] || 'Dashboard';
+  document.getElementById('contentArea').scrollTop = 0;
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function buildSpark(id, vals) {
+  var el = document.getElementById(id); if (!el) return;
+  var max = Math.max.apply(null, vals);
+  el.innerHTML = vals.map(function(v) {
+    return '<div class="kpi-spark-bar" style="height:'+Math.max(15,(v/max)*100)+'%"></div>';
+  }).join('');
+}
+
+function renderPoTable() {
+  var data = POS.slice();
+  if (sortCol) {
+    data.sort(function(a,b) {
+      var av, bv;
+      switch(sortCol) {
+        case 'id': av=a.id; bv=b.id; break;
+        case 'style': av=a.styles[0].name; bv=b.styles[0].name; break;
+        case 'factory': av=a.factory; bv=b.factory; break;
+        case 'country': av=COUNTRIES[a.country]||a.country; bv=COUNTRIES[b.country]||b.country; break;
+        case 'qty': av=a.qty; bv=b.qty; break;
+        case 'status': av=(STATUSES[a.status]||[''])[0]; bv=(STATUSES[b.status]||[''])[0]; break;
+        case 'date': av=a.date; bv=b.date; break;
+        default: return 0;
+      }
+      if (av < bv) return sortAsc ? -1 : 1;
+      if (av > bv) return sortAsc ? 1 : -1;
+      return 0;
+    });
+  }
+  document.getElementById('poTableBody').innerHTML = data.map(function(po) {
+    var s = STATUSES[po.status] || ['--','muted'];
+    var flag = COUNTRY_FLAGS[po.country] || '';
+    var mainStyle = po.styles[0].name;
+    var extra = po.styles.length > 1 ? ' <span style="color:var(--fg-faint)">+' + (po.styles.length-1) + '</span>' : '';
+    return '<tr onclick="openPoDetail(\''+po.id+'\')">'
+      +'<td><span style="font-family:var(--font-mono);font-size:12px">'+po.id+'</span></td>'
+      +'<td>'+mainStyle+extra+'</td>'
+      +'<td>'+po.factory+'</td>'
+      +'<td>'+flag+' '+(COUNTRIES[po.country]||po.country)+'</td>'
+      +'<td style="font-family:var(--font-mono)">'+po.qty.toLocaleString()+'</td>'
+      +'<td><span class="badge badge-'+s[1]+'">'+s[0]+'</span></td>'
+      +'<td>'+new Date(po.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'</td>'
+      +'</tr>';
+  }).join('');
+}
+
+document.getElementById('poTable').querySelector('thead').addEventListener('click', function(e) {
+  var th = e.target.closest('th');
+  if (!th) return;
+  var col = th.dataset.col;
+  if (sortCol === col) { sortAsc = !sortAsc; } else { sortCol = col; sortAsc = true; }
+  document.querySelectorAll('#poTable th').forEach(function(t) { t.classList.remove('sorted'); });
+  th.classList.add('sorted');
+  th.querySelector('.sort-icon').textContent = sortAsc ? '↑' : '↓';
+  renderPoTable();
+});
+
+function renderFullPoTable() {
+  document.getElementById('poFullTableBody').innerHTML = POS.map(function(po) {
+    var s = STATUSES[po.status] || ['--','muted'];
+    var flag = COUNTRY_FLAGS[po.country] || '';
+    var icon = CAT_ICONS[po.cat] || '';
+    return '<tr onclick="openPoDetail(\''+po.id+'\')">'
+      +'<td style="font-family:var(--font-mono);font-size:12px">'+po.id+'</td>'
+      +'<td>'+po.brand+'</td>'
+      +'<td>'+po.styles.length+'</td>'
+      +'<td>'+po.factory+'</td>'
+      +'<td>'+flag+' '+(COUNTRIES[po.country]||po.country)+'</td>'
+      +'<td style="font-family:var(--font-mono)">'+po.qty.toLocaleString()+'</td>'
+      +'<td>'+icon+' '+po.cat+'</td>'
+      +'<td><span class="badge badge-'+s[1]+'">'+s[0]+'</span></td>'
+      +'<td>'+new Date(po.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'</td>'
+      +'</tr>';
+  }).join('');
+}
+
+function renderBrandInsTable() {
+  document.getElementById('brandInsTableBody').innerHTML = INSPECTIONS.map(function(ins) {
+    var days = {today:'Today',wed:'Wednesday',thu:'Thursday',fri:'Friday'};
+    var done = ins.status === 'completed';
+    return '<tr onclick="'+(done?'':'')+'">'
+      +'<td style="font-family:var(--font-mono);font-size:12px">'+ins.id+'</td>'
+      +'<td>'+ins.po+'</td>'
+      +'<td>'+ins.factory+'</td>'
+      +'<td>'+(COUNTRY_FLAGS[ins.country]||'')+' '+(COUNTRIES[ins.country]||ins.country)+'</td>'
+      +'<td>'+ins.type+'</td>'
+      +'<td>'+(days[ins.day]||ins.day)+' '+ins.time+'</td>'
+      +'<td><span class="badge '+(done?'badge-ok':'badge-accent')+'">'+(done?'Done':'Scheduled')+'</span></td>'
+      +'</tr>';
+  }).join('');
+}
+
+function renderActivityFeed() {
+  var feed = document.getElementById('activityFeed');
+  var activities = [
+    { dot:'green', msg:'<strong>Bulk Cutting Started</strong> confirmed on PO-2611-AW-001', time:'2 hours ago' },
+    { dot:'red', msg:'NCR raised on PO-2611-BB-002 — 8% defect rate on back yoke', time:'Yesterday' },
+    { dot:'blue', msg:'Inspector <strong>Priya Sharma</strong> assigned for Nov 10 in-line inspection', time:'Yesterday' },
+    { dot:'orange', msg:'Final inspection <strong>overdue</strong> on PO-2611-AW-002', time:'2 days ago' },
+    { dot:'green', msg:'Fabric inward confirmed at <strong>Dhaka Textiles</strong> for PO-2611-AW-003', time:'3 days ago' },
+    { dot:'blue', msg:'<strong>PP Sample</strong> approved for Hoodie Classic Pullover', time:'4 days ago' },
+    { dot:'green', msg:'PO-2611-BB-001 shipped from <strong>Phnom Penh Garments</strong>', time:'5 days ago' },
+    { dot:'red', msg:'NCR on PO-2611-BB-003 — lining puckering at <strong>Istanbul Konfeksiyon</strong>', time:'1 week ago' }
+  ];
+  var html = '<div class="activity-feed-header">Recent Activity</div>';
+  html += activities.map(function(a) {
+    return '<div class="activity-item">'
+      +'<div class="activity-dot" style="background:var(--'+({green:'ok',red:'bad',blue:'accent',orange:'warn'}[a.dot])+')"></div>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:13px;line-height:1.4">'+a.msg+'</div><div style="font-size:11px;color:var(--fg-faint);margin-top:2px">'+a.time+'</div></div>'
+      +'</div>';
+  }).join('');
+  feed.innerHTML = html;
+}
+
+function renderFactoryTable() {
+  var fps = POS.filter(function(p) { return p.factory.indexOf('Dhaka') >= 0; });
+  document.getElementById('factoryTableBody').innerHTML = fps.map(function(po) {
+    var s = STATUSES[po.status] || ['--','muted'];
+    var pct = po.status==='in_production'?Math.floor(Math.random()*40+40):po.status==='ncr_open'?65:100;
+    return '<tr onclick="openPoDetail(\''+po.id+'\')">'
+      +'<td style="font-family:var(--font-mono);font-size:12px">'+po.id+'</td>'
+      +'<td>'+po.brand+'</td>'
+      +'<td>'+po.styles[0].name+(po.styles.length>1?' <span style="color:var(--fg-faint)">+'+(po.styles.length-1)+'</span>':'')+'</td>'
+      +'<td style="font-family:var(--font-mono)">'+po.qty.toLocaleString()+'</td>'
+      +'<td><div class="progress-track" style="width:120px;display:inline-block;vertical-align:middle"><div class="progress-fill" style="width:'+pct+'%;background:'+(po.status==='ncr_open'?'var(--bad)':'var(--accent)')+'"></div></div> <span style="font-family:var(--font-mono);font-size:12px">'+pct+'%</span></td>'
+      +'<td><span class="badge badge-'+s[1]+'">'+s[0]+'</span></td>'
+      +'</tr>';
+  }).join('');
+}
+
+function renderFactoryOrders() {
+  var fps = POS.filter(function(p) { return p.factory.indexOf('Dhaka') >= 0; });
+  document.getElementById('factoryOrdersBody').innerHTML = fps.map(function(po) {
+    var s = STATUSES[po.status] || ['--','muted'];
+    return '<tr onclick="openMilestone(\''+po.id+'\')">'
+      +'<td style="font-family:var(--font-mono);font-size:12px">'+po.id+'</td>'
+      +'<td>'+po.brand+'</td>'
+      +'<td>'+po.styles.length+'</td>'
+      +'<td style="font-family:var(--font-mono)">'+po.qty.toLocaleString()+'</td>'
+      +'<td><span class="badge badge-'+s[1]+'">'+s[0]+'</span></td>'
+      +'<td>'+new Date(po.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'</td>'
+      +'</tr>';
+  }).join('');
+}
+
+function renderInspectorTable() {
+  var days = {today:'Today',wed:'Wednesday',thu:'Thursday',fri:'Friday'};
+  document.getElementById('inspectorTableBody').innerHTML = INSPECTIONS.map(function(ins) {
+    var done = ins.status === 'completed';
+    return '<tr>'
+      +'<td style="font-family:var(--font-mono);font-size:12px">'+ins.id+'</td>'
+      +'<td>'+ins.po+'</td>'
+      +'<td>'+ins.factory+'</td>'
+      +'<td>'+(COUNTRY_FLAGS[ins.country]||'')+' '+(COUNTRIES[ins.country]||ins.country)+'</td>'
+      +'<td>'+ins.type+'</td>'
+      +'<td>'+ins.time+'</td>'
+      +'<td>'+(days[ins.day]||ins.day)+'</td>'
+      +'<td><span class="badge '+(done?'badge-ok':'badge-accent')+'">'+(done?'Completed':'Scheduled')+'</span></td>'
+      +'</tr>';
+  }).join('');
+}
+
+function renderChecklist() {
+  document.getElementById('checkList').innerHTML = CHECKS.map(function(c, i) {
+    var cls = checkStates[i] === 'pass' ? ' checked' : checkStates[i] === 'fail' ? ' failed' : '';
+    var svg = checkStates[i] === 'fail'
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>';
+    return '<div class="check-item'+cls+'" onclick="toggleCheck('+i+')">'
+      +'<div class="check-box">'+svg+'</div>'
+      +'<div class="check-text">'+c+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function toggleCheck(i) {
+  var cycle = {none:'pass', pass:'fail', fail:'none'};
+  checkStates[i] = cycle[checkStates[i]];
+  renderChecklist();
+}
+
+function submitChecklist() {
+  var passed = checkStates.filter(function(s){return s==='pass';}).length;
+  var failed = checkStates.filter(function(s){return s==='fail';}).length;
+  if (passed + failed < CHECKS.length) {
+    showToast('Please complete all checklist items before submitting.');
+    return;
+  }
+  showToast('Inspection report submitted: '+passed+' passed, '+failed+' failed');
+  pushNotif('Inspection <strong>INS-2611-DT-001</strong> completed: '+passed+'/'+CHECKS.length+' passed', failed > 0 ? 'red' : 'green', {type:'inspection',id:'INS-2611-DT-001'});
+}
+
+function openPoDetail(poId) {
+  var po = POS.find(function(p) { return p.id === poId; });
+  if (!po) return;
+  var s = STATUSES[po.status] || ['--','muted'];
+  document.getElementById('detailTitle').textContent = po.id;
+  var badge = document.getElementById('detailBadge');
+  badge.textContent = s[0];
+  badge.className = 'badge badge-' + s[1];
+
+  var body = document.getElementById('detailBody');
+  var html = '';
+
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">'
+    +'<div class="kpi-card" style="padding:14px"><div class="kpi-label">Total Qty</div><div class="kpi-value accent" style="font-size:24px">'+po.qty.toLocaleString()+'</div></div>'
+    +'<div class="kpi-card" style="padding:14px"><div class="kpi-label">Ex-Factory</div><div style="font-family:var(--font-display);font-size:16px;color:var(--fg)">'+new Date(po.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'</div></div>'
+    +'<div class="kpi-card" style="padding:14px"><div class="kpi-label">Category</div><div style="font-family:var(--font-display);font-size:16px;color:var(--fg)">'+(CAT_ICONS[po.cat]||'')+' '+po.cat+'</div></div>'
+    +'</div>';
+
+  var fInfo = FACTORIES[po.factory] || { city:'--', country:po.country, audited:false, approved:false, active:true, img:'\u{1F3ED}' };
+  var flag = COUNTRY_FLAGS[fInfo.country] || '';
+  var coo = COUNTRIES[fInfo.country] || fInfo.country;
+  html += '<div class="section-label">Vendor / Factory</div>';
+  html += '<div class="factory-card">'
+    +'<div class="factory-top">'
+      +'<div class="factory-img">'+fInfo.img+'</div>'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:11px;color:var(--fg-faint);font-weight:600;text-transform:uppercase;letter-spacing:0.04em">'+flag+' '+coo+'</div>'
+        +'<div style="font-size:12px;color:var(--fg-muted);margin-top:1px">'+fInfo.city+'</div>'
+        +'<div style="font-weight:700;font-size:15px;margin-top:4px;color:var(--fg)">'+po.factory+'</div>'
+      +'</div>'
+    +'</div>'
+    +'<div class="factory-badges">'
+      +'<span class="badge '+(fInfo.audited?'badge-ok':'badge-warn')+'">'+(fInfo.audited?'Audited':'Not Audited')+'</span>'
+      +'<span class="badge '+(fInfo.approved?'badge-accent':'badge-bad')+'">'+(fInfo.approved?'Brand Approved':'Pending Approval')+'</span>'
+      +'<span class="badge '+(fInfo.active?'badge-ok':'badge-muted')+'">'+(fInfo.active?'Active Vendor':'Inactive')+'</span>'
+    +'</div>'
+    +'</div>';
+
+  if (po.styles && po.styles.length) {
+    html += '<div class="section-label">Styles & SKUs ('+po.styles.length+')</div>';
+    po.styles.forEach(function(st, si) {
+      var stl = STYLE_TIMELINES[st.sku] || TIMELINES[po.id] || [];
+      var currentStep = stl.find(function(s){return s.current;});
+      var statusLabel = currentStep ? currentStep.label : 'Pending';
+      var statusBadge = currentStep ? (currentStep.ncr ? 'badge-bad' : 'badge-accent') : 'badge-muted';
+      var doneCount = stl.filter(function(s){return s.done;}).length;
+      var pct = stl.length ? Math.round((doneCount/stl.length)*100) : 0;
+      var tlId = 'stl-'+po.id.replace(/[^a-zA-Z0-9]/g,'')+'-'+si;
+
+      var tlHtml = stl.map(function(s) {
+        var cls = s.done?'done':s.current?'current':'pending';
+        if (s.ncr) cls = 'ncr';
+        var icon = s.done?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>'
+          :s.ncr?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 8v4M12 16h.01"/></svg>'
+          :(s.current?'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>'
+          :'<svg viewBox="0 0 24 24" fill="currentColor" opacity="0.3"><circle cx="12" cy="12" r="3"/></svg>');
+        return '<div class="timeline-item"><div class="timeline-dot '+cls+'">'+icon+'</div><div>'
+          +'<div class="timeline-label">'+s.label+'</div>'
+          +(s.sub?'<div class="timeline-sub">'+s.sub+'</div>':'')
+          +(s.date?'<div class="timeline-date">'+s.date+'</div>':'')
+          +'</div></div>';
+      }).join('');
+
+      html += '<div class="style-card">'
+        +'<div class="style-card-header"><span class="style-name">'+st.name+'</span><span class="style-sku">'+st.sku+'</span></div>'
+        +'<div class="style-meta">'
+          +'<span style="background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:10px">'+st.colors.join(', ')+'</span>'
+          +'<span style="background:var(--bg-dim);padding:2px 8px;border-radius:10px">'+st.sizes+'</span>'
+          +'<span style="background:var(--bg-dim);padding:2px 8px;border-radius:10px">'+st.pcs.toLocaleString()+' pcs</span>'
+        +'</div>'
+        +'<div style="display:flex;align-items:center;gap:8px">'
+          +'<span class="badge '+statusBadge+'">'+statusLabel+'</span>'
+          +'<div class="progress-track" style="flex:1"><div class="progress-fill" style="width:'+pct+'%;background:var(--accent)"></div></div>'
+          +'<span style="font-family:var(--font-mono);font-size:12px;color:var(--fg-muted)">'+pct+'%</span>'
+        +'</div>'
+        +'<button class="tl-toggle" onclick="toggleTl(this,\''+tlId+'\')">'
+          +'Order Timeline <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>'
+        +'</button>'
+        +'<div class="tl-body" id="'+tlId+'"><div class="timeline">'+tlHtml+'</div></div>'
+        +'</div>';
+    });
+  }
+
+  var comments = COMMENTS[po.id];
+  if (comments && comments.length) {
+    html += '<div class="section-label">Comments & Follow-ups</div>';
+    html += '<div class="comment-thread">';
+    comments.forEach(function(c) {
+      var me = (currentPortal === 'brand' && c.from === 'Sarah Chen') || (currentPortal === 'factory' && c.from === 'Rahim Khan');
+      html += '<div class="comment-bubble '+(me?'me':'them')+'">'
+        +'<div class="comment-sender">'+c.from+' · '+c.role+'</div>'
+        +'<div>'+c.msg+'</div>'
+        +'<div class="comment-time">'+c.time+'</div>'
+        +'</div>';
+    });
+    html += '</div>';
+    html += '<div class="comment-input-row">'
+      +'<input type="text" class="comment-input" id="commentInput" placeholder="Type a message..." onkeydown="if(event.key===\'Enter\')addComment(\''+po.id+'\')">'
+      +'<button class="btn-send" onclick="addComment(\''+po.id+'\')"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>'
+      +'</div>';
+  }
+
+  body.innerHTML = html;
+  document.getElementById('detailOverlay').classList.add('show');
+}
+
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('show');
+}
+
+function toggleTl(btn, id) {
+  var body = document.getElementById(id);
+  var isOpen = body.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+}
+
+function addComment(poId) {
+  var input = document.getElementById('commentInput');
+  var text = input.value.trim();
+  if (!text) return;
+  var user = USERS[currentPortal];
+  if (!COMMENTS[poId]) COMMENTS[poId] = [];
+  COMMENTS[poId].push({ from:user.name, role:currentPortal.charAt(0).toUpperCase()+currentPortal.slice(1), msg:text, time:'Just now', me:true });
+  input.value = '';
+  openPoDetail(poId);
+  playNotifSound();
+}
+
+function openMilestone(poId) {
+  currentMsPo = poId;
+  var tl = TIMELINES[poId] || [];
+  var pending = tl.filter(function(s){ return s.pending || s.current; });
+  var sel = document.getElementById('msStep');
+  sel.innerHTML = pending.map(function(s){ return '<option value="'+s.label+'">'+s.label+'</option>'; }).join('');
+  document.getElementById('msNotes').value = '';
+  document.getElementById('msDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('milestoneModal').classList.add('show');
+}
+
+function closeMilestoneModal() {
+  document.getElementById('milestoneModal').classList.remove('show');
+  currentMsPo = null;
+}
+
+function confirmMilestone() {
+  var step = document.getElementById('msStep').value;
+  var notes = document.getElementById('msNotes').value;
+  var date = document.getElementById('msDate').value;
+  if (!currentMsPo) return;
+  var tl = TIMELINES[currentMsPo];
+  if (tl) {
+    var item = tl.find(function(s){ return s.label === step; });
+    if (item) {
+      item.done = true;
+      item.current = false;
+      item.pending = false;
+      if (notes) item.sub = notes;
+      if (date) item.date = new Date(date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    }
+  }
+  showToast('Milestone confirmed: ' + step);
+  pushNotif('Milestone confirmed: <strong>'+step+'</strong> on '+currentMsPo, 'green', {type:'po',id:currentMsPo});
+  closeMilestoneModal();
+}
+
+function pushNotif(msg, color, nav) {
+  notifications.unshift({ msg:msg, color:color, time:'Just now', read:false, nav:nav });
+  updateNotifUI();
+  playNotifSound();
+}
+
+function updateNotifUI() {
+  var unread = notifications.filter(function(n){ return !n.read; }).length;
+  var badge = document.getElementById('notifBadge');
+  if (unread > 0) {
+    badge.style.display = 'flex';
+    badge.textContent = unread;
+  } else {
+    badge.style.display = 'none';
+  }
+  var list = document.getElementById('notifList');
+  if (notifications.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--fg-faint);font-size:13px;padding:24px 0">No notifications yet</div>';
+    return;
+  }
+  list.innerHTML = notifications.map(function(n, i) {
+    return '<div class="notif-item'+(n.read?'':' unread')+'" onclick="clickNotif('+i+')">'
+      +'<div class="notif-dot '+({green:'green',red:'red',blue:'blue',orange:'orange'}[n.color]||'blue')+'"></div>'
+      +'<div style="flex:1;min-width:0"><div class="notif-msg">'+n.msg+'</div><div class="notif-time">'+n.time+'</div></div>'
+      +'</div>';
+  }).join('');
+}
+
+function clickNotif(idx) {
+  var n = notifications[idx];
+  n.read = true;
+  updateNotifUI();
+  if (n.nav) {
+    if (n.nav.type === 'po') {
+      if (currentPortal !== 'brand') switchPortal('brand');
+      openPoDetail(n.nav.id);
+    }
+  }
+  toggleNotifs();
+}
+
+function clearNotifs() {
+  notifications = [];
+  updateNotifUI();
+}
+
+function toggleNotifs() {
+  var dd = document.getElementById('notifDropdown');
+  dd.classList.toggle('show');
+  if (dd.classList.contains('show')) {
+    notifications.forEach(function(n){ n.read = true; });
+    setTimeout(function(){ updateNotifUI(); }, 2000);
+  }
+}
+
+function playNotifSound() {
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.2);
+  } catch(e) {}
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+document.addEventListener('click', function(e) {
+  var dd = document.getElementById('notifDropdown');
+  var bell = document.getElementById('notifBell');
+  if (dd.classList.contains('show') && !dd.contains(e.target) && !bell.contains(e.target)) {
+    dd.classList.remove('show');
+  }
+  if (window.innerWidth <= 860) {
+    var sidebar = document.getElementById('sidebar');
+    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !e.target.closest('.hamburger')) {
+      sidebar.classList.remove('open');
+    }
+  }
+});
+
+document.getElementById('searchInput').addEventListener('input', function(e) {
+  var q = e.target.value.toLowerCase();
+  if (!q) { renderPoTable(); return; }
+  var rows = document.querySelectorAll('#poTableBody tr');
+  rows.forEach(function(row) {
+    var text = row.textContent.toLowerCase();
+    row.style.display = text.indexOf(q) >= 0 ? '' : 'none';
+  });
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeDetail();
+    closeMilestoneModal();
+    document.getElementById('notifDropdown').classList.remove('show');
+  }
+});
+
+init();
+</script>
+</body>
+</html>
