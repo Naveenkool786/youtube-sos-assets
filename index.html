@@ -1196,7 +1196,7 @@
               +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>'
               +'Order Timeline'
             +'</button>'
-            +(function(){ var insR = INS_RESULTS.find(function(r){ return r.po === po.id; }); return insR ? '<button class="style-tl-toggle" style="margin-top:0;background:var(--ok-soft);color:var(--ok)" onclick="event.stopPropagation();viewReport(\''+insR.id+'\')">'
+            +(function(){ var inspected = ['inspected','released','shipped','ncr_open']; var insR = (inspected.indexOf(po.status)>=0) ? INS_RESULTS.find(function(r){ return r.po === po.id; }) : null; return insR ? '<button class="style-tl-toggle" style="margin-top:0;background:var(--ok-soft);color:var(--ok)" onclick="event.stopPropagation();viewReport(\''+insR.id+'\')">'
               +'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg> Report Result</button>' : ''; })()
           +'</div>'
           +'<div class="style-tl-body" id="'+tlId+'"><div class="style-tl-inner"><div class="timeline">'+tlHtml+'</div></div></div>'
