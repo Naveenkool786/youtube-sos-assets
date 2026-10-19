@@ -55,7 +55,7 @@
     --font-display: "DM Serif Display", Georgia, serif;
     --font-body: "Inter", -apple-system, system-ui, sans-serif;
     --font-mono: "JetBrains Mono", ui-monospace, monospace;
-    --tab-h: 46px;
+    --tab-h: 40px;
     --header-h: 56px;
   }
   @media (prefers-color-scheme: dark) {
@@ -126,7 +126,7 @@
   .app-content {
     flex: 1; overflow-y: auto; overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 4px);
+    padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px) + 4px);
   }
   .screen { display: none; }
   .screen.active { display: block; }
@@ -134,17 +134,16 @@
   .tab-bar {
     position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(0);
     width: 100%; max-width: 480px; z-index: 60;
-    display: flex; align-items: stretch;
+    display: flex; align-items: flex-end;
     background: var(--tab-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid var(--divider);
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    height: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
     transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
   }
   .tab-bar.hidden { transform: translateX(-50%) translateY(100%); }
   .tab-btn {
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 0; border: none; background: none; cursor: pointer; padding: 2px 4px;
+    gap: 0; border: none; background: none; cursor: pointer; padding: 6px 4px 4px;
     color: var(--fg-faint); transition: color 0.15s, background 0.15s; -webkit-tap-highlight-color: transparent;
     position: relative;
   }
