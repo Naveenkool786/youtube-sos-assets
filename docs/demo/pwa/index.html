@@ -235,6 +235,17 @@
   .milestone-modal.show { opacity:1; pointer-events:auto; }
   .milestone-sheet { background:var(--bg); border-radius:20px 20px 0 0; width:100%; max-width:420px; padding:24px 20px calc(24px + env(safe-area-inset-bottom)); transform:translateY(100%); transition:transform 0.3s cubic-bezier(0.16,1,0.3,1); }
   .milestone-modal.show .milestone-sheet { transform:translateY(0); }
+  .report-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:210; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+  .report-overlay.show { opacity:1; pointer-events:auto; }
+  .report-sheet { background:var(--bg); border-radius:20px 20px 0 0; width:100%; max-width:420px; max-height:85vh; display:flex; flex-direction:column; transform:translateY(100%); transition:transform 0.3s cubic-bezier(0.16,1,0.3,1); }
+  .report-overlay.show .report-sheet { transform:translateY(0); }
+  .report-sheet-header { display:flex; align-items:center; gap:10px; padding:18px 20px 14px; border-bottom:1px solid var(--divider); flex-shrink:0; }
+  .report-sheet-header .report-title { flex:1; font-weight:700; font-size:15px; }
+  .report-sheet-body { flex:1; overflow-y:auto; padding:16px 20px; -webkit-overflow-scrolling:touch; }
+  .report-sheet-footer { display:flex; justify-content:flex-end; gap:8px; padding:12px 20px calc(12px + env(safe-area-inset-bottom)); border-top:1px solid var(--divider); flex-shrink:0; }
+  .report-sheet-footer .btn-dl { display:flex; align-items:center; gap:6px; padding:10px 18px; border-radius:var(--radius); border:none; font-family:var(--font-body); font-size:14px; font-weight:600; cursor:pointer; }
+  .btn-dl.primary { background:var(--accent); color:var(--accent-ink); }
+  .btn-dl.secondary { background:var(--bg-dim); color:var(--fg); }
   .notif-bell { position:relative; width:40px; height:40px; border:none; background:none; color:var(--fg); cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; -webkit-tap-highlight-color:transparent; }
   .notif-bell:active { background:var(--accent-glow); }
   .notif-badge { position:absolute; top:4px; right:4px; min-width:18px; height:18px; background:var(--bad); color:#fff; font-size:11px; font-weight:700; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 5px; font-family:var(--font-body); animation:notif-pop 0.3s cubic-bezier(0.34,1.56,0.64,1); }
@@ -619,6 +630,19 @@
   </div>
 </div>
 <div class="toast" id="toast"></div>
+
+<!-- Inspection Report Modal -->
+<div class="report-overlay" id="reportOverlay" onclick="closeReport()">
+  <div class="report-sheet" onclick="event.stopPropagation()">
+    <div class="report-sheet-header">
+      <span class="report-title" id="reportTitle">Inspection Report</span>
+      <button style="border:none;background:none;color:var(--fg-faint);cursor:pointer;font-size:20px" onclick="closeReport()">&times;</button>
+    </div>
+    <div class="report-sheet-body" id="reportBody"></div>
+    <div class="report-sheet-footer" id="reportFooter"></div>
+  </div>
+</div>
+
 <button class="fab" id="fab" style="display:none" onclick="showScreen('factory-defect')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
 
 <script>
@@ -995,6 +1019,18 @@
     ],
   };
 
+  var INS_RESULTS = [
+    { id:'INS-2611-DT-001', po:'PO-2611-AW-001', factory:'Dhaka Textiles', type:'In-line', date:'2026-11-10', aql:'Level II', defect:'2.1%', verdict:'pass' },
+    { id:'INS-2611-SS-001', po:'PO-2611-AW-002', factory:'Saigon Stitch', type:'Final', date:'2026-11-20', aql:'Level II', defect:'1.4%', verdict:'pass' },
+    { id:'INS-2611-PP-001', po:'PO-2611-BB-001', factory:'Phnom Penh Garments', type:'Pre-shipment', date:'2026-10-15', aql:'Level III', defect:'0.8%', verdict:'pass' },
+    { id:'INS-2611-DT-002', po:'PO-2611-BB-002', factory:'Dhaka Textiles', type:'Final', date:'2026-10-20', aql:'Level II', defect:'8.2%', verdict:'fail' },
+    { id:'INS-2611-TK-001', po:'PO-2611-AW-005', factory:'Tirupur Knits', type:'In-line', date:'2026-11-05', aql:'Level II', defect:'3.5%', verdict:'pass' },
+    { id:'INS-2611-IK-001', po:'PO-2611-BB-003', factory:'Istanbul Konfeksiyon', type:'Final', date:'2026-11-12', aql:'Level II', defect:'5.1%', verdict:'fail' },
+    { id:'INS-2611-SK-001', po:'PO-2611-AW-006', factory:'Sialkot Sports', type:'In-line', date:'2026-11-18', aql:'Level I', defect:'1.2%', verdict:'pass' },
+    { id:'INS-2611-AA-001', po:'PO-2611-BB-004', factory:'Addis Ababa Garments', type:'Final', date:'2026-11-22', aql:'Level II', defect:'4.7%', verdict:'conditional' }
+  ];
+
+  var currentPortal = 'brand';
   var checkStates = CHECKS.map(function(){ return 'none'; });
 
   setTimeout(function(){
@@ -1075,6 +1111,7 @@
   }
 
   window.switchPortal = function(portal) {
+    currentPortal = portal;
     document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.portal===portal); });
     document.getElementById('portalBadge').textContent = portal.charAt(0).toUpperCase()+portal.slice(1);
     var screens = {brand:'brand-home',factory:'factory-home',inspector:'inspector-home'};
@@ -1155,10 +1192,14 @@
             +'<div style="flex:1;height:4px;border-radius:2px;background:var(--bg-dim);overflow:hidden"><div style="height:100%;width:'+pct+'%;border-radius:2px;background:'+(currentStep&&currentStep.ncr?'var(--bad)':'var(--accent)')+'"></div></div>'
             +'<span style="font-family:var(--font-mono);font-size:11px;color:var(--fg-faint)">'+pct+'%</span>'
           +'</div>'
-          +'<button class="style-tl-toggle" onclick="toggleStyleTl(this,\''+tlId+'\')">'
-            +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>'
-            +'Order Timeline'
-          +'</button>'
+          +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'
+            +'<button class="style-tl-toggle" style="margin-top:0" onclick="toggleStyleTl(this,\''+tlId+'\')">'
+              +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>'
+              +'Order Timeline'
+            +'</button>'
+            +(function(){ var insR = INS_RESULTS.find(function(r){ return r.po === po.id; }); return insR ? '<button class="style-tl-toggle" style="margin-top:0;background:var(--ok-soft);color:var(--ok)" onclick="event.stopPropagation();viewReport(\''+insR.id+'\')">'
+              +'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg> Report Result</button>' : ''; })()
+          +'</div>'
           +'<div class="style-tl-body" id="'+tlId+'"><div class="style-tl-inner"><div class="timeline">'+tlHtml+'</div></div></div>'
           +'</div>';
       }).join('');
@@ -1230,6 +1271,52 @@
     }
     setTimeout(function(){ showScreen('inspector-home'); },800);
   };
+
+  // --- Inspection Report viewer ---
+  window.viewReport = function(insId) {
+    var r = INS_RESULTS.find(function(x){ return x.id === insId; });
+    if (!r) return;
+    document.getElementById('reportTitle').textContent = 'Report — ' + r.id;
+    var vLabel = r.verdict==='pass'?'PASS':r.verdict==='fail'?'FAIL':'CONDITIONAL';
+    var vColor = r.verdict==='pass'?'var(--ok)':r.verdict==='fail'?'var(--bad)':'var(--warn)';
+    var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+      +'<div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">Inspection</div><div style="font-family:var(--font-mono);font-size:13px;margin-top:3px">'+r.id+'</div></div>'
+      +'<div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">PO</div><div style="font-size:13px;margin-top:3px">'+r.po+'</div></div>'
+      +'<div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">Factory</div><div style="font-size:13px;margin-top:3px">'+r.factory+'</div></div>'
+      +'<div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">Type</div><div style="font-size:13px;margin-top:3px">'+r.type+'</div></div>'
+      +'<div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">Date</div><div style="font-size:13px;margin-top:3px">'+new Date(r.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'</div></div>'
+      +'<div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">AQL Level</div><div style="font-size:13px;margin-top:3px">'+r.aql+'</div></div>'
+      +'</div>'
+      +'<div style="border:2px solid '+vColor+';border-radius:var(--radius);padding:14px;text-align:center;margin-bottom:16px">'
+        +'<div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">Overall Verdict</div>'
+        +'<div style="font-size:24px;font-weight:700;color:'+vColor+';margin-top:4px">'+vLabel+'</div>'
+        +'<div style="font-size:13px;color:var(--fg-muted);margin-top:2px">Defect Rate: <strong>'+r.defect+'</strong></div>'
+      +'</div>'
+      +'<div style="font-weight:700;font-size:13px;margin-bottom:8px">AQL Test Results</div>';
+    CHECKS.forEach(function(c) {
+      var pass = Math.random() > (r.verdict==='fail' ? 0.6 : 0.15);
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--divider);font-size:12px">'
+        +'<span style="flex:1;min-width:0;padding-right:8px">'+c+'</span>'
+        +'<span class="badge '+(pass?'badge-ok':'badge-bad')+'" style="flex-shrink:0">'+(pass?'Pass':'Fail')+'</span>'
+        +'</div>';
+    });
+    document.getElementById('reportBody').innerHTML = html;
+    var footer = document.getElementById('reportFooter');
+    if (currentPortal === 'brand') {
+      footer.innerHTML = '<button class="btn-dl secondary" onclick="closeReport()">Close</button>'
+        +'<button class="btn-dl primary" onclick="window.print();showToast(\'Report sent to print / PDF\')"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg> Download PDF</button>';
+    } else if (currentPortal === 'factory') {
+      footer.innerHTML = '<div style="font-size:11px;color:var(--fg-faint);display:flex;align-items:center;gap:5px;flex:1"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> View-only</div>'
+        +'<button class="btn-dl secondary" onclick="closeReport()">Close</button>';
+    } else {
+      footer.innerHTML = '<button class="btn-dl secondary" onclick="closeReport()">Close</button>';
+    }
+    document.getElementById('reportOverlay').classList.add('show');
+  };
+  window.closeReport = function() {
+    document.getElementById('reportOverlay').classList.remove('show');
+  };
+
   // --- Notification system with sound ---
   var notifications = [];
   var audioCtx = null;
