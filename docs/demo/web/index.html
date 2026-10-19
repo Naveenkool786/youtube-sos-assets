@@ -165,6 +165,30 @@ body {
   color: rgba(255,255,255,0.35);
 }
 
+/* Sidebar collapse */
+.sidebar { transition: width 0.25s ease; }
+.sidebar-toggle {
+  width: 28px; height: 28px; border: none; border-radius: 6px;
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  margin-left: auto; flex-shrink: 0; transition: background 0.15s;
+}
+.sidebar-toggle:hover { background: rgba(255,255,255,0.2); }
+.sidebar-toggle svg { width: 16px; height: 16px; transition: transform 0.25s; }
+.sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+.portal-btn .portal-short { display: none; }
+.sidebar.collapsed { width: 60px; }
+.sidebar.collapsed .sidebar-logo-name { display: none; }
+.sidebar.collapsed .sidebar-portals { flex-direction: column; padding: 8px 6px; gap: 3px; }
+.sidebar.collapsed .portal-btn { padding: 6px 4px; font-size: 12px; }
+.sidebar.collapsed .portal-btn .portal-full { display: none; }
+.sidebar.collapsed .portal-btn .portal-short { display: inline; }
+.sidebar.collapsed .sidebar-nav { padding: 8px 6px; }
+.sidebar.collapsed .nav-item { justify-content: center; padding: 10px 8px; gap: 0; }
+.sidebar.collapsed .nav-item span { display: none; }
+.sidebar.collapsed .sidebar-footer { display: none; }
+.sidebar.collapsed .sidebar-logo { justify-content: center; padding: 18px 10px; }
+
 /* Main area */
 .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
@@ -323,7 +347,13 @@ body {
   display: grid;
   grid-template-columns: 1fr 340px;
   gap: 24px;
+  min-height: 0;
+  flex: 1;
 }
+.dash-cols > div { display: flex; flex-direction: column; min-height: 0; }
+.dash-cols .data-table-wrap { flex: 1; overflow: auto; }
+.dash-cols .activity-feed { flex: 1; max-height: none; }
+#page-brand-dashboard.page.active { display: flex; flex-direction: column; }
 
 /* Table */
 .data-table-wrap {
@@ -354,6 +384,29 @@ body {
 .data-table th:hover { color: var(--accent); }
 .data-table th .sort-icon { display: inline-block; margin-left: 4px; opacity: 0.4; }
 .data-table th.sorted .sort-icon { opacity: 1; color: var(--accent); }
+.data-table th .filter-icon { display: inline-flex; margin-left: 4px; opacity: 0.35; vertical-align: middle; cursor: pointer; position: relative; }
+.data-table th .filter-icon:hover { opacity: 0.7; }
+.data-table th .filter-icon.active { opacity: 1; color: var(--accent); }
+.filter-drop {
+  position: absolute; top: 100%; left: 0; margin-top: 4px;
+  min-width: 200px; max-height: 280px; overflow-y: auto;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
+  z-index: 80; padding: 8px 0; display: none;
+  font-weight: 400; text-transform: none; letter-spacing: 0;
+}
+.filter-drop.show { display: block; }
+.filter-drop label {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 14px; font-size: 13px; color: var(--fg);
+  cursor: pointer; white-space: nowrap;
+}
+.filter-drop label:hover { background: var(--accent-glow); }
+.filter-drop input[type="checkbox"] { accent-color: var(--accent); width: 16px; height: 16px; }
+.filter-drop .filter-actions { display: flex; justify-content: space-between; padding: 6px 14px 4px; border-top: 1px solid var(--divider); margin-top: 4px; }
+.filter-drop .filter-actions button { border: none; background: none; font-size: 12px; font-weight: 600; cursor: pointer; font-family: var(--font-body); }
+.filter-drop .filter-actions .f-clear { color: var(--fg-muted); }
+.filter-drop .filter-actions .f-apply { color: var(--accent); }
 .data-table td {
   padding: 12px 16px;
   border-bottom: 1px solid var(--divider);
@@ -620,6 +673,83 @@ body {
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
+/* AI Chat FAB */
+.ai-fab {
+  position: fixed; bottom: 24px; right: 24px; z-index: 40;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #1B7A4E);
+  color: #fff; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(15,66,56,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.ai-fab:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(15,66,56,0.4); }
+.ai-fab svg { width: 26px; height: 26px; }
+.ai-chat-panel {
+  position: fixed; bottom: 92px; right: 24px; z-index: 41;
+  width: 380px; max-height: 520px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  display: none; flex-direction: column; overflow: hidden;
+}
+.ai-chat-panel.show { display: flex; }
+.ai-chat-header {
+  padding: 14px 16px; border-bottom: 1px solid var(--divider);
+  display: flex; align-items: center; gap: 10px;
+}
+.ai-chat-header .ai-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ok); }
+.ai-chat-header span { font-weight: 700; font-size: 14px; flex: 1; }
+.ai-chat-header button { border: none; background: none; color: var(--fg-faint); cursor: pointer; font-size: 18px; }
+.ai-chat-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.ai-msg { padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.45; max-width: 92%; }
+.ai-msg.bot { background: var(--accent-soft); color: var(--fg); border-bottom-left-radius: 4px; align-self: flex-start; }
+.ai-msg.user { background: var(--accent); color: var(--accent-ink); border-bottom-right-radius: 4px; align-self: flex-end; }
+.ai-chat-footer { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--divider); }
+.ai-chat-footer input { flex: 1; padding: 10px 14px; border-radius: var(--radius-pill); border: 1.5px solid var(--border); background: var(--bg); color: var(--fg); font-size: 13px; font-family: var(--font-body); outline: none; }
+.ai-chat-footer input:focus { border-color: var(--accent); }
+.ai-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 12px; }
+.ai-sug { padding: 6px 12px; border-radius: var(--radius-pill); border: 1px solid var(--border); background: var(--bg); color: var(--fg); font-size: 12px; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; }
+.ai-sug:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+/* Inspection Report Modal */
+.report-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 200; display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.report-overlay.show { opacity: 1; pointer-events: auto; }
+.report-box {
+  background: var(--bg); border-radius: var(--radius);
+  width: 700px; max-width: 95vw; max-height: 90vh;
+  display: flex; flex-direction: column; box-shadow: var(--shadow-lg);
+  transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.report-overlay.show .report-box { transform: translateY(0); }
+.report-box-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 24px; border-bottom: 1px solid var(--divider); flex-shrink: 0;
+}
+.report-box-header .report-title { flex: 1; font-weight: 700; font-size: 16px; }
+.report-box-body { flex: 1; overflow-y: auto; padding: 24px; }
+.report-box-footer {
+  display: flex; justify-content: flex-end; gap: 10px;
+  padding: 16px 24px; border-top: 1px solid var(--divider); flex-shrink: 0;
+}
+.report-box-footer .btn-dl {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 20px; border-radius: var(--radius-sm);
+  border: none; font-family: var(--font-body); font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.btn-dl.primary { background: var(--accent); color: var(--accent-ink); }
+.btn-dl.secondary { background: var(--bg-dim); color: var(--fg); }
+@media print {
+  body * { visibility: hidden; }
+  .report-box, .report-box * { visibility: visible; }
+  .report-box { position: fixed; inset: 0; width: 100%; max-width: 100%; max-height: 100%; box-shadow: none; border-radius: 0; }
+  .report-box-footer { display: none; }
+  .report-overlay { background: none; }
+}
+
 /* Mobile responsive */
 .hamburger {
   display: none; width: 38px; height: 38px;
@@ -662,11 +792,14 @@ body {
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M4 8L12 4L20 8L12 12Z"/><path d="M4 12L12 16L20 12"/></svg>
       </div>
       <span class="sidebar-logo-name">FABRIQ</span>
+      <button class="sidebar-toggle" onclick="toggleSidebarCollapse()" title="Toggle sidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
     </div>
     <div class="sidebar-portals">
-      <button class="portal-btn active" data-portal="brand" onclick="switchPortal('brand')">Brand</button>
-      <button class="portal-btn" data-portal="factory" onclick="switchPortal('factory')">Factory</button>
-      <button class="portal-btn" data-portal="inspector" onclick="switchPortal('inspector')">Inspector</button>
+      <button class="portal-btn active" data-portal="brand" onclick="switchPortal('brand')"><span class="portal-full">Brand</span><span class="portal-short">B</span></button>
+      <button class="portal-btn" data-portal="factory" onclick="switchPortal('factory')"><span class="portal-full">Factory</span><span class="portal-short">F</span></button>
+      <button class="portal-btn" data-portal="inspector" onclick="switchPortal('inspector')"><span class="portal-full">Inspector</span><span class="portal-short">I</span></button>
     </div>
     <nav class="sidebar-nav" id="sidebarNav"></nav>
     <div class="sidebar-footer">FABRIQ FashionHub &middot; QMS Platform</div>
@@ -720,10 +853,10 @@ body {
                   <tr>
                     <th data-col="id">PO # <span class="sort-icon">↕</span></th>
                     <th data-col="style">Style <span class="sort-icon">↕</span></th>
-                    <th data-col="factory">Factory <span class="sort-icon">↕</span></th>
-                    <th data-col="country">Country <span class="sort-icon">↕</span></th>
+                    <th data-col="factory">Factory <span class="sort-icon">↕</span><span class="filter-icon" onclick="event.stopPropagation();toggleFilter('factory',this)"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg><div class="filter-drop" id="filter-factory"></div></span></th>
+                    <th data-col="country">Country <span class="sort-icon">↕</span><span class="filter-icon" onclick="event.stopPropagation();toggleFilter('country',this)"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg><div class="filter-drop" id="filter-country"></div></span></th>
                     <th data-col="qty">Qty <span class="sort-icon">↕</span></th>
-                    <th data-col="status">Status <span class="sort-icon">↕</span></th>
+                    <th data-col="status">Status <span class="sort-icon">↕</span><span class="filter-icon" onclick="event.stopPropagation();toggleFilter('status',this)"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg><div class="filter-drop" id="filter-status"></div></span></th>
                     <th data-col="date">Ex-Factory <span class="sort-icon">↕</span></th>
                   </tr>
                 </thead>
@@ -759,7 +892,7 @@ body {
           <table class="data-table">
             <thead>
               <tr>
-                <th>Inspection #</th><th>PO</th><th>Factory</th><th>Country</th><th>Type</th><th>Time</th><th>Status</th>
+                <th>Inspection #</th><th>PO</th><th>Factory</th><th>Country</th><th>Type</th><th>Time</th><th>Status</th><th></th>
               </tr>
             </thead>
             <tbody id="brandInsTableBody"></tbody>
@@ -792,7 +925,7 @@ body {
         </div>
         <div class="data-table-wrap">
           <table class="data-table">
-            <thead><tr><th>PO #</th><th>Brand</th><th>Style</th><th>Qty</th><th>Progress</th><th>Status</th></tr></thead>
+            <thead><tr><th>PO #</th><th>Brand</th><th>Style</th><th>Qty</th><th>Progress</th><th>Status <span class="filter-icon" onclick="event.stopPropagation();togglePortalFilter('factory','status',this)"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg><div class="filter-drop" id="filter-factory-status"></div></span></th></tr></thead>
             <tbody id="factoryTableBody"></tbody>
           </table>
         </div>
@@ -823,23 +956,22 @@ body {
         </div>
         <div class="data-table-wrap">
           <table class="data-table">
-            <thead><tr><th>Inspection #</th><th>PO</th><th>Factory</th><th>Country</th><th>Type</th><th>Time</th><th>Day</th><th>Status</th></tr></thead>
+            <thead><tr><th>Inspection #</th><th>PO</th><th>Factory <span class="filter-icon" onclick="event.stopPropagation();togglePortalFilter('inspector','factory',this)"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg><div class="filter-drop" id="filter-inspector-factory"></div></span></th><th>Country <span class="filter-icon" onclick="event.stopPropagation();togglePortalFilter('inspector','country',this)"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg><div class="filter-drop" id="filter-inspector-country"></div></span></th><th>Type <span class="filter-icon" onclick="event.stopPropagation();togglePortalFilter('inspector','type',this)"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg><div class="filter-drop" id="filter-inspector-type"></div></span></th><th>Time</th><th>Day</th><th>Status <span class="filter-icon" onclick="event.stopPropagation();togglePortalFilter('inspector','status',this)"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg><div class="filter-drop" id="filter-inspector-status"></div></span></th></tr></thead>
             <tbody id="inspectorTableBody"></tbody>
           </table>
         </div>
       </div>
 
-      <div class="page" id="page-inspector-checklist">
-        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
-          <div style="font-weight:700;font-size:15px;margin-bottom:4px">AQL Inspection Checklist</div>
-          <div style="font-size:13px;color:var(--fg-muted)">INS-2611-DT-001 &middot; Dhaka Textiles &middot; In-line Inspection</div>
-        </div>
-        <div class="check-list" id="checkList"></div>
-        <div style="margin-top:20px">
-          <button class="btn-primary" onclick="submitChecklist()">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
-            Submit Inspection Report
-          </button>
+      <div class="page" id="page-inspector-results">
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Inspection #</th><th>PO</th><th>Factory</th><th>Type</th><th>Date</th><th>AQL Level</th><th>Defect Rate</th><th>Verdict</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="insResultsBody"></tbody>
+          </table>
         </div>
       </div>
 
@@ -888,6 +1020,43 @@ body {
       <button class="btn-primary" style="background:var(--bg-dim);color:var(--fg)" onclick="closeMilestoneModal()">Cancel</button>
       <button class="btn-primary" onclick="confirmMilestone()">Confirm</button>
     </div>
+  </div>
+</div>
+
+<!-- AI Chat FAB -->
+<button class="ai-fab" id="aiFab" onclick="toggleAiChat()" title="Ask FABRIQ AI">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a7 7 0 017 7c0 3-2 5.5-4 7l-3 4-3-4c-2-1.5-4-4-4-7a7 7 0 017-7z"/><circle cx="12" cy="9" r="1.5" fill="currentColor" stroke="none"/><path d="M9 9h.01M15 9h.01" stroke-width="2.5"/></svg>
+</button>
+<div class="ai-chat-panel" id="aiChatPanel">
+  <div class="ai-chat-header">
+    <div class="ai-dot"></div>
+    <span>FABRIQ AI Assistant</span>
+    <button onclick="toggleAiChat()">&times;</button>
+  </div>
+  <div class="ai-chat-body" id="aiChatBody">
+    <div class="ai-msg bot">Hi! I'm your FABRIQ AI assistant. I can help with PO insights, factory analytics, defect trends, and more. What would you like to know?</div>
+  </div>
+  <div class="ai-suggestions" id="aiSuggestions">
+    <button class="ai-sug" onclick="askAi('Which POs have the highest risk of delay?')">Delay risk POs</button>
+    <button class="ai-sug" onclick="askAi('What is the current NCR summary?')">NCR summary</button>
+    <button class="ai-sug" onclick="askAi('Compare factory defect rates')">Factory defect rates</button>
+    <button class="ai-sug" onclick="askAi('Show on-time delivery trends')">OTD trends</button>
+  </div>
+  <div class="ai-chat-footer">
+    <input type="text" id="aiInput" placeholder="Ask FABRIQ AI..." onkeydown="if(event.key==='Enter')sendAiMsg()">
+    <button class="btn-send" onclick="sendAiMsg()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+  </div>
+</div>
+
+<!-- Inspection Report Modal -->
+<div class="report-overlay" id="reportOverlay" onclick="closeReport()">
+  <div class="report-box" onclick="event.stopPropagation()">
+    <div class="report-box-header">
+      <span class="report-title" id="reportTitle">Inspection Report</span>
+      <button style="border:none;background:none;color:var(--fg-faint);cursor:pointer;font-size:20px" onclick="closeReport()">&times;</button>
+    </div>
+    <div class="report-box-body" id="reportBody"></div>
+    <div class="report-box-footer" id="reportFooter"></div>
   </div>
 </div>
 
@@ -1118,6 +1287,9 @@ var currentPage = 'brand-dashboard';
 var currentMsPo = null;
 var sortCol = null;
 var sortAsc = true;
+var sidebarCollapsed = true;
+var factoryFilters = { status:[] };
+var inspectorFilters = { factory:[], country:[], type:[], status:[] };
 
 var NAV_ITEMS = {
   brand: [
@@ -1133,7 +1305,7 @@ var NAV_ITEMS = {
   ],
   inspector: [
     { id:'inspector-schedule', label:'Schedule', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' },
-    { id:'inspector-checklist', label:'Checklist', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>' },
+    { id:'inspector-results', label:'Inspection Results', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>' },
     { id:'inspector-reports', label:'Reports', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>' }
   ]
 };
@@ -1153,11 +1325,12 @@ var PAGE_TITLES = {
   'factory-orders':'Active Orders',
   'factory-milestones':'Milestones',
   'inspector-schedule':'Schedule',
-  'inspector-checklist':'AQL Checklist',
+  'inspector-results':'Inspection Results',
   'inspector-reports':'Reports'
 };
 
 function init() {
+  document.getElementById('sidebar').classList.add('collapsed');
   renderSidebarNav();
   renderPoTable();
   renderActivityFeed();
@@ -1166,7 +1339,7 @@ function init() {
   renderFactoryTable();
   renderFactoryOrders();
   renderInspectorTable();
-  renderChecklist();
+  renderInsResults();
   buildSpark('spark1', [8,10,9,11,12,10,12]);
   buildSpark('spark2', [9.2,10.1,11.5,12.8,13.1,14.0,14.2]);
   pushNotif('Milestone confirmed: <strong>Bulk Cutting Started</strong> on PO-2611-AW-001','green',{type:'po',id:'PO-2611-AW-001'});
@@ -1218,6 +1391,12 @@ function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
 }
 
+function toggleSidebarCollapse() {
+  var sb = document.getElementById('sidebar');
+  sidebarCollapsed = !sidebarCollapsed;
+  sb.classList.toggle('collapsed', sidebarCollapsed);
+}
+
 function buildSpark(id, vals) {
   var el = document.getElementById(id); if (!el) return;
   var max = Math.max.apply(null, vals);
@@ -1227,7 +1406,18 @@ function buildSpark(id, vals) {
 }
 
 function renderPoTable() {
-  var data = POS.slice();
+  var data = POS.filter(function(po) {
+    if (activeFilters.factory.length && activeFilters.factory.indexOf(po.factory) < 0) return false;
+    if (activeFilters.country.length) {
+      var cv = (COUNTRY_FLAGS[po.country]||'')+' '+(COUNTRIES[po.country]||po.country);
+      if (activeFilters.country.indexOf(cv) < 0) return false;
+    }
+    if (activeFilters.status.length) {
+      var sv = (STATUSES[po.status]||['--'])[0];
+      if (activeFilters.status.indexOf(sv) < 0) return false;
+    }
+    return true;
+  });
   if (sortCol) {
     data.sort(function(a,b) {
       var av, bv;
@@ -1305,6 +1495,7 @@ function renderBrandInsTable() {
       +'<td>'+ins.type+'</td>'
       +'<td>'+(days[ins.day]||ins.day)+' '+ins.time+'</td>'
       +'<td><span class="badge '+(done?'badge-ok':'badge-accent')+'">'+(done?'Done':'Scheduled')+'</span></td>'
+      +'<td>'+(done?'<button style="border:none;background:var(--accent-soft);color:var(--accent);padding:5px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font-body)" onclick="viewReport(\''+ins.id+'\')">View Report</button>':'')+'</td>'
       +'</tr>';
   }).join('');
 }
@@ -1332,7 +1523,14 @@ function renderActivityFeed() {
 }
 
 function renderFactoryTable() {
-  var fps = POS.filter(function(p) { return p.factory.indexOf('Dhaka') >= 0; });
+  var fps = POS.filter(function(p) {
+    if (p.factory.indexOf('Dhaka') < 0) return false;
+    if (factoryFilters.status.length) {
+      var sv = (STATUSES[p.status]||['--'])[0];
+      if (factoryFilters.status.indexOf(sv) < 0) return false;
+    }
+    return true;
+  });
   document.getElementById('factoryTableBody').innerHTML = fps.map(function(po) {
     var s = STATUSES[po.status] || ['--','muted'];
     var pct = po.status==='in_production'?Math.floor(Math.random()*40+40):po.status==='ncr_open'?65:100;
@@ -1364,7 +1562,20 @@ function renderFactoryOrders() {
 
 function renderInspectorTable() {
   var days = {today:'Today',wed:'Wednesday',thu:'Thursday',fri:'Friday'};
-  document.getElementById('inspectorTableBody').innerHTML = INSPECTIONS.map(function(ins) {
+  var data = INSPECTIONS.filter(function(ins) {
+    if (inspectorFilters.factory.length && inspectorFilters.factory.indexOf(ins.factory) < 0) return false;
+    if (inspectorFilters.country.length) {
+      var cv = (COUNTRY_FLAGS[ins.country]||'')+' '+(COUNTRIES[ins.country]||ins.country);
+      if (inspectorFilters.country.indexOf(cv) < 0) return false;
+    }
+    if (inspectorFilters.type.length && inspectorFilters.type.indexOf(ins.type) < 0) return false;
+    if (inspectorFilters.status.length) {
+      var sv = ins.status==='completed'?'Completed':'Scheduled';
+      if (inspectorFilters.status.indexOf(sv) < 0) return false;
+    }
+    return true;
+  });
+  document.getElementById('inspectorTableBody').innerHTML = data.map(function(ins) {
     var done = ins.status === 'completed';
     return '<tr>'
       +'<td style="font-family:var(--font-mono);font-size:12px">'+ins.id+'</td>'
@@ -1379,34 +1590,209 @@ function renderInspectorTable() {
   }).join('');
 }
 
-function renderChecklist() {
-  document.getElementById('checkList').innerHTML = CHECKS.map(function(c, i) {
-    var cls = checkStates[i] === 'pass' ? ' checked' : checkStates[i] === 'fail' ? ' failed' : '';
-    var svg = checkStates[i] === 'fail'
-      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>'
-      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>';
-    return '<div class="check-item'+cls+'" onclick="toggleCheck('+i+')">'
-      +'<div class="check-box">'+svg+'</div>'
-      +'<div class="check-text">'+c+'</div>'
-      +'</div>';
+var INS_RESULTS = [
+  { id:'INS-2611-DT-001', po:'PO-2611-AW-001', factory:'Dhaka Textiles', type:'In-line', date:'2026-11-10', aql:'Level II', defect:'2.1%', verdict:'pass' },
+  { id:'INS-2611-SS-001', po:'PO-2611-AW-002', factory:'Saigon Stitch', type:'Final', date:'2026-11-20', aql:'Level II', defect:'1.4%', verdict:'pass' },
+  { id:'INS-2611-PP-001', po:'PO-2611-BB-001', factory:'Phnom Penh Garments', type:'Pre-shipment', date:'2026-10-15', aql:'Level III', defect:'0.8%', verdict:'pass' },
+  { id:'INS-2611-DT-002', po:'PO-2611-BB-002', factory:'Dhaka Textiles', type:'Final', date:'2026-10-20', aql:'Level II', defect:'8.2%', verdict:'fail' },
+  { id:'INS-2611-TK-001', po:'PO-2611-AW-005', factory:'Tirupur Knits', type:'In-line', date:'2026-11-05', aql:'Level II', defect:'3.5%', verdict:'pass' },
+  { id:'INS-2611-IK-001', po:'PO-2611-BB-003', factory:'Istanbul Konfeksiyon', type:'Final', date:'2026-11-12', aql:'Level II', defect:'5.1%', verdict:'fail' },
+  { id:'INS-2611-SK-001', po:'PO-2611-AW-006', factory:'Sialkot Sports', type:'In-line', date:'2026-11-18', aql:'Level I', defect:'1.2%', verdict:'pass' },
+  { id:'INS-2611-AA-001', po:'PO-2611-BB-004', factory:'Addis Ababa Garments', type:'Final', date:'2026-11-22', aql:'Level II', defect:'4.7%', verdict:'conditional' }
+];
+
+function renderInsResults() {
+  document.getElementById('insResultsBody').innerHTML = INS_RESULTS.map(function(r) {
+    var vBadge = r.verdict==='pass'?'badge-ok':r.verdict==='fail'?'badge-bad':'badge-warn';
+    var vLabel = r.verdict==='pass'?'Pass':r.verdict==='fail'?'Fail':'Conditional';
+    return '<tr>'
+      +'<td style="font-family:var(--font-mono);font-size:12px">'+r.id+'</td>'
+      +'<td>'+r.po+'</td>'
+      +'<td>'+r.factory+'</td>'
+      +'<td>'+r.type+'</td>'
+      +'<td>'+new Date(r.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'</td>'
+      +'<td>'+r.aql+'</td>'
+      +'<td style="font-family:var(--font-mono);font-weight:600;color:'+(parseFloat(r.defect)>4?'var(--bad)':parseFloat(r.defect)>2.5?'var(--warn)':'var(--ok)')+'">'+r.defect+'</td>'
+      +'<td><span class="badge '+vBadge+'">'+vLabel+'</span></td>'
+      +'<td><button style="border:none;background:var(--accent-soft);color:var(--accent);padding:6px 12px;border-radius:var(--radius-pill);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font-body)" onclick="viewReport(\''+r.id+'\')">View Report</button></td>'
+      +'</tr>';
   }).join('');
 }
 
-function toggleCheck(i) {
-  var cycle = {none:'pass', pass:'fail', fail:'none'};
-  checkStates[i] = cycle[checkStates[i]];
-  renderChecklist();
+// Filter logic
+var activeFilters = { factory:[], country:[], status:[] };
+function toggleFilter(col, el) {
+  document.querySelectorAll('.filter-drop.show').forEach(function(d) { if (d.id !== 'filter-'+col) d.classList.remove('show'); });
+  var drop = document.getElementById('filter-'+col);
+  if (drop.classList.contains('show')) { drop.classList.remove('show'); return; }
+  var vals = [];
+  POS.forEach(function(po) {
+    var v;
+    if (col==='factory') v=po.factory;
+    else if (col==='country') v=(COUNTRY_FLAGS[po.country]||'')+' '+(COUNTRIES[po.country]||po.country);
+    else if (col==='status') v=(STATUSES[po.status]||['--'])[0];
+    if (vals.indexOf(v)<0) vals.push(v);
+  });
+  vals.sort();
+  var sel = activeFilters[col] || [];
+  var html = vals.map(function(v) {
+    var checked = sel.length===0 || sel.indexOf(v)>=0 ? ' checked' : '';
+    return '<label onclick="event.stopPropagation()"><input type="checkbox"'+checked+' value="'+v.replace(/"/g,'&quot;')+'"> '+v+'</label>';
+  }).join('');
+  html += '<div class="filter-actions"><button class="f-clear" onclick="event.stopPropagation();clearFilter(\''+col+'\')">Clear</button><button class="f-apply" onclick="event.stopPropagation();applyFilter(\''+col+'\')">Apply</button></div>';
+  drop.innerHTML = html;
+  drop.classList.add('show');
+}
+function applyFilter(col) {
+  var drop = document.getElementById('filter-'+col);
+  var checked = [];
+  drop.querySelectorAll('input[type=checkbox]:checked').forEach(function(cb) { checked.push(cb.value); });
+  var allVals = [];
+  drop.querySelectorAll('input[type=checkbox]').forEach(function(cb) { allVals.push(cb.value); });
+  activeFilters[col] = checked.length === allVals.length ? [] : checked;
+  drop.classList.remove('show');
+  var icon = drop.closest('.filter-icon');
+  if (icon) icon.classList.toggle('active', activeFilters[col].length > 0);
+  renderPoTable();
+}
+function clearFilter(col) {
+  activeFilters[col] = [];
+  document.getElementById('filter-'+col).classList.remove('show');
+  var icon = document.querySelector('#filter-'+col).closest('.filter-icon');
+  if (icon) icon.classList.remove('active');
+  renderPoTable();
 }
 
-function submitChecklist() {
-  var passed = checkStates.filter(function(s){return s==='pass';}).length;
-  var failed = checkStates.filter(function(s){return s==='fail';}).length;
-  if (passed + failed < CHECKS.length) {
-    showToast('Please complete all checklist items before submitting.');
-    return;
+// Portal filter logic (Factory + Inspector tables)
+function togglePortalFilter(portal, col, el) {
+  document.querySelectorAll('.filter-drop.show').forEach(function(d) { if (d.id !== 'filter-'+portal+'-'+col) d.classList.remove('show'); });
+  var drop = document.getElementById('filter-'+portal+'-'+col);
+  if (drop.classList.contains('show')) { drop.classList.remove('show'); return; }
+  var vals = [];
+  var src = portal === 'factory' ? POS.filter(function(p){ return p.factory.indexOf('Dhaka')>=0; }) : INSPECTIONS;
+  src.forEach(function(item) {
+    var v;
+    if (portal === 'factory') {
+      if (col==='status') v = (STATUSES[item.status]||['--'])[0];
+    } else {
+      if (col==='factory') v = item.factory;
+      else if (col==='country') v = (COUNTRY_FLAGS[item.country]||'')+' '+(COUNTRIES[item.country]||item.country);
+      else if (col==='type') v = item.type;
+      else if (col==='status') v = item.status==='completed'?'Completed':'Scheduled';
+    }
+    if (v && vals.indexOf(v)<0) vals.push(v);
+  });
+  vals.sort();
+  var filters = portal === 'factory' ? factoryFilters : inspectorFilters;
+  var sel = filters[col] || [];
+  var html = vals.map(function(v) {
+    var checked = sel.length===0 || sel.indexOf(v)>=0 ? ' checked' : '';
+    return '<label onclick="event.stopPropagation()"><input type="checkbox"'+checked+' value="'+v.replace(/"/g,'&quot;')+'"> '+v+'</label>';
+  }).join('');
+  html += '<div class="filter-actions"><button class="f-clear" onclick="event.stopPropagation();clearPortalFilter(\''+portal+'\',\''+col+'\')">Clear</button><button class="f-apply" onclick="event.stopPropagation();applyPortalFilter(\''+portal+'\',\''+col+'\')">Apply</button></div>';
+  drop.innerHTML = html;
+  drop.classList.add('show');
+}
+function applyPortalFilter(portal, col) {
+  var drop = document.getElementById('filter-'+portal+'-'+col);
+  var checked = [];
+  drop.querySelectorAll('input[type=checkbox]:checked').forEach(function(cb) { checked.push(cb.value); });
+  var allVals = [];
+  drop.querySelectorAll('input[type=checkbox]').forEach(function(cb) { allVals.push(cb.value); });
+  var filters = portal === 'factory' ? factoryFilters : inspectorFilters;
+  filters[col] = checked.length === allVals.length ? [] : checked;
+  drop.classList.remove('show');
+  var icon = drop.closest('.filter-icon');
+  if (icon) icon.classList.toggle('active', filters[col].length > 0);
+  if (portal === 'factory') renderFactoryTable(); else renderInspectorTable();
+}
+function clearPortalFilter(portal, col) {
+  var filters = portal === 'factory' ? factoryFilters : inspectorFilters;
+  filters[col] = [];
+  document.getElementById('filter-'+portal+'-'+col).classList.remove('show');
+  var icon = document.querySelector('#filter-'+portal+'-'+col).closest('.filter-icon');
+  if (icon) icon.classList.remove('active');
+  if (portal === 'factory') renderFactoryTable(); else renderInspectorTable();
+}
+
+// AI Chat
+function toggleAiChat() {
+  document.getElementById('aiChatPanel').classList.toggle('show');
+}
+var AI_RESPONSES = {
+  'Which POs have the highest risk of delay?': 'Based on current timelines, <strong>3 POs have elevated delay risk</strong>:<br><br>1. <strong>PO-2611-BB-002</strong> (Denim Jackets) — NCR open, 8% defect rate requires rework + re-inspection before Dec 1 ship date. <span style="color:var(--bad)">HIGH RISK</span><br>2. <strong>PO-2611-AW-002</strong> (Winter Parkas) — Final inspection overdue by 3 days at Saigon Stitch. <span style="color:var(--warn)">MEDIUM RISK</span><br>3. <strong>PO-2611-BB-003</strong> (Wool Overcoat) — NCR for lining puckering at Istanbul. Dec 10 deadline tight. <span style="color:var(--warn)">MEDIUM RISK</span>',
+  'What is the current NCR summary?': '<strong>4 NCRs currently open</strong> across the portfolio:<br><br>1. <strong>PO-2611-BB-002</strong> — Back yoke stitching (8% defect) at Dhaka Textiles. Rework in progress.<br>2. <strong>PO-2611-BB-003</strong> — Lining puckering at Istanbul Konfeksiyon.<br>3. <strong>PO-2611-AW-007</strong> — Leather grain inconsistency at Sialkot Sports.<br>4. <strong>PO-2611-BB-005</strong> — EVA sole delamination at Shenzhen Footwear.<br><br>Average resolution time: <strong>18 days</strong>. Cost of quality trending up $2.1k this month.',
+  'Compare factory defect rates': '<strong>Factory Defect Rate Comparison (YTD)</strong>:<br><br>🟢 Phnom Penh Garments: <strong>0.8%</strong> (excellent)<br>🟢 Sialkot Sports: <strong>1.2%</strong><br>🟢 Saigon Stitch: <strong>1.4%</strong><br>🟡 Dhaka Textiles: <strong>3.2%</strong> (trending up due to NCR)<br>🟡 Tirupur Knits: <strong>3.5%</strong><br>🔴 Addis Ababa Garments: <strong>4.7%</strong> (new supplier, needs audit)<br>🔴 Istanbul Konfeksiyon: <strong>5.1%</strong><br>🔴 Dhaka Textiles (Denim line): <strong>8.2%</strong> (NCR active)',
+  'Show on-time delivery trends': '<strong>On-Time Delivery (OTD) — Last 6 Months</strong>:<br><br>May: 94% &nbsp; Jun: 91% &nbsp; Jul: 89% &nbsp; Aug: 85% &nbsp; Sep: 83% &nbsp; Oct: 87%<br><br>📈 OTD recovering after August dip caused by monsoon logistics delays in Bangladesh + Vietnam. Current 87% still below 90% target. Key drivers: Dhaka Textiles improved from 78% → 88% after new logistics partner. Istanbul still lagging at 79%.'
+};
+function askAi(question) {
+  var body = document.getElementById('aiChatBody');
+  body.innerHTML += '<div class="ai-msg user">'+question+'</div>';
+  document.getElementById('aiSuggestions').style.display = 'none';
+  setTimeout(function() {
+    var answer = AI_RESPONSES[question] || 'I\'m analyzing your data... Based on the current portfolio of 12 active POs across 9 factories, I\'d need more specific criteria to give you actionable insights. Try asking about delay risks, defect rates, NCRs, or delivery trends.';
+    body.innerHTML += '<div class="ai-msg bot">'+answer+'</div>';
+    body.scrollTop = body.scrollHeight;
+  }, 800);
+  body.scrollTop = body.scrollHeight;
+}
+function sendAiMsg() {
+  var input = document.getElementById('aiInput');
+  var q = input.value.trim();
+  if (!q) return;
+  input.value = '';
+  askAi(q);
+}
+
+// Inspection Report
+function viewReport(insId) {
+  var r = INS_RESULTS.find(function(x) { return x.id === insId; });
+  if (!r) return;
+  document.getElementById('reportTitle').textContent = 'Inspection Report — ' + r.id;
+  var vLabel = r.verdict==='pass'?'PASS':r.verdict==='fail'?'FAIL':'CONDITIONAL';
+  var vColor = r.verdict==='pass'?'var(--ok)':r.verdict==='fail'?'var(--bad)':'var(--warn)';
+  var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">'
+    +'<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">Inspection ID</div><div style="font-family:var(--font-mono);font-size:14px;margin-top:4px">'+r.id+'</div></div>'
+    +'<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">Purchase Order</div><div style="font-size:14px;margin-top:4px">'+r.po+'</div></div>'
+    +'<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">Factory</div><div style="font-size:14px;margin-top:4px">'+r.factory+'</div></div>'
+    +'<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">Inspection Type</div><div style="font-size:14px;margin-top:4px">'+r.type+'</div></div>'
+    +'<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">Date</div><div style="font-size:14px;margin-top:4px">'+new Date(r.date).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+'</div></div>'
+    +'<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">AQL Level</div><div style="font-size:14px;margin-top:4px">'+r.aql+'</div></div>'
+    +'</div>'
+    +'<div style="border:2px solid '+vColor+';border-radius:var(--radius);padding:16px;text-align:center;margin-bottom:20px">'
+      +'<div style="font-size:12px;font-weight:600;text-transform:uppercase;color:var(--fg-faint)">Overall Verdict</div>'
+      +'<div style="font-size:28px;font-weight:700;color:'+vColor+';margin-top:4px">'+vLabel+'</div>'
+      +'<div style="font-size:14px;color:var(--fg-muted);margin-top:2px">Defect Rate: <strong>'+r.defect+'</strong></div>'
+    +'</div>'
+    +'<div style="font-weight:700;font-size:14px;margin-bottom:10px">AQL Test Results</div>'
+    +'<table style="width:100%;font-size:13px;border-collapse:collapse">'
+    +'<tr style="background:var(--bg-dim)"><th style="text-align:left;padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--fg-muted)">Test</th><th style="text-align:center;padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--fg-muted)">Result</th></tr>';
+  CHECKS.forEach(function(c, i) {
+    var pass = Math.random() > (r.verdict==='fail' ? 0.6 : 0.15);
+    html += '<tr style="border-bottom:1px solid var(--divider)"><td style="padding:8px 12px">'+c+'</td>'
+      +'<td style="text-align:center;padding:8px 12px"><span class="badge '+(pass?'badge-ok':'badge-bad')+'">'+(pass?'Pass':'Fail')+'</span></td></tr>';
+  });
+  html += '</table>';
+  document.getElementById('reportBody').innerHTML = html;
+
+  var footer = document.getElementById('reportFooter');
+  if (currentPortal === 'brand') {
+    footer.innerHTML = '<button class="btn-dl secondary" onclick="closeReport()">Close</button>'
+      +'<button class="btn-dl primary" onclick="downloadReport()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg> Download PDF</button>';
+  } else if (currentPortal === 'factory') {
+    footer.innerHTML = '<div style="font-size:12px;color:var(--fg-faint);display:flex;align-items:center;gap:6px;flex:1"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> View-only access. Contact brand for copies.</div>'
+      +'<button class="btn-dl secondary" onclick="closeReport()">Close</button>';
+  } else {
+    footer.innerHTML = '<button class="btn-dl secondary" onclick="closeReport()">Close</button>';
   }
-  showToast('Inspection report submitted: '+passed+' passed, '+failed+' failed');
-  pushNotif('Inspection <strong>INS-2611-DT-001</strong> completed: '+passed+'/'+CHECKS.length+' passed', failed > 0 ? 'red' : 'green', {type:'inspection',id:'INS-2611-DT-001'});
+  document.getElementById('reportOverlay').classList.add('show');
+}
+function closeReport() {
+  document.getElementById('reportOverlay').classList.remove('show');
+}
+function downloadReport() {
+  window.print();
+  showToast('Inspection report sent to print / PDF');
 }
 
 function openPoDetail(poId) {
@@ -1484,9 +1870,13 @@ function openPoDetail(poId) {
           +'<div class="progress-track" style="flex:1"><div class="progress-fill" style="width:'+pct+'%;background:var(--accent)"></div></div>'
           +'<span style="font-family:var(--font-mono);font-size:12px;color:var(--fg-muted)">'+pct+'%</span>'
         +'</div>'
-        +'<button class="tl-toggle" onclick="toggleTl(this,\''+tlId+'\')">'
-          +'Order Timeline <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>'
-        +'</button>'
+        +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">'
+          +'<button class="tl-toggle" style="margin-top:0" onclick="toggleTl(this,\''+tlId+'\')">'
+            +'Order Timeline <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>'
+          +'</button>'
+          +(function(){ var insR = INS_RESULTS.find(function(r){ return r.po === po.id; }); return insR ? '<button class="tl-toggle" style="margin-top:0;background:var(--ok-soft);color:var(--ok)" onclick="event.stopPropagation();viewReport(\''+insR.id+'\')">'
+            +'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg> Report Result</button>' : ''; })()
+        +'</div>'
         +'<div class="tl-body" id="'+tlId+'"><div class="timeline">'+tlHtml+'</div></div>'
         +'</div>';
     });
@@ -1681,7 +2071,16 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     closeDetail();
     closeMilestoneModal();
+    closeReport();
     document.getElementById('notifDropdown').classList.remove('show');
+    document.querySelectorAll('.filter-drop.show').forEach(function(d) { d.classList.remove('show'); });
+    var panel = document.getElementById('aiChatPanel');
+    if (panel.classList.contains('show')) panel.classList.remove('show');
+  }
+});
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.filter-icon')) {
+    document.querySelectorAll('.filter-drop.show').forEach(function(d) { d.classList.remove('show'); });
   }
 });
 
