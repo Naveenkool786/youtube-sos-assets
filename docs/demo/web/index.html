@@ -786,7 +786,6 @@ body {
 }
 .fd-close:hover { background: var(--border); color: var(--fg); }
 .fd-body { flex: 1; overflow-y: auto; padding: 24px 28px; }
-.fd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .fd-section { margin-bottom: 24px; }
 .fd-section-title {
   font-size: 11px; font-weight: 600; text-transform: uppercase;
@@ -803,13 +802,22 @@ body {
   border-bottom: 2px solid var(--divider);
 }
 .fd-audit-table td { padding: 10px 12px; border-bottom: 1px solid var(--divider); }
-.fd-contact { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--divider); }
+.fd-contact { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--divider); }
 .fd-contact:last-child { border-bottom: none; }
 .fd-contact-avatar {
-  width: 36px; height: 36px; border-radius: 50%; background: var(--accent-soft);
+  width: 44px; height: 44px; border-radius: 50%; background: var(--accent-soft);
   color: var(--accent); display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 14px; flex-shrink: 0;
+  font-weight: 700; font-size: 15px; flex-shrink: 0; position: relative; cursor: pointer;
+  border: 2px dashed var(--border); transition: border-color 0.15s, background 0.15s;
 }
+.fd-contact-avatar:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.fd-contact-avatar .fd-photo-hint {
+  position: absolute; bottom: -2px; right: -2px; width: 16px; height: 16px;
+  border-radius: 50%; background: var(--accent); color: #fff; display: flex;
+  align-items: center; justify-content: center; font-size: 10px; font-weight: 700;
+  border: 2px solid var(--bg-card); opacity: 0; transition: opacity 0.15s;
+}
+.fd-contact-avatar:hover .fd-photo-hint { opacity: 1; }
 .fd-vendor-status { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; }
 .fd-vs-active { background: var(--ok-soft); color: var(--ok); }
 .fd-vs-on_hold { background: var(--warn-soft); color: var(--warn); }
@@ -824,7 +832,6 @@ body {
 .fd-cap-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
 @media (max-width: 860px) {
   .factory-detail-box { margin: 0; border-radius: 0; max-width: 100%; }
-  .fd-grid { grid-template-columns: 1fr; }
   .fd-kpi-row { grid-template-columns: repeat(2, 1fr); }
   .fd-header-actions { flex-wrap: wrap; }
 }
@@ -1209,8 +1216,8 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'2.1%', otd:'88%', totalPOs:5, ncrs:1 },
     capacity: { monthly:15000, utilization:72 },
     contacts: [
-      { name:'Rahim Khan', role:'Production Manager', phone:'+880-1712-XXXXXX' },
-      { name:'Fatima Begum', role:'QA Head', phone:'+880-1812-XXXXXX' }
+      { name:'Rahim Khan', role:'Production Manager', phone:'+880-1712-XXXXXX', email:'rahim.khan@amangarments.bd' },
+      { name:'Fatima Begum', role:'QA Head', phone:'+880-1812-XXXXXX', email:'fatima.begum@amangarments.bd' }
     ]
   },
   'Saigon Stitch Co.': {
@@ -1223,8 +1230,8 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'1.8%', otd:'92%', totalPOs:4, ncrs:0 },
     capacity: { monthly:12000, utilization:65 },
     contacts: [
-      { name:'Linh Nguyen', role:'Factory Director', phone:'+84-90-XXXXXXX' },
-      { name:'Tran Minh', role:'QC Manager', phone:'+84-91-XXXXXXX' }
+      { name:'Linh Nguyen', role:'Factory Director', phone:'+84-90-XXXXXXX', email:'linh.nguyen@saigonstitch.vn' },
+      { name:'Tran Minh', role:'QC Manager', phone:'+84-91-XXXXXXX', email:'tran.minh@saigonstitch.vn' }
     ]
   },
   'Phnom Penh Garments': {
@@ -1237,7 +1244,7 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'3.2%', otd:'85%', totalPOs:3, ncrs:1 },
     capacity: { monthly:8000, utilization:80 },
     contacts: [
-      { name:'Sok Chea', role:'General Manager', phone:'+855-12-XXXXXX' }
+      { name:'Sok Chea', role:'General Manager', phone:'+855-12-XXXXXX', email:'sok.chea@phnompenh-garments.kh' }
     ]
   },
   'Guangzhou Yufeng Shoes': {
@@ -1249,7 +1256,7 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'--', otd:'--', totalPOs:1, ncrs:0 },
     capacity: { monthly:20000, utilization:40 },
     contacts: [
-      { name:'Wang Lei', role:'Export Manager', phone:'+86-138-XXXXXXXX' }
+      { name:'Wang Lei', role:'Export Manager', phone:'+86-138-XXXXXXXX', email:'wang.lei@gzyufeng.cn' }
     ]
   },
   'Tirupur Knits Pvt. Ltd.': {
@@ -1263,8 +1270,8 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'1.4%', otd:'94%', totalPOs:3, ncrs:0 },
     capacity: { monthly:25000, utilization:58 },
     contacts: [
-      { name:'Ramesh Kumar', role:'MD', phone:'+91-98422-XXXXX' },
-      { name:'Priya Devi', role:'Quality Head', phone:'+91-98433-XXXXX' }
+      { name:'Ramesh Kumar', role:'MD', phone:'+91-98422-XXXXX', email:'ramesh@tirupurknits.in' },
+      { name:'Priya Devi', role:'Quality Head', phone:'+91-98433-XXXXX', email:'priya.devi@tirupurknits.in' }
     ]
   },
   'Istanbul Konfeksiyon A.S.': {
@@ -1277,7 +1284,7 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'2.5%', otd:'90%', totalPOs:2, ncrs:0 },
     capacity: { monthly:10000, utilization:70 },
     contacts: [
-      { name:'Emre Yilmaz', role:'Operations Director', phone:'+90-532-XXXXXXX' }
+      { name:'Emre Yilmaz', role:'Operations Director', phone:'+90-532-XXXXXXX', email:'emre@istanbulkonf.com.tr' }
     ]
   },
   'Sialkot Sports Mfg.': {
@@ -1290,8 +1297,8 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'3.8%', otd:'82%', totalPOs:3, ncrs:1 },
     capacity: { monthly:18000, utilization:55 },
     contacts: [
-      { name:'Imran Ali', role:'Factory Manager', phone:'+92-300-XXXXXXX' },
-      { name:'Saba Noor', role:'QA Lead', phone:'+92-301-XXXXXXX' }
+      { name:'Imran Ali', role:'Factory Manager', phone:'+92-300-XXXXXXX', email:'imran.ali@sialkotmfg.pk' },
+      { name:'Saba Noor', role:'QA Lead', phone:'+92-301-XXXXXXX', email:'saba.noor@sialkotmfg.pk' }
     ]
   },
   'Addis Ababa Garments PLC': {
@@ -1303,7 +1310,7 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'--', otd:'--', totalPOs:1, ncrs:0 },
     capacity: { monthly:6000, utilization:35 },
     contacts: [
-      { name:'Abebe Tadesse', role:'General Manager', phone:'+251-91-XXXXXXX' }
+      { name:'Abebe Tadesse', role:'General Manager', phone:'+251-91-XXXXXXX', email:'abebe@aag-plc.et' }
     ]
   },
   'Shenzhen Footwear Co.': {
@@ -1316,8 +1323,8 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'4.1%', otd:'78%', totalPOs:2, ncrs:1 },
     capacity: { monthly:30000, utilization:45 },
     contacts: [
-      { name:'Chen Wei', role:'Sales Director', phone:'+86-755-XXXXXXXX' },
-      { name:'Li Fang', role:'QC Manager', phone:'+86-755-XXXXXXXX' }
+      { name:'Chen Wei', role:'Sales Director', phone:'+86-755-XXXXXXXX', email:'chen.wei@szfootwear.cn' },
+      { name:'Li Fang', role:'QC Manager', phone:'+86-755-XXXXXXXX', email:'li.fang@szfootwear.cn' }
     ]
   }
 };
@@ -1829,112 +1836,6 @@ var INS_RESULTS = [
   { id:'INS-2611-SK-001', po:'PO-2611-AW-006', factory:'Sialkot Sports', type:'In-line', date:'2026-11-18', aql:'Level I', defect:'1.2%', verdict:'pass' },
   { id:'INS-2611-AA-001', po:'PO-2611-BB-004', factory:'Addis Ababa Garments', type:'Final', date:'2026-11-22', aql:'Level II', defect:'4.7%', verdict:'conditional' }
 ];
-
-var FACTORY_DETAILS = {
-  'Dhaka Textiles Ltd.': {
-    audits: [
-      { standard:'BSCI', grade:'B', date:'2026-03-15', expiry:'2027-03-14', body:'amfori' },
-      { standard:'OEKO-TEX 100', grade:'Class I', date:'2026-01-10', expiry:'2027-01-09', body:'Hohenstein' },
-      { standard:'WRAP', grade:'Gold', date:'2025-09-20', expiry:'2026-09-19', body:'WRAP' }
-    ],
-    certifications: [{ name:'ISO 9001:2015', issued:'2025-06-01', expiry:'2028-05-31' }, { name:'GOTS 6.0', issued:'2026-02-15', expiry:'2027-02-14' }],
-    approvalTier:'Preferred', approvalDate:'2024-06-01', approvalNotes:'Top-tier supplier. 3+ years relationship. Excellent audit track record.',
-    vendorStatus:'Active', vendorSince:'2021-04-15',
-    performance: { qualityScore:96, onTimeDelivery:94, defectRate:1.8, responseTime:2.1 },
-    capacity: { monthlyUnits:120000, currentLoad:78, peakSeason:'Aug–Nov', machinery:[{type:'Single Needle',count:220},{type:'Overlock',count:85},{type:'Flatlock',count:40},{type:'Pressing',count:30}] },
-    contacts: [{ name:'Rahim Khan', role:'General Manager', email:'rahim@dhakatextiles.com', phone:'+880 1711 234567' },{ name:'Fatima Begum', role:'QC Head', email:'fatima@dhakatextiles.com', phone:'+880 1911 345678' },{ name:'Kamal Hossain', role:'Production Manager', email:'kamal@dhakatextiles.com', phone:'+880 1611 456789' }]
-  },
-  'Saigon Stitch Co.': {
-    audits: [
-      { standard:'WRAP', grade:'Gold', date:'2026-05-10', expiry:'2027-05-09', body:'WRAP' },
-      { standard:'SA8000', grade:'Certified', date:'2025-12-01', expiry:'2028-11-30', body:'SAI' }
-    ],
-    certifications: [{ name:'ISO 14001:2015', issued:'2025-08-01', expiry:'2028-07-31' }],
-    approvalTier:'Approved', approvalDate:'2025-01-15', approvalNotes:'Strong performance. Expanding capacity in 2027.',
-    vendorStatus:'Active', vendorSince:'2023-07-01',
-    performance: { qualityScore:93, onTimeDelivery:91, defectRate:2.3, responseTime:3.0 },
-    capacity: { monthlyUnits:85000, currentLoad:82, peakSeason:'Sep–Dec', machinery:[{type:'Single Needle',count:160},{type:'Overlock',count:60},{type:'Button Attach',count:25}] },
-    contacts: [{ name:'Linh Nguyen', role:'Operations Director', email:'linh@saigonstitch.vn', phone:'+84 28 3824 5678' },{ name:'Minh Tran', role:'QA Supervisor', email:'minh@saigonstitch.vn', phone:'+84 28 3824 5679' }]
-  },
-  'Phnom Penh Garments': {
-    audits: [
-      { standard:'BSCI', grade:'B', date:'2026-02-20', expiry:'2027-02-19', body:'amfori' },
-      { standard:'SMETA', grade:'4-Pillar', date:'2025-11-15', expiry:'2026-11-14', body:'Sedex' }
-    ],
-    certifications: [{ name:'ISO 9001:2015', issued:'2025-04-01', expiry:'2028-03-31' }],
-    approvalTier:'Approved', approvalDate:'2025-03-01', approvalNotes:'Reliable for basic garments. Good labor standards.',
-    vendorStatus:'Active', vendorSince:'2023-11-01',
-    performance: { qualityScore:90, onTimeDelivery:88, defectRate:2.8, responseTime:4.2 },
-    capacity: { monthlyUnits:60000, currentLoad:71, peakSeason:'Jul–Oct', machinery:[{type:'Single Needle',count:110},{type:'Overlock',count:45},{type:'Pressing',count:20}] },
-    contacts: [{ name:'Sokha Meas', role:'Factory Director', email:'sokha@ppgarments.kh', phone:'+855 23 987654' }]
-  },
-  'Guangzhou Yufeng Shoes': {
-    audits: [],
-    certifications: [],
-    approvalTier:'Conditional', approvalDate:'2026-08-01', approvalNotes:'New vendor. Initial audit pending. Trial order placed.',
-    vendorStatus:'Active', vendorSince:'2026-06-15',
-    performance: { qualityScore:78, onTimeDelivery:72, defectRate:5.1, responseTime:6.5 },
-    capacity: { monthlyUnits:50000, currentLoad:45, peakSeason:'Oct–Jan', machinery:[{type:'Stitching Machine',count:80},{type:'Lasting Machine',count:30},{type:'Sole Press',count:15}] },
-    contacts: [{ name:'Wei Zhang', role:'Sales Manager', email:'wei@yufengshoes.cn', phone:'+86 20 8765 4321' }]
-  },
-  'Tirupur Knits Pvt. Ltd.': {
-    audits: [
-      { standard:'SA8000', grade:'Certified', date:'2026-04-10', expiry:'2029-04-09', body:'SAI' },
-      { standard:'OEKO-TEX 100', grade:'Class I', date:'2026-06-01', expiry:'2027-05-31', body:'Hohenstein' },
-      { standard:'GOTS', grade:'6.0', date:'2025-10-15', expiry:'2026-10-14', body:'Control Union' }
-    ],
-    certifications: [{ name:'ISO 9001:2015', issued:'2024-12-01', expiry:'2027-11-30' },{ name:'Fair Trade', issued:'2025-03-01', expiry:'2026-02-28' }],
-    approvalTier:'Preferred', approvalDate:'2024-01-20', approvalNotes:'Premium knitwear specialist. Organic cotton capability.',
-    vendorStatus:'Active', vendorSince:'2022-03-01',
-    performance: { qualityScore:95, onTimeDelivery:92, defectRate:1.9, responseTime:2.5 },
-    capacity: { monthlyUnits:95000, currentLoad:85, peakSeason:'Aug–Nov', machinery:[{type:'Circular Knit',count:60},{type:'Single Needle',count:140},{type:'Dyeing',count:12},{type:'Pressing',count:25}] },
-    contacts: [{ name:'Raj Krishnamurthy', role:'Managing Director', email:'raj@tirupurknits.in', phone:'+91 421 234 5678' },{ name:'Priya Sundaram', role:'Compliance Officer', email:'priya@tirupurknits.in', phone:'+91 421 234 5679' }]
-  },
-  'Istanbul Konfeksiyon A.S.': {
-    audits: [
-      { standard:'BSCI', grade:'C', date:'2026-01-20', expiry:'2027-01-19', body:'amfori' },
-      { standard:'SMETA', grade:'2-Pillar', date:'2025-08-10', expiry:'2026-08-09', body:'Sedex' }
-    ],
-    certifications: [{ name:'ISO 9001:2015', issued:'2025-05-01', expiry:'2028-04-30' }],
-    approvalTier:'Approved', approvalDate:'2025-06-01', approvalNotes:'Grade C on BSCI needs improvement. Corrective action plan due Feb 2027.',
-    vendorStatus:'On Hold', vendorSince:'2024-02-01',
-    performance: { qualityScore:84, onTimeDelivery:79, defectRate:4.3, responseTime:5.0 },
-    capacity: { monthlyUnits:70000, currentLoad:55, peakSeason:'Sep–Dec', machinery:[{type:'Single Needle',count:130},{type:'Overlock',count:50},{type:'Embroidery',count:18}] },
-    contacts: [{ name:'Mehmet Yilmaz', role:'Export Manager', email:'mehmet@istanbulkonf.tr', phone:'+90 212 555 6789' },{ name:'Ayse Demir', role:'QC Manager', email:'ayse@istanbulkonf.tr', phone:'+90 212 555 6790' }]
-  },
-  'Sialkot Sports Mfg.': {
-    audits: [
-      { standard:'WRAP', grade:'Silver', date:'2026-02-10', expiry:'2027-02-09', body:'WRAP' }
-    ],
-    certifications: [{ name:'ISO 9001:2015', issued:'2025-09-01', expiry:'2028-08-31' }],
-    approvalTier:'Approved', approvalDate:'2025-05-01', approvalNotes:'Specialist in sports accessories and gloves.',
-    vendorStatus:'Active', vendorSince:'2024-08-01',
-    performance: { qualityScore:89, onTimeDelivery:86, defectRate:3.2, responseTime:3.8 },
-    capacity: { monthlyUnits:40000, currentLoad:68, peakSeason:'Jul–Oct', machinery:[{type:'Cutting',count:20},{type:'Stitching',count:90},{type:'Pressing',count:15},{type:'Packing',count:10}] },
-    contacts: [{ name:'Ali Hassan', role:'Factory Owner', email:'ali@sialkotports.pk', phone:'+92 52 123 4567' }]
-  },
-  'Addis Ababa Garments PLC': {
-    audits: [],
-    certifications: [],
-    approvalTier:'Pending', approvalDate:null, approvalNotes:'Under evaluation. Initial factory visit scheduled for Dec 2026.',
-    vendorStatus:'Probation', vendorSince:'2026-07-01',
-    performance: { qualityScore:71, onTimeDelivery:65, defectRate:6.8, responseTime:8.2 },
-    capacity: { monthlyUnits:30000, currentLoad:38, peakSeason:'Oct–Jan', machinery:[{type:'Single Needle',count:70},{type:'Overlock',count:25},{type:'Pressing',count:10}] },
-    contacts: [{ name:'Tadesse Bekele', role:'General Manager', email:'tadesse@aag.et', phone:'+251 11 234 5678' }]
-  },
-  'Shenzhen Footwear Co.': {
-    audits: [
-      { standard:'SMETA', grade:'2-Pillar', date:'2025-11-20', expiry:'2026-11-19', body:'Sedex' }
-    ],
-    certifications: [{ name:'ISO 9001:2015', issued:'2025-07-01', expiry:'2028-06-30' }],
-    approvalTier:'Conditional', approvalDate:'2026-04-01', approvalNotes:'Pending full BSCI audit. SMETA 2-pillar only.',
-    vendorStatus:'Active', vendorSince:'2025-10-01',
-    performance: { qualityScore:82, onTimeDelivery:80, defectRate:4.0, responseTime:4.5 },
-    capacity: { monthlyUnits:65000, currentLoad:60, peakSeason:'Sep–Dec', machinery:[{type:'Stitching Machine',count:120},{type:'Lasting Machine',count:45},{type:'Sole Press',count:20},{type:'Finishing',count:15}] },
-    contacts: [{ name:'Li Chen', role:'Sales Director', email:'li@szfootwear.cn', phone:'+86 755 8765 4321' },{ name:'Wang Jun', role:'QC Lead', email:'wang@szfootwear.cn', phone:'+86 755 8765 4322' }]
-  }
-};
-
 function openFactoryDetail(factoryName) {
   var fInfo = FACTORIES[factoryName] || {};
   var fd = FACTORY_DETAILS[factoryName];
@@ -1963,12 +1864,14 @@ function openFactoryDetail(factoryName) {
 
   var html = '';
 
-  html += '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:20px">';
+  // Status chips
+  html += '<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px">';
   html += '<span class="fd-vendor-status '+vsClass+'"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="currentColor"/></svg> '+vsLabel+'</span>';
   html += '<span class="fd-approval-tier '+atClass+'">'+fd.approval.tier+' Vendor</span>';
   if (fd.vendorStatusReason) html += '<span style="font-size:12px;color:var(--fg-faint);font-style:italic">'+fd.vendorStatusReason+'</span>';
   html += '</div>';
 
+  // KPIs — full width row
   html += '<div class="fd-kpi-row">';
   html += '<div class="fd-kpi"><div class="fd-kpi-label">Defect Rate</div><div class="fd-kpi-value" style="color:'+(parseFloat(fd.metrics.defectRate)>3?'var(--bad)':'var(--ok)')+'">'+fd.metrics.defectRate+'</div></div>';
   html += '<div class="fd-kpi"><div class="fd-kpi-label">On-Time Delivery</div><div class="fd-kpi-value" style="color:'+(parseFloat(fd.metrics.otd)<85?'var(--warn)':'var(--ok)')+'">'+fd.metrics.otd+'</div></div>';
@@ -1976,10 +1879,7 @@ function openFactoryDetail(factoryName) {
   html += '<div class="fd-kpi"><div class="fd-kpi-label">Open NCRs</div><div class="fd-kpi-value" style="color:'+(fd.metrics.ncrs>0?'var(--bad)':'var(--ok)')+'">'+fd.metrics.ncrs+'</div></div>';
   html += '</div>';
 
-  html += '<div class="fd-grid">';
-
-  html += '<div>';
-
+  // Audit table — full width
   html += '<div class="fd-section"><div class="fd-section-title">Audit & Compliance Certificates</div>';
   html += '<table class="fd-audit-table"><thead><tr><th>Type</th><th>Standard</th><th>Grade</th><th>Body</th><th>Valid Until</th><th>Status</th></tr></thead><tbody>';
   fd.audits.forEach(function(a) {
@@ -1989,9 +1889,12 @@ function openFactoryDetail(factoryName) {
   });
   html += '</tbody></table></div>';
 
-  html += '<div class="fd-section"><div class="fd-section-title">Brand Approval</div>';
-  html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px">';
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">';
+  // Brand Approval + Capacity — side by side, equal height
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch">';
+
+  html += '<div class="fd-section" style="margin-bottom:0;display:flex;flex-direction:column"><div class="fd-section-title">Brand Approval</div>';
+  html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;flex:1">';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">';
   html += '<div><span style="color:var(--fg-faint)">Tier:</span> <strong>'+fd.approval.tier+'</strong></div>';
   html += '<div><span style="color:var(--fg-faint)">Categories:</span> '+fd.approval.categories.join(', ')+'</div>';
   html += '<div><span style="color:var(--fg-faint)">Approved:</span> '+fd.approval.approvedDate+'</div>';
@@ -1999,31 +1902,32 @@ function openFactoryDetail(factoryName) {
   html += '<div><span style="color:var(--fg-faint)">Next Review:</span> '+fd.approval.nextReview+'</div>';
   html += '</div></div></div>';
 
-  html += '</div>';
-
-  html += '<div>';
-
-  html += '<div class="fd-section"><div class="fd-section-title">Production Capacity</div>';
-  html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px">';
+  html += '<div class="fd-section" style="margin-bottom:0;display:flex;flex-direction:column"><div class="fd-section-title">Production Capacity</div>';
+  html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;flex:1">';
   html += '<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--fg-faint)">Monthly Capacity</span><strong>'+fd.capacity.monthly.toLocaleString()+' pcs</strong></div>';
   html += '<div style="display:flex;justify-content:space-between;font-size:13px;margin-top:8px"><span style="color:var(--fg-faint)">Current Utilization</span><strong style="color:'+(fd.capacity.utilization>80?'var(--warn)':'var(--ok)')+'">'+fd.capacity.utilization+'%</strong></div>';
   var capColor = fd.capacity.utilization > 80 ? 'var(--warn)' : (fd.capacity.utilization > 60 ? 'var(--accent)' : 'var(--ok)');
   html += '<div class="fd-cap-bar"><div class="fd-cap-fill" style="width:'+fd.capacity.utilization+'%;background:'+capColor+'"></div></div>';
   html += '</div></div>';
 
-  html += '<div class="fd-section"><div class="fd-section-title">Key Contacts</div>';
+  html += '</div>';
+
+  // Key Contacts — full width
+  html += '<div class="fd-section" style="margin-top:16px"><div class="fd-section-title">Key Contacts</div>';
+  html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 16px">';
   fd.contacts.forEach(function(c) {
     var initials = c.name.split(' ').map(function(w){return w[0];}).join('');
     html += '<div class="fd-contact">'
-      +'<div class="fd-contact-avatar">'+initials+'</div>'
-      +'<div style="flex:1"><div style="font-weight:600;font-size:13px">'+c.name+'</div><div style="font-size:12px;color:var(--fg-faint)">'+c.role+'</div></div>'
-      +'<div style="font-family:var(--font-mono);font-size:12px;color:var(--fg-muted)">'+c.phone+'</div>'
+      +'<div class="fd-contact-avatar" title="Click to upload photo" onclick="event.stopPropagation();showToast(\'Photo upload — Coming in full platform\')">'+initials+'<span class="fd-photo-hint">+</span></div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-weight:600;font-size:13px">'+c.name+'</div>'
+      +'<div style="font-size:12px;color:var(--fg-faint)">'+c.role+'</div>'
+      +'<div style="font-size:12px;color:var(--accent);margin-top:2px">'+c.email+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0"><div style="font-family:var(--font-mono);font-size:12px;color:var(--fg-muted)">'+c.phone+'</div></div>'
       +'</div>';
   });
-  html += '</div>';
-
-  html += '</div>';
-  html += '</div>';
+  html += '</div></div>';
 
   document.getElementById('fdBody').innerHTML = html;
   document.getElementById('factoryDetailOverlay').classList.add('show');

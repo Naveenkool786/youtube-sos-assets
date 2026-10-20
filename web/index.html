@@ -802,13 +802,22 @@ body {
   border-bottom: 2px solid var(--divider);
 }
 .fd-audit-table td { padding: 10px 12px; border-bottom: 1px solid var(--divider); }
-.fd-contact { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--divider); }
+.fd-contact { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--divider); }
 .fd-contact:last-child { border-bottom: none; }
 .fd-contact-avatar {
-  width: 36px; height: 36px; border-radius: 50%; background: var(--accent-soft);
+  width: 44px; height: 44px; border-radius: 50%; background: var(--accent-soft);
   color: var(--accent); display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 14px; flex-shrink: 0;
+  font-weight: 700; font-size: 15px; flex-shrink: 0; position: relative; cursor: pointer;
+  border: 2px dashed var(--border); transition: border-color 0.15s, background 0.15s;
 }
+.fd-contact-avatar:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.fd-contact-avatar .fd-photo-hint {
+  position: absolute; bottom: -2px; right: -2px; width: 16px; height: 16px;
+  border-radius: 50%; background: var(--accent); color: #fff; display: flex;
+  align-items: center; justify-content: center; font-size: 10px; font-weight: 700;
+  border: 2px solid var(--bg-card); opacity: 0; transition: opacity 0.15s;
+}
+.fd-contact-avatar:hover .fd-photo-hint { opacity: 1; }
 .fd-vendor-status { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; }
 .fd-vs-active { background: var(--ok-soft); color: var(--ok); }
 .fd-vs-on_hold { background: var(--warn-soft); color: var(--warn); }
@@ -1207,8 +1216,8 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'2.1%', otd:'88%', totalPOs:5, ncrs:1 },
     capacity: { monthly:15000, utilization:72 },
     contacts: [
-      { name:'Rahim Khan', role:'Production Manager', phone:'+880-1712-XXXXXX' },
-      { name:'Fatima Begum', role:'QA Head', phone:'+880-1812-XXXXXX' }
+      { name:'Rahim Khan', role:'Production Manager', phone:'+880-1712-XXXXXX', email:'rahim.khan@amangarments.bd' },
+      { name:'Fatima Begum', role:'QA Head', phone:'+880-1812-XXXXXX', email:'fatima.begum@amangarments.bd' }
     ]
   },
   'Saigon Stitch Co.': {
@@ -1221,8 +1230,8 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'1.8%', otd:'92%', totalPOs:4, ncrs:0 },
     capacity: { monthly:12000, utilization:65 },
     contacts: [
-      { name:'Linh Nguyen', role:'Factory Director', phone:'+84-90-XXXXXXX' },
-      { name:'Tran Minh', role:'QC Manager', phone:'+84-91-XXXXXXX' }
+      { name:'Linh Nguyen', role:'Factory Director', phone:'+84-90-XXXXXXX', email:'linh.nguyen@saigonstitch.vn' },
+      { name:'Tran Minh', role:'QC Manager', phone:'+84-91-XXXXXXX', email:'tran.minh@saigonstitch.vn' }
     ]
   },
   'Phnom Penh Garments': {
@@ -1235,7 +1244,7 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'3.2%', otd:'85%', totalPOs:3, ncrs:1 },
     capacity: { monthly:8000, utilization:80 },
     contacts: [
-      { name:'Sok Chea', role:'General Manager', phone:'+855-12-XXXXXX' }
+      { name:'Sok Chea', role:'General Manager', phone:'+855-12-XXXXXX', email:'sok.chea@phnompenh-garments.kh' }
     ]
   },
   'Guangzhou Yufeng Shoes': {
@@ -1247,7 +1256,7 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'--', otd:'--', totalPOs:1, ncrs:0 },
     capacity: { monthly:20000, utilization:40 },
     contacts: [
-      { name:'Wang Lei', role:'Export Manager', phone:'+86-138-XXXXXXXX' }
+      { name:'Wang Lei', role:'Export Manager', phone:'+86-138-XXXXXXXX', email:'wang.lei@gzyufeng.cn' }
     ]
   },
   'Tirupur Knits Pvt. Ltd.': {
@@ -1261,8 +1270,8 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'1.4%', otd:'94%', totalPOs:3, ncrs:0 },
     capacity: { monthly:25000, utilization:58 },
     contacts: [
-      { name:'Ramesh Kumar', role:'MD', phone:'+91-98422-XXXXX' },
-      { name:'Priya Devi', role:'Quality Head', phone:'+91-98433-XXXXX' }
+      { name:'Ramesh Kumar', role:'MD', phone:'+91-98422-XXXXX', email:'ramesh@tirupurknits.in' },
+      { name:'Priya Devi', role:'Quality Head', phone:'+91-98433-XXXXX', email:'priya.devi@tirupurknits.in' }
     ]
   },
   'Istanbul Konfeksiyon A.S.': {
@@ -1275,7 +1284,7 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'2.5%', otd:'90%', totalPOs:2, ncrs:0 },
     capacity: { monthly:10000, utilization:70 },
     contacts: [
-      { name:'Emre Yilmaz', role:'Operations Director', phone:'+90-532-XXXXXXX' }
+      { name:'Emre Yilmaz', role:'Operations Director', phone:'+90-532-XXXXXXX', email:'emre@istanbulkonf.com.tr' }
     ]
   },
   'Sialkot Sports Mfg.': {
@@ -1288,8 +1297,8 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'3.8%', otd:'82%', totalPOs:3, ncrs:1 },
     capacity: { monthly:18000, utilization:55 },
     contacts: [
-      { name:'Imran Ali', role:'Factory Manager', phone:'+92-300-XXXXXXX' },
-      { name:'Saba Noor', role:'QA Lead', phone:'+92-301-XXXXXXX' }
+      { name:'Imran Ali', role:'Factory Manager', phone:'+92-300-XXXXXXX', email:'imran.ali@sialkotmfg.pk' },
+      { name:'Saba Noor', role:'QA Lead', phone:'+92-301-XXXXXXX', email:'saba.noor@sialkotmfg.pk' }
     ]
   },
   'Addis Ababa Garments PLC': {
@@ -1301,7 +1310,7 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'--', otd:'--', totalPOs:1, ncrs:0 },
     capacity: { monthly:6000, utilization:35 },
     contacts: [
-      { name:'Abebe Tadesse', role:'General Manager', phone:'+251-91-XXXXXXX' }
+      { name:'Abebe Tadesse', role:'General Manager', phone:'+251-91-XXXXXXX', email:'abebe@aag-plc.et' }
     ]
   },
   'Shenzhen Footwear Co.': {
@@ -1314,8 +1323,8 @@ var FACTORY_DETAILS = {
     metrics: { defectRate:'4.1%', otd:'78%', totalPOs:2, ncrs:1 },
     capacity: { monthly:30000, utilization:45 },
     contacts: [
-      { name:'Chen Wei', role:'Sales Director', phone:'+86-755-XXXXXXXX' },
-      { name:'Li Fang', role:'QC Manager', phone:'+86-755-XXXXXXXX' }
+      { name:'Chen Wei', role:'Sales Director', phone:'+86-755-XXXXXXXX', email:'chen.wei@szfootwear.cn' },
+      { name:'Li Fang', role:'QC Manager', phone:'+86-755-XXXXXXXX', email:'li.fang@szfootwear.cn' }
     ]
   }
 };
@@ -1880,11 +1889,11 @@ function openFactoryDetail(factoryName) {
   });
   html += '</tbody></table></div>';
 
-  // Brand Approval + Capacity — side by side
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">';
+  // Brand Approval + Capacity — side by side, equal height
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch">';
 
-  html += '<div class="fd-section" style="margin-bottom:0"><div class="fd-section-title">Brand Approval</div>';
-  html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px">';
+  html += '<div class="fd-section" style="margin-bottom:0;display:flex;flex-direction:column"><div class="fd-section-title">Brand Approval</div>';
+  html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;flex:1">';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">';
   html += '<div><span style="color:var(--fg-faint)">Tier:</span> <strong>'+fd.approval.tier+'</strong></div>';
   html += '<div><span style="color:var(--fg-faint)">Categories:</span> '+fd.approval.categories.join(', ')+'</div>';
@@ -1893,8 +1902,8 @@ function openFactoryDetail(factoryName) {
   html += '<div><span style="color:var(--fg-faint)">Next Review:</span> '+fd.approval.nextReview+'</div>';
   html += '</div></div></div>';
 
-  html += '<div class="fd-section" style="margin-bottom:0"><div class="fd-section-title">Production Capacity</div>';
-  html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px">';
+  html += '<div class="fd-section" style="margin-bottom:0;display:flex;flex-direction:column"><div class="fd-section-title">Production Capacity</div>';
+  html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;flex:1">';
   html += '<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--fg-faint)">Monthly Capacity</span><strong>'+fd.capacity.monthly.toLocaleString()+' pcs</strong></div>';
   html += '<div style="display:flex;justify-content:space-between;font-size:13px;margin-top:8px"><span style="color:var(--fg-faint)">Current Utilization</span><strong style="color:'+(fd.capacity.utilization>80?'var(--warn)':'var(--ok)')+'">'+fd.capacity.utilization+'%</strong></div>';
   var capColor = fd.capacity.utilization > 80 ? 'var(--warn)' : (fd.capacity.utilization > 60 ? 'var(--accent)' : 'var(--ok)');
@@ -1909,9 +1918,13 @@ function openFactoryDetail(factoryName) {
   fd.contacts.forEach(function(c) {
     var initials = c.name.split(' ').map(function(w){return w[0];}).join('');
     html += '<div class="fd-contact">'
-      +'<div class="fd-contact-avatar">'+initials+'</div>'
-      +'<div style="flex:1"><div style="font-weight:600;font-size:13px">'+c.name+'</div><div style="font-size:12px;color:var(--fg-faint)">'+c.role+'</div></div>'
-      +'<div style="font-family:var(--font-mono);font-size:12px;color:var(--fg-muted)">'+c.phone+'</div>'
+      +'<div class="fd-contact-avatar" title="Click to upload photo" onclick="event.stopPropagation();showToast(\'Photo upload — Coming in full platform\')">'+initials+'<span class="fd-photo-hint">+</span></div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-weight:600;font-size:13px">'+c.name+'</div>'
+      +'<div style="font-size:12px;color:var(--fg-faint)">'+c.role+'</div>'
+      +'<div style="font-size:12px;color:var(--accent);margin-top:2px">'+c.email+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0"><div style="font-family:var(--font-mono);font-size:12px;color:var(--fg-muted)">'+c.phone+'</div></div>'
       +'</div>';
   });
   html += '</div></div>';
