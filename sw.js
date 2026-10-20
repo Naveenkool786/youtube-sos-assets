@@ -1,4 +1,4 @@
-const CACHE = 'fabriq-v1';
+const CACHE = 'fabriq-v2';
 
 self.addEventListener('install', e => {
   self.skipWaiting();
