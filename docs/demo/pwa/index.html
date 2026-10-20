@@ -159,6 +159,7 @@
     height: var(--header-h); padding: 0 16px;
     background: var(--bg); border-bottom: 1px solid var(--divider);
   }
+  .app-header { gap: 8px; }
   .app-logo { display: flex; align-items: center; gap: 8px; }
   .app-logo-icon {
     width: 28px; height: 28px; border-radius: 7px; background: var(--accent);
@@ -175,35 +176,69 @@
   .app-content {
     flex: 1; overflow-y: auto; overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px) + 4px);
+    padding-bottom: env(safe-area-inset-bottom, 12px);
   }
   .screen { display: none; }
   .screen.active { display: block; }
 
-  .tab-bar {
-    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(0);
-    width: 100%; max-width: 480px; z-index: 60;
-    display: flex; align-items: flex-end;
-    background: var(--tab-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid var(--divider);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* Hamburger button */
+  .hamburger-btn {
+    width: 36px; height: 36px; border: none; border-radius: var(--radius-sm);
+    background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--fg); -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .hamburger-btn:active { background: var(--accent-glow); }
+  .hamburger-btn svg { width: 22px; height: 22px; }
+
+  /* Sidebar drawer */
+  .drawer-backdrop {
+    position: fixed; inset: 0; z-index: 90;
+    background: rgba(0,0,0,0.45); opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .drawer-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .drawer {
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+    width: 260px; max-width: 75vw;
+    background: var(--accent); color: #fff;
+    display: flex; flex-direction: column;
+    transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    padding-top: env(safe-area-inset-top, 0px);
   }
-  .tab-bar.hidden { transform: translateX(-50%) translateY(100%); }
-  .tab-btn {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 0; border: none; background: none; cursor: pointer; padding: 6px 4px 4px;
-    color: var(--fg-faint); transition: color 0.15s, background 0.15s; -webkit-tap-highlight-color: transparent;
-    position: relative;
+  .drawer.open { transform: translateX(0); }
+  .drawer-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
   }
-  .tab-btn.active { color: var(--accent); }
-  .tab-btn svg { width: 18px; height: 18px; transition: transform 0.15s; }
-  .tab-btn.active svg { fill: var(--accent); stroke: var(--accent); transform: scale(1.08); }
-  .tab-icon-wrap { width:34px; height:22px; border-radius:var(--radius-pill); display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
-  .tab-btn.active .tab-icon-wrap { background:var(--accent-soft); }
-  .tab-label { font-size: 9px; font-weight: 600; letter-spacing: 0.02em; line-height: 1; }
-  .tab-btn.active .tab-label { color: var(--accent); font-weight: 700; }
-  .tab-dot { display:none; }
+  .drawer-logo-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(255,255,255,0.18);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .drawer-logo-icon svg { width: 18px; height: 18px; }
+  .drawer-logo-name { font-family: var(--font-display); font-size: 22px; color: #fff; }
+  .drawer-nav { flex: 1; padding: 12px; overflow-y: auto; }
+  .drawer-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: var(--radius-sm);
+    color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s; border: none; background: none; width: 100%;
+    text-align: left; -webkit-tap-highlight-color: transparent;
+  }
+  .drawer-item:active, .drawer-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .drawer-item.active { background: rgba(255,255,255,0.18); color: #fff; font-weight: 600; }
+  .drawer-item svg { width: 20px; height: 20px; flex-shrink: 0; opacity: 0.8; }
+  .drawer-item.active svg { opacity: 1; }
+  .drawer-sep { height: 1px; background: rgba(255,255,255,0.1); margin: 8px 14px; }
+  .drawer-footer {
+    padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 11px; color: rgba(255,255,255,0.4);
+  }
 
   .section-pad { padding: 20px 16px; }
   .section-title { font-family: var(--font-display); font-size: 26px; line-height: 1.15; color: var(--fg); margin-bottom: 4px; }
@@ -542,6 +577,9 @@
   </div>
 
   <header class="app-header">
+    <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div class="app-logo">
       <div class="app-logo-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M4 8L12 4L20 8L12 12Z"/><path d="M4 12L12 16L20 12"/></svg>
@@ -761,11 +799,35 @@
     </div>
   </div>
 
-  <nav class="tab-bar">
-    <button class="tab-btn active" data-portal="brand" onclick="switchPortal('brand')"><div class="tab-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div><span class="tab-label">Brand</span></button>
-    <button class="tab-btn" data-portal="factory" onclick="switchPortal('factory')"><div class="tab-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21V8l5-5 5 5v13"/><path d="M13 21V11l4-3 4 3v10"/><path d="M7 17h2"/><path d="M7 13h2"/><path d="M15 17h2"/></svg></div><span class="tab-label">Factory</span></button>
-    <button class="tab-btn" data-portal="inspector" onclick="switchPortal('inspector')"><div class="tab-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg></div><span class="tab-label">Inspector</span></button>
-    <button class="tab-btn" data-portal="settings" onclick="switchPortal('settings')"><div class="tab-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg></div><span class="tab-label">Settings</span></button>
+  <!-- Hamburger Drawer Sidebar -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+  <nav class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div class="drawer-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M4 8L12 4L20 8L12 12Z"/><path d="M4 12L12 16L20 12"/></svg>
+      </div>
+      <span class="drawer-logo-name">FABRIQ</span>
+    </div>
+    <div class="drawer-nav">
+      <button class="drawer-item active" data-portal="brand" onclick="switchPortal('brand')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        Brand Portal
+      </button>
+      <button class="drawer-item" data-portal="factory" onclick="switchPortal('factory')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21V8l5-5 5 5v13"/><path d="M13 21V11l4-3 4 3v10"/><path d="M7 17h2"/><path d="M7 13h2"/><path d="M15 17h2"/></svg>
+        Factory Portal
+      </button>
+      <button class="drawer-item" data-portal="inspector" onclick="switchPortal('inspector')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
+        Inspector Portal
+      </button>
+      <div class="drawer-sep"></div>
+      <button class="drawer-item" data-portal="settings" onclick="switchPortal('settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Settings
+      </button>
+    </div>
+    <div class="drawer-footer">FABRIQ QMS v0.1 demo</div>
   </nav>
 </div>
 
@@ -1405,27 +1467,37 @@
     setTimeout(function(){ document.getElementById('splash').style.display = 'none'; }, 400);
   }, 1200);
 
-  // Auto-hide tab bar on scroll up, show on scroll down
+  // Hamburger drawer open/close
+  window.toggleDrawer = function() {
+    var d = document.getElementById('drawer');
+    var b = document.getElementById('drawerBackdrop');
+    var isOpen = d.classList.toggle('open');
+    b.classList.toggle('open', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  };
+  window.closeDrawer = function() {
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('drawerBackdrop').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+  // Swipe from left edge to open, swipe left to close
   (function(){
-    var content = document.getElementById('content');
-    var tabBar = document.querySelector('.tab-bar');
-    var lastY = 0;
-    var ticking = false;
-    content.addEventListener('scroll', function(){
-      if (!ticking) {
-        window.requestAnimationFrame(function(){
-          var y = content.scrollTop;
-          if (y > lastY && y > 60) {
-            tabBar.classList.add('hidden');
-          } else {
-            tabBar.classList.remove('hidden');
-          }
-          lastY = y;
-          ticking = false;
-        });
-        ticking = true;
+    var startX=0, startY=0, tracking=false;
+    document.addEventListener('touchstart', function(e){
+      var t=e.touches[0];
+      if(t.clientX < 25 && !document.getElementById('drawer').classList.contains('open')){
+        startX=t.clientX; startY=t.clientY; tracking=true;
+      } else if(document.getElementById('drawer').classList.contains('open')){
+        startX=t.clientX; startY=t.clientY; tracking=true;
       }
-    }, { passive:true });
+    }, {passive:true});
+    document.addEventListener('touchend', function(e){
+      if(!tracking) return; tracking=false;
+      var t=e.changedTouches[0], dx=t.clientX-startX, dy=Math.abs(t.clientY-startY);
+      if(dy>Math.abs(dx)) return;
+      if(dx>60 && !document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+      else if(dx<-60 && document.getElementById('drawer').classList.contains('open')) closeDrawer();
+    }, {passive:true});
   })();
 
   function buildSpark(id, vals) {
@@ -1478,8 +1550,9 @@
   }
 
   window.switchPortal = function(portal) {
+    closeDrawer();
+    document.querySelectorAll('.drawer-item').forEach(function(b){ b.classList.toggle('active', b.dataset.portal===portal); });
     if (portal === 'settings') {
-      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.portal==='settings'); });
       document.getElementById('portalBadge').textContent = 'Settings';
       showScreen('settings-home');
       document.getElementById('fab').style.display = 'none';
@@ -1488,7 +1561,6 @@
       return;
     }
     currentPortal = portal;
-    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.portal===portal); });
     document.getElementById('portalBadge').textContent = portal.charAt(0).toUpperCase()+portal.slice(1);
     var screens = {brand:'brand-home',factory:'factory-home',inspector:'inspector-home'};
     showScreen(screens[portal]);
