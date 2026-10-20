@@ -786,7 +786,6 @@ body {
 }
 .fd-close:hover { background: var(--border); color: var(--fg); }
 .fd-body { flex: 1; overflow-y: auto; padding: 24px 28px; }
-.fd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .fd-section { margin-bottom: 24px; }
 .fd-section-title {
   font-size: 11px; font-weight: 600; text-transform: uppercase;
@@ -824,7 +823,6 @@ body {
 .fd-cap-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
 @media (max-width: 860px) {
   .factory-detail-box { margin: 0; border-radius: 0; max-width: 100%; }
-  .fd-grid { grid-template-columns: 1fr; }
   .fd-kpi-row { grid-template-columns: repeat(2, 1fr); }
   .fd-header-actions { flex-wrap: wrap; }
 }
@@ -1857,12 +1855,14 @@ function openFactoryDetail(factoryName) {
 
   var html = '';
 
-  html += '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:20px">';
+  // Status chips
+  html += '<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px">';
   html += '<span class="fd-vendor-status '+vsClass+'"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="currentColor"/></svg> '+vsLabel+'</span>';
   html += '<span class="fd-approval-tier '+atClass+'">'+fd.approval.tier+' Vendor</span>';
   if (fd.vendorStatusReason) html += '<span style="font-size:12px;color:var(--fg-faint);font-style:italic">'+fd.vendorStatusReason+'</span>';
   html += '</div>';
 
+  // KPIs — full width row
   html += '<div class="fd-kpi-row">';
   html += '<div class="fd-kpi"><div class="fd-kpi-label">Defect Rate</div><div class="fd-kpi-value" style="color:'+(parseFloat(fd.metrics.defectRate)>3?'var(--bad)':'var(--ok)')+'">'+fd.metrics.defectRate+'</div></div>';
   html += '<div class="fd-kpi"><div class="fd-kpi-label">On-Time Delivery</div><div class="fd-kpi-value" style="color:'+(parseFloat(fd.metrics.otd)<85?'var(--warn)':'var(--ok)')+'">'+fd.metrics.otd+'</div></div>';
@@ -1870,10 +1870,7 @@ function openFactoryDetail(factoryName) {
   html += '<div class="fd-kpi"><div class="fd-kpi-label">Open NCRs</div><div class="fd-kpi-value" style="color:'+(fd.metrics.ncrs>0?'var(--bad)':'var(--ok)')+'">'+fd.metrics.ncrs+'</div></div>';
   html += '</div>';
 
-  html += '<div class="fd-grid">';
-
-  html += '<div>';
-
+  // Audit table — full width
   html += '<div class="fd-section"><div class="fd-section-title">Audit & Compliance Certificates</div>';
   html += '<table class="fd-audit-table"><thead><tr><th>Type</th><th>Standard</th><th>Grade</th><th>Body</th><th>Valid Until</th><th>Status</th></tr></thead><tbody>';
   fd.audits.forEach(function(a) {
@@ -1883,9 +1880,12 @@ function openFactoryDetail(factoryName) {
   });
   html += '</tbody></table></div>';
 
-  html += '<div class="fd-section"><div class="fd-section-title">Brand Approval</div>';
+  // Brand Approval + Capacity — side by side
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">';
+
+  html += '<div class="fd-section" style="margin-bottom:0"><div class="fd-section-title">Brand Approval</div>';
   html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px">';
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">';
   html += '<div><span style="color:var(--fg-faint)">Tier:</span> <strong>'+fd.approval.tier+'</strong></div>';
   html += '<div><span style="color:var(--fg-faint)">Categories:</span> '+fd.approval.categories.join(', ')+'</div>';
   html += '<div><span style="color:var(--fg-faint)">Approved:</span> '+fd.approval.approvedDate+'</div>';
@@ -1893,11 +1893,7 @@ function openFactoryDetail(factoryName) {
   html += '<div><span style="color:var(--fg-faint)">Next Review:</span> '+fd.approval.nextReview+'</div>';
   html += '</div></div></div>';
 
-  html += '</div>';
-
-  html += '<div>';
-
-  html += '<div class="fd-section"><div class="fd-section-title">Production Capacity</div>';
+  html += '<div class="fd-section" style="margin-bottom:0"><div class="fd-section-title">Production Capacity</div>';
   html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px">';
   html += '<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--fg-faint)">Monthly Capacity</span><strong>'+fd.capacity.monthly.toLocaleString()+' pcs</strong></div>';
   html += '<div style="display:flex;justify-content:space-between;font-size:13px;margin-top:8px"><span style="color:var(--fg-faint)">Current Utilization</span><strong style="color:'+(fd.capacity.utilization>80?'var(--warn)':'var(--ok)')+'">'+fd.capacity.utilization+'%</strong></div>';
@@ -1905,7 +1901,11 @@ function openFactoryDetail(factoryName) {
   html += '<div class="fd-cap-bar"><div class="fd-cap-fill" style="width:'+fd.capacity.utilization+'%;background:'+capColor+'"></div></div>';
   html += '</div></div>';
 
-  html += '<div class="fd-section"><div class="fd-section-title">Key Contacts</div>';
+  html += '</div>';
+
+  // Key Contacts — full width
+  html += '<div class="fd-section" style="margin-top:16px"><div class="fd-section-title">Key Contacts</div>';
+  html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 16px">';
   fd.contacts.forEach(function(c) {
     var initials = c.name.split(' ').map(function(w){return w[0];}).join('');
     html += '<div class="fd-contact">'
@@ -1914,10 +1914,7 @@ function openFactoryDetail(factoryName) {
       +'<div style="font-family:var(--font-mono);font-size:12px;color:var(--fg-muted)">'+c.phone+'</div>'
       +'</div>';
   });
-  html += '</div>';
-
-  html += '</div>';
-  html += '</div>';
+  html += '</div></div>';
 
   document.getElementById('fdBody').innerHTML = html;
   document.getElementById('factoryDetailOverlay').classList.add('show');
