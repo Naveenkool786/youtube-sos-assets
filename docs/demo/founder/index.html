@@ -8,7 +8,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* ── Theme: Dark Professional (DEFAULT) ── */
+/* ═══════════════════════════════════════════
+   THEMES (6 total)
+   ═══════════════════════════════════════════ */
 :root, :root[data-theme="dark"] {
   --bg: #0B0E11; --bg-card: #141820; --bg-card-hover: #1A1F2A; --bg-dim: #0F1318;
   --fg: #E8ECF1; --fg-muted: #8B95A5; --fg-faint: #5A6577;
@@ -34,7 +36,6 @@
   --sidebar-border: rgba(255,255,255,0.06);
   color-scheme: dark;
 }
-/* ── Theme: Light Classic ── */
 :root[data-theme="light"] {
   --bg: #FAF7F1; --bg-card: #FFFFFF; --bg-card-hover: #F5F0E8; --bg-dim: #F2EDE2;
   --fg: #171A17; --fg-muted: #5A635C; --fg-faint: #8A918B;
@@ -55,7 +56,6 @@
   --sidebar-border: rgba(255,255,255,0.1);
   color-scheme: light;
 }
-/* ── Theme: High Contrast ── */
 :root[data-theme="high-contrast"] {
   --bg: #000000; --bg-card: #111111; --bg-card-hover: #1A1A1A; --bg-dim: #0A0A0A;
   --fg: #FFFFFF; --fg-muted: #CCCCCC; --fg-faint: #999999;
@@ -76,7 +76,6 @@
   --sidebar-border: #333333;
   color-scheme: dark;
 }
-/* ── Theme: Ocean ── */
 :root[data-theme="ocean"] {
   --bg: #EFF6FC; --bg-card: #FFFFFF; --bg-card-hover: #E6F0FA; --bg-dim: #E1EDF8;
   --fg: #0B2545; --fg-muted: #4A6B8A; --fg-faint: #7A95AD;
@@ -97,7 +96,6 @@
   --sidebar-border: rgba(255,255,255,0.12);
   color-scheme: light;
 }
-/* ── Theme: Earth ── */
 :root[data-theme="earth"] {
   --bg: #FAF5F0; --bg-card: #FFFFFF; --bg-card-hover: #F5EDE2; --bg-dim: #F0E8DD;
   --fg: #3E2723; --fg-muted: #6D4C41; --fg-faint: #A1887F;
@@ -118,7 +116,6 @@
   --sidebar-border: rgba(255,255,255,0.1);
   color-scheme: light;
 }
-/* ── Theme: Soft Vision ── */
 :root[data-theme="soft"] {
   --bg: #F5F0FF; --bg-card: #FFFFFF; --bg-card-hover: #EDE5FF; --bg-dim: #EDE5FF;
   --fg: #2D1B69; --fg-muted: #6B5B8D; --fg-faint: #9B8FB5;
@@ -140,7 +137,10 @@
   color-scheme: light;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { height: 100%; overflow: hidden; }
 body {
   height: 100%; background: var(--bg); color: var(--fg);
@@ -153,15 +153,17 @@ body {
 .content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 .content { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 
-/* ── PIN Lock ── */
+/* ═══════════════════════════════════════════
+   PIN LOCK SCREEN
+   ═══════════════════════════════════════════ */
 .pin-lock {
   position: fixed; inset: 0; z-index: 1000;
   background: linear-gradient(135deg, #0B0E11 0%, #1a1035 50%, #0B0E11 100%);
-  background-size: 200% 200%; animation: pin-bg-shift 8s ease infinite;
+  background-size: 200% 200%; animation: pin-bg 8s ease infinite;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   transition: opacity 0.4s, transform 0.4s;
 }
-@keyframes pin-bg-shift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+@keyframes pin-bg { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
 .pin-lock.unlocked { opacity: 0; transform: scale(1.05); pointer-events: none; }
 .pin-logo {
   width: 72px; height: 72px; border-radius: 18px;
@@ -173,10 +175,13 @@ body {
 .pin-title { font-family: var(--font-display); font-size: 32px; margin-bottom: 4px; color: #fff; }
 .pin-sub { color: rgba(255,255,255,0.5); font-size: 13px; margin-bottom: 36px; }
 .pin-dots { display: flex; gap: 14px; margin-bottom: 32px; }
-.pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.25); transition: all 0.2s; }
+.pin-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.25); transition: all 0.2s;
+}
 .pin-dot.filled { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
-.pin-dot.error { background: var(--bad); border-color: var(--bad); animation: pin-shake 0.4s; }
-.pin-pad { display: grid; grid-template-columns: repeat(3,72px); gap: 12px; }
+.pin-dot.error { background: var(--bad); border-color: var(--bad); animation: shake 0.4s; }
+.pin-pad { display: grid; grid-template-columns: repeat(3, 72px); gap: 12px; }
 .pin-key {
   width: 72px; height: 56px; border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius-sm); background: rgba(255,255,255,0.04);
@@ -184,18 +189,26 @@ body {
   cursor: pointer; transition: all 0.15s;
   display: flex; align-items: center; justify-content: center;
 }
-.pin-key:active,.pin-key:hover { background: rgba(108,92,231,0.2); border-color: var(--accent); }
+.pin-key:active, .pin-key:hover { background: rgba(108,92,231,0.2); border-color: var(--accent); }
 .pin-key.empty { visibility: hidden; }
 .pin-key.back { font-size: 16px; }
 .pin-error-msg { color: var(--bad); font-size: 12px; margin-top: 16px; min-height: 18px; }
-@keyframes pin-shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px)} 40%,80%{transform:translateX(8px)} }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px)} 40%,80%{transform:translateX(8px)} }
 
-/* ── Main Layout ── */
+/* ═══════════════════════════════════════════
+   APP SHELL & LAYOUT
+   ═══════════════════════════════════════════ */
 .app { display: none; height: 100%; }
 .app.visible { display: flex; }
 .layout { display: flex; height: 100%; }
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 24px; }
+.page { display: none; }
+.page.active { display: block; }
 
-/* ── Sidebar ── */
+/* ═══════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════ */
 .sidebar {
   width: var(--sidebar-w); background: var(--sidebar-bg); color: var(--sidebar-fg);
   display: flex; flex-direction: column; flex-shrink: 0; z-index: 30;
@@ -242,15 +255,18 @@ body {
   padding: 12px 16px; border-top: 1px solid var(--sidebar-border);
   font-size: 10px; color: var(--sidebar-fg-faint);
 }
-/* Sidebar collapse */
 .sidebar.collapsed { width: 56px; }
-.sidebar.collapsed .sidebar-brand, .sidebar.collapsed .nav-item span,
-.sidebar.collapsed .sidebar-footer, .sidebar.collapsed .sidebar-brand-sub { display: none; }
+.sidebar.collapsed .sidebar-brand,
+.sidebar.collapsed .nav-item span,
+.sidebar.collapsed .sidebar-footer,
+.sidebar.collapsed .sidebar-brand-sub { display: none; }
 .sidebar.collapsed .nav-item { justify-content: center; padding: 9px 0; }
 .sidebar.collapsed .sidebar-header { justify-content: center; padding: 18px 8px; }
 .sidebar.collapsed .sidebar-logo { width: 32px; height: 32px; }
 
-/* ── Mobile Drawer ── */
+/* ═══════════════════════════════════════════
+   MOBILE DRAWER
+   ═══════════════════════════════════════════ */
 .drawer-backdrop {
   position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,0.5);
   opacity: 0; pointer-events: none; transition: opacity 0.3s;
@@ -263,8 +279,9 @@ body {
 }
 .hamburger-btn svg { width: 22px; height: 22px; }
 
-/* ── Main Content ── */
-.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+/* ═══════════════════════════════════════════
+   TOPBAR
+   ═══════════════════════════════════════════ */
 .topbar {
   display: flex; align-items: center; gap: 12px;
   padding: 12px 24px; border-bottom: 1px solid var(--divider);
@@ -294,24 +311,21 @@ body {
 }
 .lock-btn:hover { border-color: var(--bad); color: var(--bad); }
 
-.content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 24px; }
-.page { display: none; }
-.page.active { display: block; }
-
-/* ── Status Banner ── */
+/* ═══════════════════════════════════════════
+   DASHBOARD COMPONENTS
+   ═══════════════════════════════════════════ */
 .status-banner {
   display: flex; align-items: center; gap: 12px;
   background: linear-gradient(135deg, var(--accent-soft), var(--ok-soft));
   border: 1px solid var(--border-accent);
   border-radius: var(--radius); padding: 14px 20px; margin-bottom: 24px;
 }
-.status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ok); animation: pulse-dot 2s infinite; flex-shrink: 0; }
-@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ok); animation: pulse 2s infinite; flex-shrink: 0; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .status-text { font-size: 13px; color: var(--fg-muted); }
 .status-text strong { color: var(--fg); }
 .status-date { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--fg-faint); flex-shrink: 0; }
 
-/* ── KPI Grid ── */
 .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 12px; margin-bottom: 28px; }
 .kpi-card {
   background: var(--bg-card); border: 1px solid var(--border);
@@ -326,19 +340,19 @@ body {
 .kpi-value.ok { color: var(--ok); } .kpi-value.warn { color: var(--warn); }
 .kpi-value.bad { color: var(--bad); } .kpi-value.accent { color: var(--accent); }
 
-/* ── Section Header ── */
 .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; margin-top: 8px; }
 .section-header h2 { font-family: var(--font-display); font-size: 20px; font-weight: 400; white-space: nowrap; }
 .section-header .section-count { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-pill); background: var(--accent-soft); color: var(--accent); }
 .section-line { flex: 1; height: 1px; background: var(--divider); }
 
-/* ── 3D Section Cards ── */
+/* ═══════════════════════════════════════════
+   3D SECTION CARDS
+   ═══════════════════════════════════════════ */
 .section-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 28px 16px; margin-bottom: 32px; padding-top: 32px; }
 .s-card {
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 24px 18px 18px;
   cursor: pointer; transition: all 0.3s ease; position: relative;
-  margin-top: 0;
 }
 .s-card:hover { border-color: var(--border-accent); background: var(--bg-card-hover); transform: translateY(-3px); box-shadow: var(--shadow-lg); }
 .s-card-icon-3d {
@@ -363,14 +377,15 @@ body {
 .s-stat-val { font-family: var(--font-mono); font-size: 16px; font-weight: 700; }
 .s-stat-label { font-size: 10px; color: var(--fg-faint); text-transform: uppercase; letter-spacing: 0.05em; }
 
-/* ── Badge colors ── */
 .badge-ok { background: var(--ok-soft); color: var(--ok); }
 .badge-warn { background: var(--warn-soft); color: var(--warn); }
 .badge-bad { background: var(--bad-soft); color: var(--bad); }
 .badge-blue { background: var(--blue-soft); color: var(--blue); }
 .badge-accent { background: var(--accent-soft); color: var(--accent); }
 
-/* ── Quick Actions ── */
+/* ═══════════════════════════════════════════
+   QUICK ACTIONS
+   ═══════════════════════════════════════════ */
 .quick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 32px; }
 .quick-btn {
   display: flex; align-items: center; gap: 10px;
@@ -382,7 +397,9 @@ body {
 .quick-btn:hover { border-color: var(--accent); background: var(--accent-soft); }
 .quick-btn svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.6; }
 
-/* ── Activity Timeline ── */
+/* ═══════════════════════════════════════════
+   ACTIVITY TIMELINE
+   ═══════════════════════════════════════════ */
 .timeline { display: flex; flex-direction: column; margin-bottom: 32px; }
 .tl-item { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--divider); }
 .tl-dot-col { display: flex; flex-direction: column; align-items: center; width: 20px; flex-shrink: 0; padding-top: 4px; }
@@ -392,7 +409,9 @@ body {
 .tl-title { font-size: 13px; font-weight: 500; }
 .tl-meta { font-size: 11px; color: var(--fg-faint); margin-top: 2px; }
 
-/* ── Full-Screen Detail Modal ── */
+/* ═══════════════════════════════════════════
+   DETAIL MODAL
+   ═══════════════════════════════════════════ */
 .modal-overlay {
   position: fixed; inset: 0; z-index: 200;
   background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
@@ -405,7 +424,8 @@ body {
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius); box-shadow: var(--shadow-lg);
   display: flex; flex-direction: column; overflow: hidden;
-  transform: scale(0.92); opacity: 0; transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
+  transform: scale(0.92); opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
 }
 .modal-overlay.show .modal-box { transform: scale(1); opacity: 1; }
 .modal-header {
@@ -420,17 +440,10 @@ body {
 }
 .modal-close:hover { background: var(--bad-soft); color: var(--bad); }
 .modal-body { flex: 1; overflow-y: auto; padding: 28px; }
-.d-section { margin-bottom: 24px; }
-.d-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-faint); margin-bottom: 8px; }
-.d-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--divider); font-size: 14px; }
-.d-row-val { font-weight: 600; font-family: var(--font-mono); }
-.d-bar-wrap { height: 8px; background: var(--bg-dim); border-radius: 4px; overflow: hidden; margin-top: 4px; }
-.d-bar { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
-.d-list { list-style: none; }
-.d-list li { padding: 10px 0; border-bottom: 1px solid var(--divider); font-size: 14px; display: flex; justify-content: space-between; }
-.d-tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-pill); font-size: 10px; font-weight: 700; }
 
-/* ── Section Detail KPI Cards ── */
+/* ═══════════════════════════════════════════
+   SECTION DETAIL KPI CARDS
+   ═══════════════════════════════════════════ */
 .sd-kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 28px; }
 .sd-kpi { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 18px; transition: border-color 0.2s; }
 .sd-kpi:hover { border-color: var(--border-accent); }
@@ -439,7 +452,6 @@ body {
 .sd-kpi-sub { font-size: 11px; color: var(--fg-muted); margin-top: 2px; }
 .sd-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 16px; }
 .sd-card-title { font-weight: 700; font-size: 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-.sd-card-title svg { width: 16px; height: 16px; color: var(--accent); }
 .sd-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--divider); font-size: 13px; }
 .sd-row:last-child { border-bottom: none; }
 .sd-row-val { font-weight: 600; font-family: var(--font-mono); font-size: 13px; }
@@ -455,7 +467,28 @@ body {
 .sd-empty { text-align: center; padding: 40px 20px; color: var(--fg-faint); }
 .sd-empty svg { width: 40px; height: 40px; opacity: 0.2; margin-bottom: 10px; }
 
-/* ── Bottom Quick-Nav Bar (JioCinema style) ── */
+/* ═══════════════════════════════════════════
+   SECTION DETAIL PAGE (full-page)
+   ═══════════════════════════════════════════ */
+.section-page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+.section-page-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+.section-page-icon svg { width: 24px; height: 24px; color: #fff; }
+.section-page-title { font-family: var(--font-display); font-size: 26px; }
+.section-page-back {
+  margin-left: auto; padding: 6px 14px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--bg-card);
+  color: var(--fg-muted); font-size: 12px; font-family: var(--font-body);
+  cursor: pointer; display: flex; align-items: center; gap: 4px;
+}
+.section-page-back:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ═══════════════════════════════════════════
+   BOTTOM NAV (JioCinema-style glass pill)
+   ═══════════════════════════════════════════ */
 .bottom-nav {
   position: fixed; bottom: 20px; left: 50%; z-index: 50;
   transform: translateX(-50%);
@@ -480,7 +513,7 @@ body {
 .bottom-pill button:hover { color: #fff; }
 .bottom-pill .pill-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.2); flex-shrink: 0; }
 .bottom-pill .pill-chevron {
-  padding: 12px 12px; border: none; background: none;
+  padding: 12px; border: none; background: none;
   color: rgba(255,255,255,0.8); cursor: pointer; display: flex; align-items: center;
 }
 .bottom-pill .pill-chevron svg { width: 16px; height: 16px; transition: transform 0.25s; }
@@ -493,14 +526,13 @@ body {
   transition: all 0.2s;
 }
 .bottom-ai-circle:hover { box-shadow: 0 6px 24px rgba(108,92,231,0.5); transform: scale(1.05); }
-.bottom-ai-circle .sparkle-rotate { display: flex; animation: ai-rotate 8s linear infinite; }
+.bottom-ai-circle .sparkle-rotate { display: flex; animation: ai-spin 8s linear infinite; }
 .bottom-ai-circle svg { width: 22px; height: 22px; }
+@keyframes ai-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
-@keyframes ai-gradient { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-@keyframes ai-glow { 0%,100%{box-shadow:0 4px 20px rgba(108,92,231,0.4)} 50%{box-shadow:0 4px 32px rgba(108,92,231,0.6)} }
-@keyframes ai-rotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-
-/* ── AI Right Sidebar Panel ── */
+/* ═══════════════════════════════════════════
+   AI RIGHT SIDEBAR PANEL
+   ═══════════════════════════════════════════ */
 .ai-backdrop {
   position: fixed; inset: 0; z-index: 290;
   background: rgba(0,0,0,0.35);
@@ -513,9 +545,8 @@ body {
   background: var(--bg-card); border-left: 1px solid var(--border);
   box-shadow: -4px 0 30px rgba(0,0,0,0.3);
   display: flex; flex-direction: column; overflow: hidden;
-  transform: translateX(110%);
-  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
-  visibility: hidden;
+  transform: translateX(110%); visibility: hidden;
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), visibility 0.35s;
 }
 .ai-sidebar.show { transform: translateX(0); visibility: visible; }
 .ai-sidebar-header {
@@ -523,9 +554,14 @@ body {
   padding: 18px 20px; border-bottom: 1px solid var(--divider);
   background: linear-gradient(135deg, rgba(108,92,231,0.08), rgba(139,92,246,0.04));
 }
-.ai-sidebar-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ok); animation: pulse-dot 2s infinite; }
+.ai-sidebar-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ok); animation: pulse 2s infinite; }
 .ai-sidebar-header span { font-weight: 700; font-size: 15px; flex: 1; }
-.ai-sidebar-header button { width: 32px; height: 32px; border: none; border-radius: 8px; background: var(--bg-dim); color: var(--fg-faint); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.15s; }
+.ai-sidebar-header button {
+  width: 32px; height: 32px; border: none; border-radius: 8px;
+  background: var(--bg-dim); color: var(--fg-faint); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  transition: all 0.15s;
+}
 .ai-sidebar-header button:hover { background: var(--bad-soft); color: var(--bad); }
 .ai-chat-body { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
 .ai-msg { padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; max-width: 88%; }
@@ -551,7 +587,9 @@ body {
   display: flex; align-items: center; justify-content: center;
 }
 
-/* ── Settings Page ── */
+/* ═══════════════════════════════════════════
+   SETTINGS
+   ═══════════════════════════════════════════ */
 .theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
 .theme-card {
   border: 2px solid var(--border); border-radius: var(--radius); padding: 16px;
@@ -562,26 +600,15 @@ body {
 .theme-card .swatch { width: 40px; height: 40px; border-radius: 10px; margin: 0 auto 10px; border: 1px solid rgba(128,128,128,0.2); }
 .theme-card .theme-name { font-weight: 600; font-size: 13px; }
 
-/* ── Section Page (Full-Page Detail) ── */
-.section-page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
-.section-page-icon {
-  width: 48px; height: 48px; border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-}
-.section-page-icon svg { width: 24px; height: 24px; color: #fff; }
-.section-page-title { font-family: var(--font-display); font-size: 26px; }
-.section-page-back {
-  margin-left: auto; padding: 6px 14px; border-radius: var(--radius-sm);
-  border: 1px solid var(--border); background: var(--bg-card);
-  color: var(--fg-muted); font-size: 12px; font-family: var(--font-body);
-  cursor: pointer; display: flex; align-items: center; gap: 4px;
-}
-.section-page-back:hover { border-color: var(--accent); color: var(--accent); }
-
-/* ── Responsive ── */
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 100; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); }
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+  }
   .sidebar.mobile-open { transform: translateX(0); }
   .sidebar.collapsed { width: var(--sidebar-w); }
   .hamburger-btn { display: flex; }
@@ -593,13 +620,12 @@ body {
   .bottom-nav { bottom: 12px; }
   .ai-sidebar { width: 100%; max-width: 100vw; }
   .modal-box { width: 96%; max-height: 92vh; }
-  .ai-modal { width: 96%; max-height: 88vh; }
 }
 </style>
 </head>
 <body>
 
-<!-- PIN Lock -->
+<!-- ═══ PIN LOCK ═══ -->
 <div class="pin-lock" id="pinLock">
   <div class="pin-logo">
     <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M4 8L12 4L20 8L12 12Z"/><path d="M4 12L12 16L20 12"/></svg>
@@ -626,7 +652,7 @@ body {
   <div class="pin-error-msg" id="pinError"></div>
 </div>
 
-<!-- App -->
+<!-- ═══ APP ═══ -->
 <div class="app" id="app">
   <div class="layout">
     <!-- Sidebar -->
@@ -648,7 +674,7 @@ body {
     <!-- Mobile drawer backdrop -->
     <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeMobileDrawer()"></div>
 
-    <!-- Main -->
+    <!-- Main area -->
     <div class="main">
       <div class="topbar">
         <button class="hamburger-btn" onclick="openMobileDrawer()">
@@ -673,7 +699,7 @@ body {
       </div>
 
       <div class="content" id="content">
-        <!-- Dashboard Page -->
+        <!-- Dashboard -->
         <div class="page active" id="page-dashboard">
           <div class="status-banner">
             <div class="status-dot"></div>
@@ -689,10 +715,10 @@ body {
           <div class="timeline" id="timeline"></div>
         </div>
 
-        <!-- Section detail pages (populated by JS) -->
+        <!-- Section detail (populated by JS) -->
         <div class="page" id="page-section"></div>
 
-        <!-- Settings Page -->
+        <!-- Settings -->
         <div class="page" id="page-settings">
           <div class="section-header"><h2>Settings</h2><div class="section-line"></div></div>
           <div style="margin-bottom:24px">
@@ -705,7 +731,7 @@ body {
   </div>
 </div>
 
-<!-- Full-Screen Detail Modal -->
+<!-- Detail Modal -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal-box" onclick="event.stopPropagation()">
     <div class="modal-header">
@@ -716,7 +742,7 @@ body {
   </div>
 </div>
 
-<!-- AI Right Sidebar -->
+<!-- AI Sidebar -->
 <div class="ai-backdrop" id="aiBackdrop" onclick="closeAi()"></div>
 <div class="ai-sidebar" id="aiSidebar">
   <div class="ai-sidebar-header">
@@ -725,7 +751,7 @@ body {
     <button onclick="closeAi()">&times;</button>
   </div>
   <div class="ai-chat-body" id="aiChatBody">
-    <div class="ai-msg bot">Hi! I'm your FABRIQ AI assistant. I can help with PO insights, factory analytics, defect trends, and more. What would you like to know?</div>
+    <div class="ai-msg bot">Hi! I can help with PO insights, factory analytics, defect trends, and more. What would you like to know?</div>
   </div>
   <div class="ai-suggestions" id="aiSuggestions">
     <button class="ai-sug" onclick="askAi('Which POs have the highest risk of delay?')">Delay risk POs</button>
@@ -739,7 +765,7 @@ body {
   </div>
 </div>
 
-<!-- Bottom Quick-Nav -->
+<!-- Bottom Nav -->
 <div class="bottom-nav" id="bottomNav">
   <div class="bottom-pill">
     <button onclick="navTo('team')">Team</button>
@@ -757,49 +783,69 @@ body {
 </div>
 
 <script>
-// ── PIN System ──
+/* ═══════════════════════════════════════════
+   PIN SYSTEM
+   ═══════════════════════════════════════════ */
 var CORRECT_PIN = '2024';
 var pinEntry = '';
+
 function pinInput(n) {
   if (pinEntry.length >= 4) return;
   pinEntry += n;
   updatePinDots();
   if (pinEntry.length === 4) setTimeout(checkPin, 200);
 }
-function pinBack() { pinEntry = pinEntry.slice(0,-1); updatePinDots(); document.getElementById('pinError').textContent=''; }
+function pinBack() {
+  pinEntry = pinEntry.slice(0, -1);
+  updatePinDots();
+  document.getElementById('pinError').textContent = '';
+}
 function updatePinDots() {
-  document.querySelectorAll('.pin-dot').forEach(function(d,i){ d.className = 'pin-dot'+(i<pinEntry.length?' filled':''); });
+  document.querySelectorAll('.pin-dot').forEach(function(d, i) {
+    d.className = 'pin-dot' + (i < pinEntry.length ? ' filled' : '');
+  });
 }
 function checkPin() {
   if (pinEntry === CORRECT_PIN) {
     document.getElementById('pinLock').classList.add('unlocked');
     document.getElementById('app').classList.add('visible');
-    try{sessionStorage.setItem('fabriq_founder_auth','1');}catch(e){}
-    setTimeout(function(){ document.getElementById('pinLock').style.display='none'; },400);
+    try { sessionStorage.setItem('fabriq_founder_auth', '1'); } catch(e) {}
+    setTimeout(function() { document.getElementById('pinLock').style.display = 'none'; }, 400);
   } else {
-    document.querySelectorAll('.pin-dot').forEach(function(d){ d.className='pin-dot error'; });
-    document.getElementById('pinError').textContent='Incorrect PIN. Try again.';
-    setTimeout(function(){ pinEntry=''; updatePinDots(); },600);
+    document.querySelectorAll('.pin-dot').forEach(function(d) { d.className = 'pin-dot error'; });
+    document.getElementById('pinError').textContent = 'Incorrect PIN. Try again.';
+    setTimeout(function() { pinEntry = ''; updatePinDots(); }, 600);
   }
 }
-function lockConsole() { try{sessionStorage.removeItem('fabriq_founder_auth');}catch(e){} location.reload(); }
-(function(){
-  try { if(sessionStorage.getItem('fabriq_founder_auth')==='1'){ document.getElementById('pinLock').style.display='none'; document.getElementById('app').classList.add('visible'); }}catch(e){}
+function lockConsole() {
+  try { sessionStorage.removeItem('fabriq_founder_auth'); } catch(e) {}
+  location.reload();
+}
+(function() {
+  try {
+    if (sessionStorage.getItem('fabriq_founder_auth') === '1') {
+      document.getElementById('pinLock').style.display = 'none';
+      document.getElementById('app').classList.add('visible');
+    }
+  } catch(e) {}
 })();
 
-// ── Sidebar Nav ──
+/* ═══════════════════════════════════════════
+   SIDEBAR NAV
+   ═══════════════════════════════════════════ */
 var NAV_ITEMS = [
-  {id:'dashboard',label:'Dashboard',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>'},
+  {id:'dashboard', label:'Dashboard', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>'},
   {id:'_sep'},
-  {id:'settings',label:'Settings',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>'}
+  {id:'settings', label:'Settings', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>'}
 ];
 
 var currentPage = 'dashboard';
+
 function renderSidebarNav() {
   var html = '';
-  NAV_ITEMS.forEach(function(n){
-    if(n.id==='_sep'){ html+='<div class="nav-sep"></div>'; return; }
-    html += '<button class="nav-item'+(n.id===currentPage?' active':'')+'" data-nav="'+n.id+'" onclick="navTo(\''+n.id+'\')">'+n.icon+'<span>'+n.label+'</span></button>';
+  NAV_ITEMS.forEach(function(n) {
+    if (n.id === '_sep') { html += '<div class="nav-sep"></div>'; return; }
+    html += '<button class="nav-item' + (n.id === currentPage ? ' active' : '') + '" data-nav="' + n.id + '" onclick="navTo(\'' + n.id + '\')">' + n.icon + '<span>' + n.label + '</span></button>';
   });
   document.getElementById('sidebarNav').innerHTML = html;
 }
@@ -807,11 +853,17 @@ function renderSidebarNav() {
 function navTo(pageId) {
   currentPage = pageId;
   closeMobileDrawer();
-  document.querySelectorAll('.nav-item').forEach(function(b){ b.classList.toggle('active', b.dataset.nav===pageId); });
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(b) { b.classList.toggle('active', b.dataset.nav === pageId); });
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
 
-  var titles = {dashboard:'Dashboard',team:'Team & Hiring',financials:'Financials',sales:'Sales Pipeline',customers:'Customer Discovery',marketing:'Marketing & Brand',product:'Product & Development',analytics:'Business Analytics',assets:'Assets & IP',investors:'Investor Relations',legal:'Legal & Compliance',support:'Support & Operations',settings:'Settings'};
-  document.getElementById('topbarTitle').textContent = titles[pageId]||pageId;
+  var titles = {
+    dashboard:'Dashboard', team:'Team & Hiring', financials:'Financials',
+    sales:'Sales Pipeline', customers:'Customer Discovery', marketing:'Marketing & Brand',
+    product:'Product & Development', analytics:'Business Analytics', assets:'Assets & IP',
+    investors:'Investor Relations', legal:'Legal & Compliance', support:'Support & Operations',
+    settings:'Settings'
+  };
+  document.getElementById('topbarTitle').textContent = titles[pageId] || pageId;
 
   if (pageId === 'dashboard') {
     document.getElementById('page-dashboard').classList.add('active');
@@ -824,13 +876,13 @@ function navTo(pageId) {
     var sp = document.getElementById('page-section');
     var d = DETAIL_DATA[pageId];
     if (d) {
-      var sec = SECTIONS.find(function(s){return s.id===pageId;});
-      var grad = GRADIENTS[pageId]||'linear-gradient(135deg,#666,#999)';
+      var sec = SECTIONS.find(function(s) { return s.id === pageId; });
+      var grad = GRADIENTS[pageId] || 'linear-gradient(135deg,#666,#999)';
       sp.innerHTML = '<div class="section-page-header">'
-        +'<div class="section-page-icon" style="background:'+grad+'">'+((sec&&sec.icon)||'')+'</div>'
-        +'<span class="section-page-title">'+d.title+'</span>'
-        +'<button class="section-page-back" onclick="navTo(\'dashboard\')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Back</button>'
-        +'</div>'+d.html;
+        + '<div class="section-page-icon" style="background:' + grad + '">' + ((sec && sec.icon) || '') + '</div>'
+        + '<span class="section-page-title">' + d.title + '</span>'
+        + '<button class="section-page-back" onclick="navTo(\'dashboard\')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Back</button>'
+        + '</div>' + d.html;
     }
     sp.classList.add('active');
     document.getElementById('bottomNav').classList.add('hidden');
@@ -838,7 +890,9 @@ function navTo(pageId) {
   document.getElementById('content').scrollTop = 0;
 }
 
-// ── Sidebar Toggle ──
+/* ═══════════════════════════════════════════
+   SIDEBAR TOGGLE & MOBILE DRAWER
+   ═══════════════════════════════════════════ */
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
 function openMobileDrawer() {
   document.getElementById('sidebar').classList.add('mobile-open');
@@ -848,60 +902,80 @@ function closeMobileDrawer() {
   document.getElementById('sidebar').classList.remove('mobile-open');
   document.getElementById('drawerBackdrop').classList.remove('open');
 }
-function showAllSections() { navTo('dashboard'); setTimeout(function(){ var el=document.getElementById('sectionGrid'); if(el) el.scrollIntoView({behavior:'smooth'}); },100); }
+function showAllSections() {
+  navTo('dashboard');
+  setTimeout(function() {
+    var el = document.getElementById('sectionGrid');
+    if (el) el.scrollIntoView({behavior: 'smooth'});
+  }, 100);
+}
 
-// ── Themes ──
+/* ═══════════════════════════════════════════
+   THEMES
+   ═══════════════════════════════════════════ */
 var THEMES = [
-  {id:'dark',name:'Dark Professional',swatch:'#0B0E11'},
-  {id:'light',name:'Light Classic',swatch:'#FAF7F1'},
-  {id:'high-contrast',name:'High Contrast',swatch:'#000000'},
-  {id:'ocean',name:'Ocean',swatch:'#EFF6FC'},
-  {id:'earth',name:'Earth Tones',swatch:'#FAF5F0'},
-  {id:'soft',name:'Soft Vision',swatch:'#F5F0FF'}
+  {id:'dark', name:'Dark Professional', swatch:'#0B0E11'},
+  {id:'light', name:'Light Classic', swatch:'#FAF7F1'},
+  {id:'high-contrast', name:'High Contrast', swatch:'#000000'},
+  {id:'ocean', name:'Ocean', swatch:'#EFF6FC'},
+  {id:'earth', name:'Earth Tones', swatch:'#FAF5F0'},
+  {id:'soft', name:'Soft Vision', swatch:'#F5F0FF'}
 ];
+
 function applyTheme(id) {
   document.documentElement.setAttribute('data-theme', id);
-  try{localStorage.setItem('fabriq_founder_theme',id);}catch(e){}
+  try { localStorage.setItem('fabriq_founder_theme', id); } catch(e) {}
   renderThemeGrid();
 }
+
 function renderThemeGrid() {
-  var cur; try{cur=localStorage.getItem('fabriq_founder_theme')||'dark';}catch(e){cur='dark';}
-  document.getElementById('themeGrid').innerHTML = THEMES.map(function(t){
-    return '<div class="theme-card'+(t.id===cur?' active':'')+'" onclick="applyTheme(\''+t.id+'\')">'
-      +'<div class="swatch" style="background:'+t.swatch+'"></div>'
-      +'<div class="theme-name">'+t.name+'</div></div>';
+  var cur;
+  try { cur = localStorage.getItem('fabriq_founder_theme') || 'dark'; } catch(e) { cur = 'dark'; }
+  document.getElementById('themeGrid').innerHTML = THEMES.map(function(t) {
+    return '<div class="theme-card' + (t.id === cur ? ' active' : '') + '" onclick="applyTheme(\'' + t.id + '\')">'
+      + '<div class="swatch" style="background:' + t.swatch + '"></div>'
+      + '<div class="theme-name">' + t.name + '</div></div>';
   }).join('');
 }
-(function(){
-  try{var t=localStorage.getItem('fabriq_founder_theme'); if(t) document.documentElement.setAttribute('data-theme',t);}catch(e){}
+
+(function() {
+  try { var t = localStorage.getItem('fabriq_founder_theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch(e) {}
 })();
 
-// ── Date ──
-document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+/* ═══════════════════════════════════════════
+   DATE
+   ═══════════════════════════════════════════ */
+document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
 
-// ── KPI Data ──
+/* ═══════════════════════════════════════════
+   KPI DATA
+   ═══════════════════════════════════════════ */
 var KPIS = [
-  {label:'Pre-Seed Target',value:'$500K',delta:null,color:''},
-  {label:'Monthly Burn',value:'$0',delta:'Pre-revenue',color:'ok'},
-  {label:'Runway',value:'∞',delta:'Bootstrap phase',color:'ok'},
-  {label:'Team Size',value:'1',delta:'Founder only',color:''},
-  {label:'Open Roles',value:'4',delta:'CTO + 3 engineers',color:'warn'},
-  {label:'Pipeline Value',value:'$0',delta:'Pre-sales',color:''},
-  {label:'Target Customers',value:'95',delta:'Discovery list ready',color:'accent'},
-  {label:'Prototype',value:'v0.1',delta:'Live on gh-pages',color:'ok'},
-  {label:'Blueprint',value:'v1.0',delta:'12 topics locked',color:'ok'},
-  {label:'Pitch Deck',value:'v1',delta:'12 slides ready',color:'ok'},
-  {label:'Financial Model',value:'5yr',delta:'Projections complete',color:'ok'},
-  {label:'Docs Created',value:'25+',delta:'All deliverables',color:'accent'}
+  {label:'Pre-Seed Target', value:'$500K', delta:null, color:''},
+  {label:'Monthly Burn', value:'$0', delta:'Pre-revenue', color:'ok'},
+  {label:'Runway', value:'∞', delta:'Bootstrap phase', color:'ok'},
+  {label:'Team Size', value:'1', delta:'Founder only', color:''},
+  {label:'Open Roles', value:'4', delta:'CTO + 3 engineers', color:'warn'},
+  {label:'Pipeline Value', value:'$0', delta:'Pre-sales', color:''},
+  {label:'Target Customers', value:'95', delta:'Discovery list ready', color:'accent'},
+  {label:'Prototype', value:'v0.1', delta:'Live on gh-pages', color:'ok'},
+  {label:'Blueprint', value:'v1.0', delta:'12 topics locked', color:'ok'},
+  {label:'Pitch Deck', value:'v1', delta:'12 slides ready', color:'ok'},
+  {label:'Financial Model', value:'5yr', delta:'Projections complete', color:'ok'},
+  {label:'Docs Created', value:'25+', delta:'All deliverables', color:'accent'}
 ];
-function renderKpis(){
-  document.getElementById('kpiGrid').innerHTML=KPIS.map(function(k){
-    var dc=k.color?' '+k.color:'';
-    return '<div class="kpi-card"><div class="kpi-label">'+k.label+'</div><div class="kpi-value'+dc+'">'+k.value+'</div>'+(k.delta?'<div class="kpi-delta neutral">'+k.delta+'</div>':'')+'</div>';
+
+function renderKpis() {
+  document.getElementById('kpiGrid').innerHTML = KPIS.map(function(k) {
+    var dc = k.color ? ' ' + k.color : '';
+    return '<div class="kpi-card"><div class="kpi-label">' + k.label + '</div><div class="kpi-value' + dc + '">' + k.value + '</div>'
+      + (k.delta ? '<div class="kpi-delta neutral">' + k.delta + '</div>' : '') + '</div>';
   }).join('');
 }
 
-// ── Sections Data ──
+/* ═══════════════════════════════════════════
+   SECTIONS DATA
+   ═══════════════════════════════════════════ */
 var GRADIENTS = {
   team:'linear-gradient(135deg,#339AF0,#228BE6)',
   financials:'linear-gradient(135deg,#00D68F,#20C997)',
@@ -917,73 +991,85 @@ var GRADIENTS = {
 };
 
 var SECTIONS = [
-  {id:'team',title:'Team & Hiring',desc:'Headcount, open roles, CTO search pipeline, org chart planning',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',badge:'Hiring',badgeClass:'badge-warn',stats:[{val:'1',label:'Team'},{val:'4',label:'Open'},{val:'17',label:'Planned'}]},
-  {id:'financials',title:'Financials',desc:'Revenue model, burn rate, funding strategy, 5-year projections, unit economics',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>',badge:'Model Ready',badgeClass:'badge-ok',stats:[{val:'$500K',label:'Target Raise'},{val:'5yr',label:'Model'},{val:'$0',label:'Burn'}]},
-  {id:'sales',title:'Sales Pipeline',desc:'Lead tracking, prospect outreach, deal stages, revenue forecasting',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',badge:'Pre-Sales',badgeClass:'badge-blue',stats:[{val:'0',label:'Leads'},{val:'0',label:'Active'},{val:'$0',label:'Pipeline'}]},
-  {id:'customers',title:'Customer Discovery',desc:'95 target companies identified, outreach scripts ready, interview tracking',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',badge:'Active',badgeClass:'badge-ok',stats:[{val:'95',label:'Targets'},{val:'0',label:'Contacted'},{val:'0',label:'Interviews'}]},
-  {id:'marketing',title:'Marketing & Brand',desc:'Brand identity, pitch deck, website, content strategy, launch plan',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>',badge:'In Progress',badgeClass:'badge-accent',stats:[{val:'15',label:'Names'},{val:'1',label:'Deck'},{val:'1',label:'Website'}]},
-  {id:'product',title:'Product & Development',desc:'Prototype status, tech stack, roadmap, blueprint tracking, AI features',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',badge:'v0.1 Live',badgeClass:'badge-ok',stats:[{val:'190',label:'Entities'},{val:'33',label:'Roles'},{val:'12',label:'Topics'}]},
-  {id:'analytics',title:'Business Analytics',desc:'Market sizing, competitive landscape, growth metrics, TAM/SAM/SOM',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',badge:'Research',badgeClass:'badge-blue',stats:[{val:'$8.2B',label:'TAM'},{val:'$1.4B',label:'SAM'},{val:'$210M',label:'SOM'}]},
-  {id:'assets',title:'Assets & IP',desc:'Document inventory, blueprints, playbooks, models, templates, domain names',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>',badge:'25+ Docs',badgeClass:'badge-ok',stats:[{val:'25+',label:'Docs'},{val:'1',label:'Blueprint'},{val:'1',label:'Repo'}]},
-  {id:'investors',title:'Investor Relations',desc:'Target investors, outreach pipeline, term sheet prep, pitch materials',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>',badge:'Preparing',badgeClass:'badge-warn',stats:[{val:'0',label:'Contacted'},{val:'$500K',label:'Target'},{val:'1',label:'Term Guide'}]},
-  {id:'legal',title:'Legal & Compliance',desc:'Entity setup, IP protection, contracts, privacy/GDPR, incorporation',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',badge:'Pending',badgeClass:'badge-warn',stats:[{val:'TBD',label:'Entity'},{val:'1',label:'Guide'},{val:'0',label:'Filed'}]},
-  {id:'support',title:'Support & Operations',desc:'Future support queue, SLA tracking, knowledge base, operations playbook',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>',badge:'Future',badgeClass:'badge-blue',stats:[{val:'0',label:'Tickets'},{val:'N/A',label:'SLA'},{val:'0',label:'KB Articles'}]}
+  {id:'team', title:'Team & Hiring', desc:'Headcount, open roles, CTO search pipeline, org chart planning', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>', badge:'Hiring', badgeClass:'badge-warn', stats:[{val:'1',label:'Team'},{val:'4',label:'Open'},{val:'17',label:'Planned'}]},
+  {id:'financials', title:'Financials', desc:'Revenue model, burn rate, funding strategy, 5-year projections, unit economics', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>', badge:'Model Ready', badgeClass:'badge-ok', stats:[{val:'$500K',label:'Target Raise'},{val:'5yr',label:'Model'},{val:'$0',label:'Burn'}]},
+  {id:'sales', title:'Sales Pipeline', desc:'Lead tracking, prospect outreach, deal stages, revenue forecasting', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>', badge:'Pre-Sales', badgeClass:'badge-blue', stats:[{val:'0',label:'Leads'},{val:'0',label:'Active'},{val:'$0',label:'Pipeline'}]},
+  {id:'customers', title:'Customer Discovery', desc:'95 target companies identified, outreach scripts ready, interview tracking', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>', badge:'Active', badgeClass:'badge-ok', stats:[{val:'95',label:'Targets'},{val:'0',label:'Contacted'},{val:'0',label:'Interviews'}]},
+  {id:'marketing', title:'Marketing & Brand', desc:'Brand identity, pitch deck, website, content strategy, launch plan', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>', badge:'In Progress', badgeClass:'badge-accent', stats:[{val:'15',label:'Names'},{val:'1',label:'Deck'},{val:'1',label:'Website'}]},
+  {id:'product', title:'Product & Development', desc:'Prototype status, tech stack, roadmap, blueprint tracking, AI features', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>', badge:'v0.1 Live', badgeClass:'badge-ok', stats:[{val:'190',label:'Entities'},{val:'33',label:'Roles'},{val:'12',label:'Topics'}]},
+  {id:'analytics', title:'Business Analytics', desc:'Market sizing, competitive landscape, growth metrics, TAM/SAM/SOM', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>', badge:'Research', badgeClass:'badge-blue', stats:[{val:'$8.2B',label:'TAM'},{val:'$1.4B',label:'SAM'},{val:'$210M',label:'SOM'}]},
+  {id:'assets', title:'Assets & IP', desc:'Document inventory, blueprints, playbooks, models, templates, domain names', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>', badge:'25+ Docs', badgeClass:'badge-ok', stats:[{val:'25+',label:'Docs'},{val:'1',label:'Blueprint'},{val:'1',label:'Repo'}]},
+  {id:'investors', title:'Investor Relations', desc:'Target investors, outreach pipeline, term sheet prep, pitch materials', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>', badge:'Preparing', badgeClass:'badge-warn', stats:[{val:'0',label:'Contacted'},{val:'$500K',label:'Target'},{val:'1',label:'Term Guide'}]},
+  {id:'legal', title:'Legal & Compliance', desc:'Entity setup, IP protection, contracts, privacy/GDPR, incorporation', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', badge:'Pending', badgeClass:'badge-warn', stats:[{val:'TBD',label:'Entity'},{val:'1',label:'Guide'},{val:'0',label:'Filed'}]},
+  {id:'support', title:'Support & Operations', desc:'Future support queue, SLA tracking, knowledge base, operations playbook', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>', badge:'Future', badgeClass:'badge-blue', stats:[{val:'0',label:'Tickets'},{val:'N/A',label:'SLA'},{val:'0',label:'KB Articles'}]}
 ];
 
-function renderSections(){
-  document.getElementById('sectionGrid').innerHTML=SECTIONS.map(function(s){
-    var grad=GRADIENTS[s.id]||'linear-gradient(135deg,#666,#999)';
-    var statsHtml=s.stats.map(function(st){return '<div class="s-stat"><span class="s-stat-val">'+st.val+'</span><span class="s-stat-label">'+st.label+'</span></div>';}).join('');
-    return '<div class="s-card" onclick="openModal(\''+s.id+'\')">'
-      +'<div class="s-card-icon-3d" style="background:'+grad+'">'+s.icon+'</div>'
-      +'<span class="s-card-badge '+s.badgeClass+'">'+s.badge+'</span>'
-      +'<div class="s-card-body"><div class="s-card-title">'+s.title+'</div>'
-      +'<div class="s-card-desc">'+s.desc+'</div>'
-      +'<div class="s-card-stats">'+statsHtml+'</div></div></div>';
+function renderSections() {
+  document.getElementById('sectionGrid').innerHTML = SECTIONS.map(function(s) {
+    var grad = GRADIENTS[s.id] || 'linear-gradient(135deg,#666,#999)';
+    var statsHtml = s.stats.map(function(st) {
+      return '<div class="s-stat"><span class="s-stat-val">' + st.val + '</span><span class="s-stat-label">' + st.label + '</span></div>';
+    }).join('');
+    return '<div class="s-card" onclick="openModal(\'' + s.id + '\')">'
+      + '<div class="s-card-icon-3d" style="background:' + grad + '">' + s.icon + '</div>'
+      + '<span class="s-card-badge ' + s.badgeClass + '">' + s.badge + '</span>'
+      + '<div class="s-card-body"><div class="s-card-title">' + s.title + '</div>'
+      + '<div class="s-card-desc">' + s.desc + '</div>'
+      + '<div class="s-card-stats">' + statsHtml + '</div></div></div>';
   }).join('');
 }
 
-// ── Quick Actions ──
+/* ═══════════════════════════════════════════
+   QUICK ACTIONS
+   ═══════════════════════════════════════════ */
 var QUICK_ACTIONS = [
-  {label:'View Blueprint',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'},
-  {label:'Open TODO Tracker',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>'},
-  {label:'90-Day Roadmap',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'},
-  {label:'Financial Model',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>'},
-  {label:'Pitch Deck',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>'},
-  {label:'Customer List (95)',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>'},
-  {label:'CTO Job Package',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>'},
-  {label:'Naming Package',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7V4a2 2 0 012-2h8.5L20 7.5V20a2 2 0 01-2 2H6a2 2 0 01-2-2v-3"/><polyline points="14 2 14 8 20 8"/><line x1="3" y1="15" x2="15" y2="15"/><polyline points="10 18 13 15 10 12"/></svg>'}
+  {label:'View Blueprint', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'},
+  {label:'Open TODO Tracker', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>'},
+  {label:'90-Day Roadmap', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'},
+  {label:'Financial Model', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>'},
+  {label:'Pitch Deck', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>'},
+  {label:'Customer List (95)', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>'},
+  {label:'CTO Job Package', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>'},
+  {label:'Naming Package', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7V4a2 2 0 012-2h8.5L20 7.5V20a2 2 0 01-2 2H6a2 2 0 01-2-2v-3"/><polyline points="14 2 14 8 20 8"/><line x1="3" y1="15" x2="15" y2="15"/><polyline points="10 18 13 15 10 12"/></svg>'}
 ];
-function renderQuickActions(){
-  document.getElementById('quickGrid').innerHTML=QUICK_ACTIONS.map(function(a){
-    return '<button class="quick-btn" onclick="showToast(\''+a.label+' — Opens in full platform\')">'+a.icon+a.label+'</button>';
+
+function renderQuickActions() {
+  document.getElementById('quickGrid').innerHTML = QUICK_ACTIONS.map(function(a) {
+    return '<button class="quick-btn" onclick="showToast(\'' + a.label + ' — Opens in full platform\')">' + a.icon + a.label + '</button>';
   }).join('');
 }
 
-// ── Activity Log ──
+/* ═══════════════════════════════════════════
+   ACTIVITY LOG
+   ═══════════════════════════════════════════ */
 var ACTIVITIES = [
-  {text:'Founder Console launched',meta:'PIN-protected command center with sidebar, themes, 3D cards',color:'var(--accent)',date:'Today'},
-  {text:'Prototype v0.1 deployed to gh-pages',meta:'Settings page, hamburger sidebar, AI FAB added',color:'var(--ok)',date:'Today'},
-  {text:'Sidebar theme fix shipped',meta:'All 6 themes now update sidebar colors',color:'var(--ok)',date:'Today'},
-  {text:'AI Assistant added to mobile PWA',meta:'Gemini-style FAB with chat sheet + DND mode',color:'var(--accent)',date:'Today'},
-  {text:'Settings page built for web + mobile',meta:'6 themes, 8 languages, smart geo-detection, notifications',color:'var(--ok)',date:'Recent'},
-  {text:'Factory detail modal with contact cards',meta:'Photo placeholders, initials, email addresses',color:'var(--blue)',date:'Recent'},
-  {text:'Customer discovery package completed',meta:'95 target companies across 5 tiers identified',color:'var(--ok)',date:'Completed'},
-  {text:'Financial model v1 locked',meta:'5-year projections, unit economics, funding scenarios',color:'var(--ok)',date:'Completed'},
-  {text:'Blueprint v1.0 finalized',meta:'190 entities, 33 roles, 12 topics, 4 portals',color:'var(--accent)',date:'Completed'},
-  {text:'Pitch deck v1 ready',meta:'12 slides, problem/solution/market/team/ask',color:'var(--ok)',date:'Completed'},
-  {text:'CTO hiring package ready',meta:'Job description, compensation, interview guide',color:'var(--ok)',date:'Completed'},
-  {text:'Naming package: 15 candidates shortlisted',meta:'Domain availability checked, trademark pre-screen done',color:'var(--warn)',date:'Pending Decision'},
-  {text:'Term sheet negotiation guide completed',meta:'Deep-dive on valuation, vesting, board, pro-rata',color:'var(--ok)',date:'Completed'}
+  {text:'Founder Console launched', meta:'PIN-protected command center with sidebar, themes, 3D cards', color:'var(--accent)', date:'Today'},
+  {text:'Prototype v0.1 deployed to gh-pages', meta:'Settings page, hamburger sidebar, AI FAB added', color:'var(--ok)', date:'Today'},
+  {text:'Sidebar theme fix shipped', meta:'All 6 themes now update sidebar colors', color:'var(--ok)', date:'Today'},
+  {text:'AI Assistant added to mobile PWA', meta:'Gemini-style FAB with chat sheet + DND mode', color:'var(--accent)', date:'Today'},
+  {text:'Settings page built for web + mobile', meta:'6 themes, 8 languages, smart geo-detection, notifications', color:'var(--ok)', date:'Recent'},
+  {text:'Factory detail modal with contact cards', meta:'Photo placeholders, initials, email addresses', color:'var(--blue)', date:'Recent'},
+  {text:'Customer discovery package completed', meta:'95 target companies across 5 tiers identified', color:'var(--ok)', date:'Completed'},
+  {text:'Financial model v1 locked', meta:'5-year projections, unit economics, funding scenarios', color:'var(--ok)', date:'Completed'},
+  {text:'Blueprint v1.0 finalized', meta:'190 entities, 33 roles, 12 topics, 4 portals', color:'var(--accent)', date:'Completed'},
+  {text:'Pitch deck v1 ready', meta:'12 slides, problem/solution/market/team/ask', color:'var(--ok)', date:'Completed'},
+  {text:'CTO hiring package ready', meta:'Job description, compensation, interview guide', color:'var(--ok)', date:'Completed'},
+  {text:'Naming package: 15 candidates shortlisted', meta:'Domain availability checked, trademark pre-screen done', color:'var(--warn)', date:'Pending Decision'},
+  {text:'Term sheet negotiation guide completed', meta:'Deep-dive on valuation, vesting, board, pro-rata', color:'var(--ok)', date:'Completed'}
 ];
-function renderTimeline(){
-  document.getElementById('activityCount').textContent=ACTIVITIES.length;
-  document.getElementById('timeline').innerHTML=ACTIVITIES.map(function(a,i){
-    return '<div class="tl-item"><div class="tl-dot-col"><div class="tl-dot" style="background:'+a.color+'"></div>'+(i<ACTIVITIES.length-1?'<div class="tl-line"></div>':'')+'</div><div class="tl-content"><div class="tl-title">'+a.text+'</div><div class="tl-meta">'+a.meta+' &middot; '+a.date+'</div></div></div>';
+
+function renderTimeline() {
+  document.getElementById('activityCount').textContent = ACTIVITIES.length;
+  document.getElementById('timeline').innerHTML = ACTIVITIES.map(function(a, i) {
+    return '<div class="tl-item"><div class="tl-dot-col"><div class="tl-dot" style="background:' + a.color + '"></div>'
+      + (i < ACTIVITIES.length - 1 ? '<div class="tl-line"></div>' : '')
+      + '</div><div class="tl-content"><div class="tl-title">' + a.text + '</div><div class="tl-meta">' + a.meta + ' &middot; ' + a.date + '</div></div></div>';
   }).join('');
 }
 
-// ── Detail Data ──
+/* ═══════════════════════════════════════════
+   DETAIL DATA (section KPI cards)
+   ═══════════════════════════════════════════ */
 var DETAIL_DATA = {
   team:{title:'Team & Hiring',html:'<div class="sd-kpi-grid"><div class="sd-kpi"><div class="sd-kpi-label">Current Team</div><div class="sd-kpi-val">1</div><div class="sd-kpi-sub">Founder only</div></div><div class="sd-kpi"><div class="sd-kpi-label">Open Roles</div><div class="sd-kpi-val" style="color:var(--warn)">4</div><div class="sd-kpi-sub">CTO is critical hire</div></div><div class="sd-kpi"><div class="sd-kpi-label">Target (Month 12)</div><div class="sd-kpi-val">17</div><div class="sd-kpi-sub">Full team</div></div><div class="sd-kpi"><div class="sd-kpi-label">Burn Impact</div><div class="sd-kpi-val">$35K</div><div class="sd-kpi-sub">/mo post-hire</div></div></div><div class="sd-grid-2"><div class="sd-card"><div class="sd-card-title">Open Roles</div><div class="sd-row"><span>CTO / Co-Founder</span><span class="sd-pill sd-pill-bad">Critical</span></div><div class="sd-row"><span>Senior Full-Stack Engineer</span><span class="sd-pill sd-pill-warn">High</span></div><div class="sd-row"><span>Senior Mobile Engineer</span><span class="sd-pill sd-pill-warn">High</span></div><div class="sd-row"><span>DevOps / Cloud Engineer</span><span class="sd-pill sd-pill-blue">Medium</span></div></div><div class="sd-card"><div class="sd-card-title">Target Org (Month 12)</div><div class="sd-row"><span>Engineering</span><span class="sd-row-val">8</span></div><div class="sd-row"><span>Product &amp; Design</span><span class="sd-row-val">3</span></div><div class="sd-row"><span>Sales &amp; CS</span><span class="sd-row-val">4</span></div><div class="sd-row"><span>Operations</span><span class="sd-row-val">2</span></div></div></div>'},
   financials:{title:'Financials',html:'<div class="sd-kpi-grid"><div class="sd-kpi"><div class="sd-kpi-label">Target Raise</div><div class="sd-kpi-val" style="color:var(--accent)">$500K</div><div class="sd-kpi-sub">Pre-Seed / SAFE</div></div><div class="sd-kpi"><div class="sd-kpi-label">Monthly Burn</div><div class="sd-kpi-val" style="color:var(--ok)">$0</div><div class="sd-kpi-sub">Pre-revenue</div></div><div class="sd-kpi"><div class="sd-kpi-label">Post-Raise Burn</div><div class="sd-kpi-val">$40K</div><div class="sd-kpi-sub">/mo estimated</div></div><div class="sd-kpi"><div class="sd-kpi-label">Runway</div><div class="sd-kpi-val" style="color:var(--ok)">13mo</div><div class="sd-kpi-sub">Post-raise est.</div></div></div><div class="sd-grid-2"><div class="sd-card"><div class="sd-card-title">Revenue Targets</div><div class="sd-row"><span>Pricing Model</span><span class="sd-row-val">Brand-Sponsored SaaS</span></div><div class="sd-row"><span>Year 1 ARR</span><span class="sd-row-val" style="color:var(--ok)">$180K</span></div><div class="sd-row"><span>Year 3 ARR</span><span class="sd-row-val" style="color:var(--ok)">$3.2M</span></div><div class="sd-row"><span>Year 5 ARR</span><span class="sd-row-val" style="color:var(--ok)">$18M</span></div></div><div class="sd-card"><div class="sd-card-title">Unit Economics</div><div class="sd-row"><span>Avg Contract Value</span><span class="sd-row-val">$24K/yr</span></div><div class="sd-row"><span>Target LTV:CAC</span><span class="sd-row-val">4:1</span></div><div class="sd-row"><span>Gross Margin Target</span><span class="sd-row-val">80%+</span></div><div class="sd-row"><span>Payback Period</span><span class="sd-row-val">&lt;12mo</span></div></div></div>'},
@@ -998,75 +1084,102 @@ var DETAIL_DATA = {
   support:{title:'Support & Operations',html:'<div class="sd-kpi-grid"><div class="sd-kpi"><div class="sd-kpi-label">Status</div><div class="sd-kpi-val" style="color:var(--fg-faint)">TBD</div><div class="sd-kpi-sub">Post-launch</div></div><div class="sd-kpi"><div class="sd-kpi-label">Tickets</div><div class="sd-kpi-val">0</div><div class="sd-kpi-sub">No customers yet</div></div><div class="sd-kpi"><div class="sd-kpi-label">SLA Target</div><div class="sd-kpi-val" style="color:var(--blue)">4hr</div><div class="sd-kpi-sub">P1 response</div></div><div class="sd-kpi"><div class="sd-kpi-label">Channels</div><div class="sd-kpi-val">3</div><div class="sd-kpi-sub">Planned</div></div></div><div class="sd-card"><div class="sd-card-title">Coming Post-Launch</div><div class="sd-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><div style="font-size:14px;font-weight:500">Support Hub Activates Post-Launch</div><div style="font-size:12px;margin-top:4px">Support queue, SLA tracking, knowledge base, and in-app chat will activate once we have customers</div></div></div>'}
 };
 
-// ── Modal ──
+/* ═══════════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════════ */
 function openModal(id) {
-  var d = DETAIL_DATA[id]; if(!d) return;
+  var d = DETAIL_DATA[id];
+  if (!d) return;
   document.getElementById('modalTitle').textContent = d.title;
   document.getElementById('modalBody').innerHTML = d.html;
   document.getElementById('modalOverlay').classList.add('show');
 }
+
 function closeModal(e) {
-  if(e && e.target && !e.target.classList.contains('modal-overlay')) return;
+  if (e && e.target && !e.target.classList.contains('modal-overlay')) return;
   document.getElementById('modalOverlay').classList.remove('show');
 }
 
-// ── AI Chat ──
+/* ═══════════════════════════════════════════
+   AI CHAT
+   ═══════════════════════════════════════════ */
 var AI_RESPONSES = {
   'Which POs have the highest risk of delay?': 'Based on current timelines, <strong>3 POs have elevated delay risk</strong>:<br><br>1. <strong>PO-2611-BB-002</strong> (Denim Jackets) — NCR open, 8% defect rate requires rework + re-inspection before Dec 1 ship date. <span style="color:var(--bad)">HIGH RISK</span><br>2. <strong>PO-2611-AW-002</strong> (Winter Parkas) — Final inspection overdue by 3 days at Saigon Stitch. <span style="color:var(--warn)">MEDIUM RISK</span><br>3. <strong>PO-2611-BB-003</strong> (Wool Overcoat) — NCR for lining puckering at Istanbul. Dec 10 deadline tight. <span style="color:var(--warn)">MEDIUM RISK</span>',
   'What is the current NCR summary?': '<strong>4 NCRs currently open</strong> across the portfolio:<br><br>1. <strong>PO-2611-BB-002</strong> — Back yoke stitching (8% defect) at Dhaka Textiles. Rework in progress.<br>2. <strong>PO-2611-BB-003</strong> — Lining puckering at Istanbul Konfeksiyon.<br>3. <strong>PO-2611-AW-007</strong> — Leather grain inconsistency at Sialkot Sports.<br>4. <strong>PO-2611-BB-005</strong> — EVA sole delamination at Shenzhen Footwear.<br><br>Average resolution time: <strong>18 days</strong>. Cost of quality trending up $2.1k this month.',
   'Compare factory defect rates': '<strong>Factory Defect Rate Comparison (YTD)</strong>:<br><br>🟢 Phnom Penh Garments: <strong>0.8%</strong> (excellent)<br>🟢 Sialkot Sports: <strong>1.2%</strong><br>🟢 Saigon Stitch: <strong>1.4%</strong><br>🟡 Dhaka Textiles: <strong>3.2%</strong> (trending up due to NCR)<br>🟡 Tirupur Knits: <strong>3.5%</strong><br>🔴 Addis Ababa Garments: <strong>4.7%</strong> (new supplier, needs audit)<br>🔴 Istanbul Konfeksiyon: <strong>5.1%</strong><br>🔴 Dhaka Textiles (Denim line): <strong>8.2%</strong> (NCR active)',
-  'Show on-time delivery trends': '<strong>On-Time Delivery (OTD) — Last 6 Months</strong>:<br><br>May: 94% &nbsp; Jun: 91% &nbsp; Jul: 89% &nbsp; Aug: 85% &nbsp; Sep: 83% &nbsp; Oct: 87%<br><br>📈 OTD recovering after August dip caused by monsoon logistics delays in Bangladesh + Vietnam. Current 87% still below 90% target. Key drivers: Dhaka Textiles improved from 78% → 88% after new logistics partner. Istanbul still lagging at 79%.'
+  'Show on-time delivery trends': '<strong>On-Time Delivery (OTD) — Last 6 Months</strong>:<br><br>May: 94% &nbsp; Jun: 91% &nbsp; Jul: 89% &nbsp; Aug: 85% &nbsp; Sep: 83% &nbsp; Oct: 87%<br><br>📈 OTD recovering after August dip caused by monsoon logistics delays in Bangladesh + Vietnam. Current 87% still below 90% target. Key drivers: Dhaka Textiles improved from 78% to 88% after new logistics partner. Istanbul still lagging at 79%.'
 };
+
+var aiAutoCloseTimer = null;
+
 function openAi() {
   document.getElementById('aiSidebar').classList.add('show');
   document.getElementById('aiBackdrop').classList.add('show');
-  setTimeout(function(){ var inp=document.getElementById('aiInput'); if(inp) inp.focus(); }, 350);
+  setTimeout(function() {
+    var inp = document.getElementById('aiInput');
+    if (inp) inp.focus();
+  }, 350);
 }
+
 function closeAi() {
   document.getElementById('aiSidebar').classList.remove('show');
   document.getElementById('aiBackdrop').classList.remove('show');
 }
-var aiAutoCloseTimer = null;
+
 function askAi(q) {
   var body = document.getElementById('aiChatBody');
-  body.innerHTML += '<div class="ai-msg user">'+q+'</div>';
-  document.getElementById('aiSuggestions').style.display='none';
-  if(aiAutoCloseTimer) clearTimeout(aiAutoCloseTimer);
-  setTimeout(function(){
+  body.innerHTML += '<div class="ai-msg user">' + q + '</div>';
+  document.getElementById('aiSuggestions').style.display = 'none';
+  if (aiAutoCloseTimer) clearTimeout(aiAutoCloseTimer);
+  setTimeout(function() {
     var ans = AI_RESPONSES[q] || 'I\'m analyzing your data... Based on the current portfolio of 12 active POs across 9 factories, I\'d need more specific criteria to give you actionable insights. Try asking about delay risks, defect rates, NCRs, or delivery trends.';
-    body.innerHTML += '<div class="ai-msg bot">'+ans+'</div>';
+    body.innerHTML += '<div class="ai-msg bot">' + ans + '</div>';
     body.scrollTop = body.scrollHeight;
     aiAutoCloseTimer = setTimeout(closeAi, 8000);
-  },800);
+  }, 800);
   body.scrollTop = body.scrollHeight;
 }
+
 function sendAiMsg() {
   var inp = document.getElementById('aiInput');
-  var q = inp.value.trim(); if(!q) return;
-  inp.value=''; askAi(q);
+  var q = inp.value.trim();
+  if (!q) return;
+  inp.value = '';
+  askAi(q);
 }
 
-// ── Toast ──
+/* ═══════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════ */
 function showToast(msg) {
-  var t=document.createElement('div');
-  t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);color:var(--fg);padding:10px 20px;border-radius:var(--radius-pill);font-size:13px;z-index:999;box-shadow:var(--shadow-lg);opacity:0;transition:opacity 0.3s';
-  t.textContent=msg; document.body.appendChild(t);
-  requestAnimationFrame(function(){t.style.opacity='1';});
-  setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove();},300);},2500);
+  var t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);color:var(--fg);padding:10px 20px;border-radius:var(--radius-pill);font-size:13px;z-index:999;box-shadow:var(--shadow-lg);opacity:0;transition:opacity 0.3s';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(function() { t.style.opacity = '1'; });
+  setTimeout(function() { t.style.opacity = '0'; setTimeout(function() { t.remove(); }, 300); }, 2500);
 }
 
-// ── Keyboard ──
-document.addEventListener('keydown',function(e){
-  var pinLock=document.getElementById('pinLock');
-  if(pinLock.style.display!=='none' && !pinLock.classList.contains('unlocked')){
-    if(e.key>='0'&&e.key<='9') pinInput(parseInt(e.key));
-    if(e.key==='Backspace') pinBack();
+/* ═══════════════════════════════════════════
+   KEYBOARD
+   ═══════════════════════════════════════════ */
+document.addEventListener('keydown', function(e) {
+  var pinLock = document.getElementById('pinLock');
+  if (pinLock.style.display !== 'none' && !pinLock.classList.contains('unlocked')) {
+    if (e.key >= '0' && e.key <= '9') pinInput(parseInt(e.key));
+    if (e.key === 'Backspace') pinBack();
     return;
   }
-  if(e.key==='Escape'){ closeModal(); closeAi(); if(aiAutoCloseTimer) clearTimeout(aiAutoCloseTimer); }
+  if (e.key === 'Escape') {
+    closeModal();
+    closeAi();
+    if (aiAutoCloseTimer) clearTimeout(aiAutoCloseTimer);
+  }
 });
 
-// ── Init ──
+/* ═══════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════ */
 renderSidebarNav();
 renderKpis();
 renderSections();
