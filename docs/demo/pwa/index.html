@@ -245,6 +245,40 @@
   .report-sheet-footer .btn-dl { display:flex; align-items:center; gap:6px; padding:10px 18px; border-radius:var(--radius); border:none; font-family:var(--font-body); font-size:14px; font-weight:600; cursor:pointer; }
   .btn-dl.primary { background:var(--accent); color:var(--accent-ink); }
   .btn-dl.secondary { background:var(--bg-dim); color:var(--fg); }
+
+  /* Factory Detail full-screen overlay */
+  .factory-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:220; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+  .factory-overlay.show { opacity:1; pointer-events:auto; }
+  .factory-sheet { background:var(--bg); border-radius:20px 20px 0 0; width:100%; max-width:420px; height:95vh; display:flex; flex-direction:column; transform:translateY(100%); transition:transform 0.3s cubic-bezier(0.16,1,0.3,1); }
+  .factory-overlay.show .factory-sheet { transform:translateY(0); }
+  .fs-header { display:flex; align-items:center; gap:10px; padding:18px 20px 14px; border-bottom:1px solid var(--divider); flex-shrink:0; }
+  .fs-header .fs-name { flex:1; font-weight:700; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .fs-body { flex:1; overflow-y:auto; padding:16px 20px; -webkit-overflow-scrolling:touch; }
+  .fs-section { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; margin-bottom:14px; }
+  .fs-section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--fg-faint); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+  .fs-section-title svg { width:14px; height:14px; }
+  .fs-badge-tier { display:inline-block; padding:3px 10px; border-radius:var(--radius-pill); font-size:11px; font-weight:700; }
+  .fs-badge-tier.preferred { background:var(--ok-soft); color:var(--ok); }
+  .fs-badge-tier.approved { background:var(--accent-soft); color:var(--accent); }
+  .fs-badge-tier.conditional { background:var(--warn-soft); color:var(--warn); }
+  .fs-badge-tier.pending { background:var(--bg-dim); color:var(--fg-faint); }
+  .fs-badge-status { display:inline-block; padding:3px 10px; border-radius:var(--radius-pill); font-size:11px; font-weight:700; }
+  .fs-badge-status.active { background:var(--ok-soft); color:var(--ok); }
+  .fs-badge-status.on_hold { background:var(--warn-soft); color:var(--warn); }
+  .fs-badge-status.probation { background:var(--bad-soft); color:var(--bad); }
+  .fs-badge-status.deactivated { background:var(--bg-dim); color:var(--fg-faint); }
+  .fs-kpi-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .fs-kpi { text-align:center; background:var(--bg-dim); border-radius:var(--radius-sm); padding:10px 6px; }
+  .fs-kpi-val { font-size:20px; font-weight:700; font-family:var(--font-display); }
+  .fs-kpi-label { font-size:10px; color:var(--fg-faint); margin-top:2px; }
+  .fs-audit-row { display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid var(--divider); font-size:12px; }
+  .fs-audit-row:last-child { border-bottom:none; }
+  .fs-contact-row { padding:8px 0; border-bottom:1px solid var(--divider); font-size:12px; }
+  .fs-contact-row:last-child { border-bottom:none; }
+  .fs-footer { display:flex; justify-content:flex-end; gap:8px; padding:12px 20px calc(12px + env(safe-area-inset-bottom)); border-top:1px solid var(--divider); flex-shrink:0; }
+  .fs-footer .btn-dl { margin:0; }
+  .fs-view-only { display:flex; align-items:center; gap:6px; padding:8px 14px; background:var(--bg-dim); border-radius:var(--radius-sm); font-size:12px; color:var(--fg-faint); font-weight:600; }
+
   .notif-bell { position:relative; width:40px; height:40px; border:none; background:none; color:var(--fg); cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; -webkit-tap-highlight-color:transparent; }
   .notif-bell:active { background:var(--accent-glow); }
   .notif-badge { position:absolute; top:4px; right:4px; min-width:18px; height:18px; background:var(--bad); color:#fff; font-size:11px; font-weight:700; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 5px; font-family:var(--font-body); animation:notif-pop 0.3s cubic-bezier(0.34,1.56,0.64,1); }
@@ -642,6 +676,20 @@
   </div>
 </div>
 
+<!-- Factory Detail Modal -->
+<div class="factory-overlay" id="factoryOverlay" onclick="closeFactoryDetail()">
+  <div class="factory-sheet" onclick="event.stopPropagation()">
+    <div class="fs-header">
+      <span class="fs-name" id="fsName">Factory</span>
+      <span id="fsTierBadge"></span>
+      <span id="fsStatusBadge"></span>
+      <button style="border:none;background:none;color:var(--fg-faint);cursor:pointer;font-size:20px" onclick="closeFactoryDetail()">&times;</button>
+    </div>
+    <div class="fs-body" id="fsBody"></div>
+    <div class="fs-footer" id="fsFooter"></div>
+  </div>
+</div>
+
 <button class="fab" id="fab" style="display:none" onclick="showScreen('factory-defect')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
 
 <script>
@@ -1030,6 +1078,191 @@
   ];
 
   var currentPortal = 'brand';
+
+  var FACTORY_DETAILS = {
+    'Dhaka Textiles Ltd.': {
+      audits: [
+        { standard:'BSCI', grade:'B', date:'2026-03-15', expiry:'2027-03-14', body:'amfori' },
+        { standard:'OEKO-TEX 100', grade:'Class I', date:'2026-01-10', expiry:'2027-01-09', body:'Hohenstein' },
+        { standard:'WRAP', grade:'Gold', date:'2025-09-20', expiry:'2026-09-19', body:'WRAP' }
+      ],
+      certifications: [{ name:'ISO 9001:2015', issued:'2025-06-01', expiry:'2028-05-31' },{ name:'GOTS 6.0', issued:'2026-02-15', expiry:'2027-02-14' }],
+      approvalTier:'Preferred', approvalDate:'2024-06-01', approvalNotes:'Top-tier supplier. 3+ years relationship.',
+      vendorStatus:'Active', vendorSince:'2021-04-15',
+      performance: { qualityScore:96, onTimeDelivery:94, defectRate:1.8, responseTime:2.1 },
+      capacity: { monthlyUnits:120000, currentLoad:78, peakSeason:'Aug–Nov', machinery:[{type:'Single Needle',count:220},{type:'Overlock',count:85},{type:'Flatlock',count:40},{type:'Pressing',count:30}] },
+      contacts: [{ name:'Rahim Khan', role:'General Manager', email:'rahim@dhakatextiles.com', phone:'+880 1711 234567' },{ name:'Fatima Begum', role:'QC Head', email:'fatima@dhakatextiles.com', phone:'+880 1911 345678' }]
+    },
+    'Saigon Stitch Co.': {
+      audits: [{ standard:'WRAP', grade:'Gold', date:'2026-05-10', expiry:'2027-05-09', body:'WRAP' },{ standard:'SA8000', grade:'Certified', date:'2025-12-01', expiry:'2028-11-30', body:'SAI' }],
+      certifications: [{ name:'ISO 14001:2015', issued:'2025-08-01', expiry:'2028-07-31' }],
+      approvalTier:'Approved', approvalDate:'2025-01-15', approvalNotes:'Strong performance. Expanding capacity in 2027.',
+      vendorStatus:'Active', vendorSince:'2023-07-01',
+      performance: { qualityScore:93, onTimeDelivery:91, defectRate:2.3, responseTime:3.0 },
+      capacity: { monthlyUnits:85000, currentLoad:82, peakSeason:'Sep–Dec', machinery:[{type:'Single Needle',count:160},{type:'Overlock',count:60},{type:'Button Attach',count:25}] },
+      contacts: [{ name:'Linh Nguyen', role:'Operations Director', email:'linh@saigonstitch.vn', phone:'+84 28 3824 5678' }]
+    },
+    'Phnom Penh Garments': {
+      audits: [{ standard:'BSCI', grade:'B', date:'2026-02-20', expiry:'2027-02-19', body:'amfori' },{ standard:'SMETA', grade:'4-Pillar', date:'2025-11-15', expiry:'2026-11-14', body:'Sedex' }],
+      certifications: [{ name:'ISO 9001:2015', issued:'2025-04-01', expiry:'2028-03-31' }],
+      approvalTier:'Approved', approvalDate:'2025-03-01', approvalNotes:'Reliable for basic garments.',
+      vendorStatus:'Active', vendorSince:'2023-11-01',
+      performance: { qualityScore:90, onTimeDelivery:88, defectRate:2.8, responseTime:4.2 },
+      capacity: { monthlyUnits:60000, currentLoad:71, peakSeason:'Jul–Oct', machinery:[{type:'Single Needle',count:110},{type:'Overlock',count:45},{type:'Pressing',count:20}] },
+      contacts: [{ name:'Sokha Meas', role:'Factory Director', email:'sokha@ppgarments.kh', phone:'+855 23 987654' }]
+    },
+    'Guangzhou Yufeng Shoes': {
+      audits: [],
+      certifications: [],
+      approvalTier:'Conditional', approvalDate:'2026-08-01', approvalNotes:'New vendor. Initial audit pending.',
+      vendorStatus:'Active', vendorSince:'2026-06-15',
+      performance: { qualityScore:78, onTimeDelivery:72, defectRate:5.1, responseTime:6.5 },
+      capacity: { monthlyUnits:50000, currentLoad:45, peakSeason:'Oct–Jan', machinery:[{type:'Stitching Machine',count:80},{type:'Lasting Machine',count:30},{type:'Sole Press',count:15}] },
+      contacts: [{ name:'Wei Zhang', role:'Sales Manager', email:'wei@yufengshoes.cn', phone:'+86 20 8765 4321' }]
+    },
+    'Tirupur Knits Pvt. Ltd.': {
+      audits: [{ standard:'SA8000', grade:'Certified', date:'2026-04-10', expiry:'2029-04-09', body:'SAI' },{ standard:'OEKO-TEX 100', grade:'Class I', date:'2026-06-01', expiry:'2027-05-31', body:'Hohenstein' },{ standard:'GOTS', grade:'6.0', date:'2025-10-15', expiry:'2026-10-14', body:'Control Union' }],
+      certifications: [{ name:'ISO 9001:2015', issued:'2024-12-01', expiry:'2027-11-30' },{ name:'Fair Trade', issued:'2025-03-01', expiry:'2026-02-28' }],
+      approvalTier:'Preferred', approvalDate:'2024-01-20', approvalNotes:'Premium knitwear specialist.',
+      vendorStatus:'Active', vendorSince:'2022-03-01',
+      performance: { qualityScore:95, onTimeDelivery:92, defectRate:1.9, responseTime:2.5 },
+      capacity: { monthlyUnits:95000, currentLoad:85, peakSeason:'Aug–Nov', machinery:[{type:'Circular Knit',count:60},{type:'Single Needle',count:140},{type:'Dyeing',count:12}] },
+      contacts: [{ name:'Raj Krishnamurthy', role:'Managing Director', email:'raj@tirupurknits.in', phone:'+91 421 234 5678' }]
+    },
+    'Istanbul Konfeksiyon A.S.': {
+      audits: [{ standard:'BSCI', grade:'C', date:'2026-01-20', expiry:'2027-01-19', body:'amfori' },{ standard:'SMETA', grade:'2-Pillar', date:'2025-08-10', expiry:'2026-08-09', body:'Sedex' }],
+      certifications: [{ name:'ISO 9001:2015', issued:'2025-05-01', expiry:'2028-04-30' }],
+      approvalTier:'Approved', approvalDate:'2025-06-01', approvalNotes:'BSCI C needs improvement. CAP due Feb 2027.',
+      vendorStatus:'On Hold', vendorSince:'2024-02-01',
+      performance: { qualityScore:84, onTimeDelivery:79, defectRate:4.3, responseTime:5.0 },
+      capacity: { monthlyUnits:70000, currentLoad:55, peakSeason:'Sep–Dec', machinery:[{type:'Single Needle',count:130},{type:'Overlock',count:50},{type:'Embroidery',count:18}] },
+      contacts: [{ name:'Mehmet Yilmaz', role:'Export Manager', email:'mehmet@istanbulkonf.tr', phone:'+90 212 555 6789' }]
+    },
+    'Sialkot Sports Mfg.': {
+      audits: [{ standard:'WRAP', grade:'Silver', date:'2026-02-10', expiry:'2027-02-09', body:'WRAP' }],
+      certifications: [{ name:'ISO 9001:2015', issued:'2025-09-01', expiry:'2028-08-31' }],
+      approvalTier:'Approved', approvalDate:'2025-05-01', approvalNotes:'Specialist in sports accessories.',
+      vendorStatus:'Active', vendorSince:'2024-08-01',
+      performance: { qualityScore:89, onTimeDelivery:86, defectRate:3.2, responseTime:3.8 },
+      capacity: { monthlyUnits:40000, currentLoad:68, peakSeason:'Jul–Oct', machinery:[{type:'Cutting',count:20},{type:'Stitching',count:90},{type:'Pressing',count:15}] },
+      contacts: [{ name:'Ali Hassan', role:'Factory Owner', email:'ali@sialkotports.pk', phone:'+92 52 123 4567' }]
+    },
+    'Addis Ababa Garments PLC': {
+      audits: [],
+      certifications: [],
+      approvalTier:'Pending', approvalDate:null, approvalNotes:'Under evaluation. Factory visit Dec 2026.',
+      vendorStatus:'Probation', vendorSince:'2026-07-01',
+      performance: { qualityScore:71, onTimeDelivery:65, defectRate:6.8, responseTime:8.2 },
+      capacity: { monthlyUnits:30000, currentLoad:38, peakSeason:'Oct–Jan', machinery:[{type:'Single Needle',count:70},{type:'Overlock',count:25},{type:'Pressing',count:10}] },
+      contacts: [{ name:'Tadesse Bekele', role:'General Manager', email:'tadesse@aag.et', phone:'+251 11 234 5678' }]
+    },
+    'Shenzhen Footwear Co.': {
+      audits: [{ standard:'SMETA', grade:'2-Pillar', date:'2025-11-20', expiry:'2026-11-19', body:'Sedex' }],
+      certifications: [{ name:'ISO 9001:2015', issued:'2025-07-01', expiry:'2028-06-30' }],
+      approvalTier:'Conditional', approvalDate:'2026-04-01', approvalNotes:'Pending full BSCI audit.',
+      vendorStatus:'Active', vendorSince:'2025-10-01',
+      performance: { qualityScore:82, onTimeDelivery:80, defectRate:4.0, responseTime:4.5 },
+      capacity: { monthlyUnits:65000, currentLoad:60, peakSeason:'Sep–Dec', machinery:[{type:'Stitching Machine',count:120},{type:'Lasting Machine',count:45},{type:'Sole Press',count:20}] },
+      contacts: [{ name:'Li Chen', role:'Sales Director', email:'li@szfootwear.cn', phone:'+86 755 8765 4321' }]
+    }
+  };
+
+  window.openFactoryDetail = function(factoryName) {
+    var fd = FACTORY_DETAILS[factoryName];
+    if (!fd) { showToast('Factory details not available'); return; }
+    document.getElementById('fsName').textContent = factoryName;
+    var tierCls = fd.approvalTier.toLowerCase().replace(/ /g,'_');
+    document.getElementById('fsTierBadge').className = 'fs-badge-tier ' + tierCls;
+    document.getElementById('fsTierBadge').textContent = fd.approvalTier;
+    var statusCls = fd.vendorStatus.toLowerCase().replace(/ /g,'_');
+    document.getElementById('fsStatusBadge').className = 'fs-badge-status ' + statusCls;
+    document.getElementById('fsStatusBadge').textContent = fd.vendorStatus;
+
+    var html = '';
+
+    // Performance KPIs
+    html += '<div class="fs-section"><div class="fs-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8v8m-4-5v5m-4-2v2m-2 4h16a2 2 0 002-2V4a2 2 0 00-2-2H4a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>Performance</div>';
+    var p = fd.performance;
+    var qColor = p.qualityScore>=90?'var(--ok)':p.qualityScore>=80?'var(--warn)':'var(--bad)';
+    var dColor = p.onTimeDelivery>=90?'var(--ok)':p.onTimeDelivery>=80?'var(--warn)':'var(--bad)';
+    var drColor = p.defectRate<=2.5?'var(--ok)':p.defectRate<=4?'var(--warn)':'var(--bad)';
+    var rtColor = p.responseTime<=3?'var(--ok)':p.responseTime<=5?'var(--warn)':'var(--bad)';
+    html += '<div class="fs-kpi-grid">';
+    html += '<div class="fs-kpi"><div class="fs-kpi-val" style="color:'+qColor+'">'+p.qualityScore+'%</div><div class="fs-kpi-label">Quality Score</div></div>';
+    html += '<div class="fs-kpi"><div class="fs-kpi-val" style="color:'+dColor+'">'+p.onTimeDelivery+'%</div><div class="fs-kpi-label">On-Time Delivery</div></div>';
+    html += '<div class="fs-kpi"><div class="fs-kpi-val" style="color:'+drColor+'">'+p.defectRate+'%</div><div class="fs-kpi-label">Defect Rate</div></div>';
+    html += '<div class="fs-kpi"><div class="fs-kpi-val" style="color:'+rtColor+'">'+p.responseTime+'h</div><div class="fs-kpi-label">Avg Response</div></div>';
+    html += '</div></div>';
+
+    // Audits & Certifications
+    html += '<div class="fs-section"><div class="fs-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Audits & Certs</div>';
+    if (fd.audits.length) {
+      fd.audits.forEach(function(a) {
+        var gradeColor = (a.grade==='B'||a.grade==='Gold'||a.grade==='Certified'||a.grade==='Class I'||a.grade==='4-Pillar'||a.grade==='6.0') ? 'var(--ok)' : (a.grade==='C'||a.grade==='Silver'||a.grade==='2-Pillar') ? 'var(--warn)' : 'var(--fg-muted)';
+        html += '<div class="fs-audit-row"><span style="font-weight:600;min-width:70px">'+a.standard+'</span><span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:color-mix(in srgb,'+gradeColor+' 15%,transparent);color:'+gradeColor+'">'+a.grade+'</span><span style="color:var(--fg-muted);margin-left:auto;font-size:11px">'+a.body+'</span></div>';
+      });
+    } else {
+      html += '<div style="color:var(--fg-faint);font-size:12px;padding:4px 0">No audits on file</div>';
+    }
+    if (fd.certifications.length) {
+      html += '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--divider)">';
+      fd.certifications.forEach(function(c) {
+        html += '<div class="fs-audit-row"><span style="font-weight:600">'+c.name+'</span><span style="color:var(--fg-muted);margin-left:auto;font-size:11px">Exp '+new Date(c.expiry).toLocaleDateString('en-GB',{month:'short',year:'numeric'})+'</span></div>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+
+    // Brand Approval + Vendor Status
+    html += '<div class="fs-section"><div class="fs-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Approval & Status</div>';
+    html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"><span class="fs-badge-tier '+tierCls+'">'+fd.approvalTier+'</span><span class="fs-badge-status '+statusCls+'">'+fd.vendorStatus+'</span></div>';
+    if (fd.approvalDate) html += '<div style="font-size:12px;color:var(--fg-muted);margin-bottom:4px">Approved: '+new Date(fd.approvalDate).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'</div>';
+    html += '<div style="font-size:12px;color:var(--fg-muted)">Vendor since: '+new Date(fd.vendorSince).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'</div>';
+    html += '<div style="font-size:12px;color:var(--fg);margin-top:8px;line-height:1.4">'+fd.approvalNotes+'</div>';
+    html += '</div>';
+
+    // Capacity
+    html += '<div class="fs-section"><div class="fs-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>Capacity</div>';
+    var cap = fd.capacity;
+    html += '<div style="display:flex;gap:14px;margin-bottom:10px">';
+    html += '<div><div style="font-size:18px;font-weight:700;font-family:var(--font-display);color:var(--accent)">'+cap.monthlyUnits.toLocaleString()+'</div><div style="font-size:10px;color:var(--fg-faint)">Monthly Units</div></div>';
+    html += '<div><div style="font-size:18px;font-weight:700;font-family:var(--font-display);color:'+(cap.currentLoad>85?'var(--bad)':cap.currentLoad>70?'var(--warn)':'var(--ok)')+'">'+cap.currentLoad+'%</div><div style="font-size:10px;color:var(--fg-faint)">Load</div></div>';
+    html += '<div><div style="font-size:13px;font-weight:600;color:var(--fg);margin-top:3px">'+cap.peakSeason+'</div><div style="font-size:10px;color:var(--fg-faint)">Peak</div></div>';
+    html += '</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+    cap.machinery.forEach(function(m) {
+      html += '<span style="background:var(--bg-dim);padding:3px 8px;border-radius:var(--radius-pill);font-size:11px">'+m.type+' <strong>'+m.count+'</strong></span>';
+    });
+    html += '</div></div>';
+
+    // Contacts
+    html += '<div class="fs-section"><div class="fs-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Contacts</div>';
+    fd.contacts.forEach(function(c) {
+      html += '<div class="fs-contact-row"><div style="font-weight:600">'+c.name+'</div><div style="color:var(--fg-muted)">'+c.role+'</div><div style="color:var(--accent);margin-top:2px">'+c.email+'</div></div>';
+    });
+    html += '</div>';
+
+    document.getElementById('fsBody').innerHTML = html;
+
+    // Footer
+    var footer = document.getElementById('fsFooter');
+    if (currentPortal === 'brand') {
+      footer.innerHTML = '<button class="btn-dl secondary" onclick="closeFactoryDetail()">Close</button>'
+        +'<button class="btn-dl secondary" onclick="showToast(\'Change Status — Coming in full platform\')">Change Status</button>'
+        +'<button class="btn-dl primary" onclick="showToast(\'Edit Details — Coming in full platform\')">Edit</button>';
+    } else if (currentPortal === 'factory') {
+      footer.innerHTML = '<div class="fs-view-only"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> View Only</div>';
+    } else {
+      footer.innerHTML = '<button class="btn-dl secondary" onclick="closeFactoryDetail()">Close</button>';
+    }
+
+    document.getElementById('factoryOverlay').classList.add('show');
+  };
+
+  window.closeFactoryDetail = function() {
+    document.getElementById('factoryOverlay').classList.remove('show');
+  };
+
   var checkStates = CHECKS.map(function(){ return 'none'; });
 
   setTimeout(function(){
@@ -1149,6 +1382,7 @@
           +'<div style="font-size:12px;color:var(--fg-muted);margin-top:1px">'+fInfo.city+'</div>'
           +'<div style="font-weight:700;font-size:15px;margin-top:4px;color:var(--fg)">'+po.factory+'</div>'
         +'</div>'
+        +'<button onclick="event.stopPropagation();openFactoryDetail(\''+po.factory.replace(/'/g,"\\'")+'\');" style="width:32px;height:32px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--fg-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" title="View factory profile"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>'
       +'</div>'
       +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--divider)">'
         +'<span style="padding:3px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:600;'

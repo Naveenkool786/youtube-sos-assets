@@ -6,7 +6,7 @@
   <title>FABRIQ - FashionHub</title>
 
   <!-- PWA -->
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0F4238">
   <meta name="mobile-web-app-capable" content="yes">
 
@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="FABRIQ">
-  <link rel="apple-touch-icon" href="/icon-192.svg">
+  <link rel="apple-touch-icon" href="icon-192.svg">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -696,7 +696,7 @@
 (function(){
   // Register service worker
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(function(){});
+    navigator.serviceWorker.register('sw.js').catch(function(){});
   }
 
   // PWA install prompt
@@ -747,80 +747,6 @@
     'Sialkot Sports Mfg.':     { city:'Sialkot', country:'PK', audited:true, approved:true, active:true, img:'⚽' },
     'Addis Ababa Garments PLC': { city:'Addis Ababa', country:'ET', audited:false, approved:false, active:true, img:'🧥' },
     'Shenzhen Footwear Co.':    { city:'Shenzhen', country:'CN', audited:true, approved:false, active:true, img:'🥾' },
-  };
-  var FACTORY_DETAILS = {
-    'Dhaka Textiles Ltd.': {
-      audits:[{type:'Factory Audit',standard:'BSCI',grade:'B',body:'SGS',validUntil:'2027-03-15',status:'valid'},{type:'Social Compliance',standard:'SMETA 4-Pillar',grade:'Pass',body:'Intertek',validUntil:'2027-06-20',status:'valid'},{type:'Environmental',standard:'OEKO-TEX 100',grade:'Class I',body:'Hohenstein',validUntil:'2026-12-30',status:'expiring_soon'}],
-      approval:{tier:'Preferred',categories:['Garments'],approvedDate:'2025-11-10',approvedBy:'Sarah Chen',nextReview:'2026-11-10'},
-      vendorStatus:'active',vendorStatusReason:'',
-      metrics:{defectRate:'2.1%',otd:'88%',totalPOs:5,ncrs:1},
-      capacity:{monthly:15000,utilization:72},
-      contacts:[{name:'Rahim Khan',role:'Production Manager',phone:'+880-1712-XXXXXX'},{name:'Fatima Begum',role:'QA Head',phone:'+880-1812-XXXXXX'}]
-    },
-    'Saigon Stitch Co.': {
-      audits:[{type:'Factory Audit',standard:'WRAP',grade:'Gold',body:'Bureau Veritas',validUntil:'2027-05-01',status:'valid'},{type:'Social Compliance',standard:'SA8000',grade:'Certified',body:'SGS',validUntil:'2027-08-15',status:'valid'}],
-      approval:{tier:'Approved',categories:['Garments'],approvedDate:'2026-01-20',approvedBy:'James Liu',nextReview:'2027-01-20'},
-      vendorStatus:'active',vendorStatusReason:'',
-      metrics:{defectRate:'1.8%',otd:'92%',totalPOs:4,ncrs:0},
-      capacity:{monthly:12000,utilization:65},
-      contacts:[{name:'Linh Nguyen',role:'Factory Director',phone:'+84-90-XXXXXXX'},{name:'Tran Minh',role:'QC Manager',phone:'+84-91-XXXXXXX'}]
-    },
-    'Phnom Penh Garments': {
-      audits:[{type:'Factory Audit',standard:'BSCI',grade:'C',body:'TUV',validUntil:'2027-02-28',status:'valid'},{type:'Social Compliance',standard:'SMETA 2-Pillar',grade:'Pass',body:'Intertek',validUntil:'2026-11-15',status:'expiring_soon'}],
-      approval:{tier:'Approved',categories:['Garments'],approvedDate:'2026-03-15',approvedBy:'Sarah Chen',nextReview:'2027-03-15'},
-      vendorStatus:'active',vendorStatusReason:'',
-      metrics:{defectRate:'3.2%',otd:'85%',totalPOs:3,ncrs:1},
-      capacity:{monthly:8000,utilization:80},
-      contacts:[{name:'Sok Chea',role:'General Manager',phone:'+855-12-XXXXXX'}]
-    },
-    'Guangzhou Yufeng Shoes': {
-      audits:[{type:'Factory Audit',standard:'--',grade:'--',body:'--',validUntil:'--',status:'missing'}],
-      approval:{tier:'Pending',categories:['Footwear'],approvedDate:'--',approvedBy:'--',nextReview:'--'},
-      vendorStatus:'active',vendorStatusReason:'New vendor — audit scheduling in progress',
-      metrics:{defectRate:'--',otd:'--',totalPOs:1,ncrs:0},
-      capacity:{monthly:20000,utilization:40},
-      contacts:[{name:'Wang Lei',role:'Export Manager',phone:'+86-138-XXXXXXXX'}]
-    },
-    'Tirupur Knits Pvt. Ltd.': {
-      audits:[{type:'Factory Audit',standard:'BSCI',grade:'A',body:'SGS',validUntil:'2027-09-01',status:'valid'},{type:'Social Compliance',standard:'SA8000',grade:'Certified',body:'Bureau Veritas',validUntil:'2027-07-10',status:'valid'},{type:'Environmental',standard:'GOTS',grade:'Certified',body:'Control Union',validUntil:'2027-04-20',status:'valid'}],
-      approval:{tier:'Preferred',categories:['Garments'],approvedDate:'2025-06-01',approvedBy:'Sarah Chen',nextReview:'2026-06-01'},
-      vendorStatus:'active',vendorStatusReason:'',
-      metrics:{defectRate:'1.4%',otd:'94%',totalPOs:3,ncrs:0},
-      capacity:{monthly:25000,utilization:58},
-      contacts:[{name:'Ramesh Kumar',role:'MD',phone:'+91-98422-XXXXX'},{name:'Priya Devi',role:'Quality Head',phone:'+91-98433-XXXXX'}]
-    },
-    'Istanbul Konfeksiyon A.S.': {
-      audits:[{type:'Factory Audit',standard:'WRAP',grade:'Silver',body:'Bureau Veritas',validUntil:'2027-01-31',status:'valid'},{type:'Social Compliance',standard:'SMETA 4-Pillar',grade:'Pass',body:'SGS',validUntil:'2027-04-15',status:'valid'}],
-      approval:{tier:'Approved',categories:['Garments'],approvedDate:'2026-02-10',approvedBy:'James Liu',nextReview:'2027-02-10'},
-      vendorStatus:'active',vendorStatusReason:'',
-      metrics:{defectRate:'2.5%',otd:'90%',totalPOs:2,ncrs:0},
-      capacity:{monthly:10000,utilization:70},
-      contacts:[{name:'Emre Yilmaz',role:'Operations Director',phone:'+90-532-XXXXXXX'}]
-    },
-    'Sialkot Sports Mfg.': {
-      audits:[{type:'Factory Audit',standard:'BSCI',grade:'B',body:'TUV',validUntil:'2027-06-30',status:'valid'},{type:'Social Compliance',standard:'SMETA 2-Pillar',grade:'Pass',body:'Intertek',validUntil:'2027-03-20',status:'valid'}],
-      approval:{tier:'Conditional',categories:['Headwear','Gloves'],approvedDate:'2026-05-01',approvedBy:'Sarah Chen',nextReview:'2026-11-01'},
-      vendorStatus:'active',vendorStatusReason:'Conditional — awaiting environmental certification',
-      metrics:{defectRate:'3.8%',otd:'82%',totalPOs:3,ncrs:1},
-      capacity:{monthly:18000,utilization:55},
-      contacts:[{name:'Imran Ali',role:'Factory Manager',phone:'+92-300-XXXXXXX'},{name:'Saba Noor',role:'QA Lead',phone:'+92-301-XXXXXXX'}]
-    },
-    'Addis Ababa Garments PLC': {
-      audits:[{type:'Factory Audit',standard:'--',grade:'--',body:'--',validUntil:'--',status:'missing'}],
-      approval:{tier:'Pending',categories:['Accessories'],approvedDate:'--',approvedBy:'--',nextReview:'--'},
-      vendorStatus:'probation',vendorStatusReason:'New factory — probation until first audit completes',
-      metrics:{defectRate:'--',otd:'--',totalPOs:1,ncrs:0},
-      capacity:{monthly:6000,utilization:35},
-      contacts:[{name:'Abebe Tadesse',role:'General Manager',phone:'+251-91-XXXXXXX'}]
-    },
-    'Shenzhen Footwear Co.': {
-      audits:[{type:'Factory Audit',standard:'BSCI',grade:'C',body:'SGS',validUntil:'2027-02-15',status:'valid'},{type:'Environmental',standard:'OEKO-TEX 100',grade:'Class II',body:'Hohenstein',validUntil:'2026-11-30',status:'expiring_soon'}],
-      approval:{tier:'Conditional',categories:['Footwear'],approvedDate:'2026-04-10',approvedBy:'James Liu',nextReview:'2026-10-10'},
-      vendorStatus:'on_hold',vendorStatusReason:'On hold — brand approval review overdue',
-      metrics:{defectRate:'4.1%',otd:'78%',totalPOs:2,ncrs:1},
-      capacity:{monthly:30000,utilization:45},
-      contacts:[{name:'Chen Wei',role:'Sales Director',phone:'+86-755-XXXXXXXX'},{name:'Li Fang',role:'QC Manager',phone:'+86-755-XXXXXXXX'}]
-    }
   };
   var CAT_ICONS = {Garments:'🧥',Footwear:'👟',Gloves:'🧤',Headwear:'🧢',Accessories:'👜'};
   var STATUSES = {
