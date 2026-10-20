@@ -1197,6 +1197,130 @@ var FACTORIES = {
   'Addis Ababa Garments PLC': { city:'Addis Ababa', country:'ET', audited:false, approved:false, active:true, img:'\u{1F9E5}' },
   'Shenzhen Footwear Co.':    { city:'Shenzhen', country:'CN', audited:true, approved:false, active:true, img:'\u{1F97E}' }
 };
+var FACTORY_DETAILS = {
+  'Dhaka Textiles Ltd.': {
+    audits: [
+      { type:'Factory Audit', standard:'BSCI', grade:'B', body:'SGS', validUntil:'2027-03-15', status:'valid' },
+      { type:'Social Compliance', standard:'SMETA 4-Pillar', grade:'Pass', body:'Intertek', validUntil:'2027-06-20', status:'valid' },
+      { type:'Environmental', standard:'OEKO-TEX 100', grade:'Class I', body:'Hohenstein', validUntil:'2026-12-30', status:'expiring_soon' }
+    ],
+    approval: { tier:'Preferred', categories:['Garments'], approvedDate:'2025-11-10', approvedBy:'Sarah Chen', nextReview:'2026-11-10' },
+    vendorStatus:'active', vendorStatusReason:'',
+    metrics: { defectRate:'2.1%', otd:'88%', totalPOs:5, ncrs:1 },
+    capacity: { monthly:15000, utilization:72 },
+    contacts: [
+      { name:'Rahim Khan', role:'Production Manager', phone:'+880-1712-XXXXXX' },
+      { name:'Fatima Begum', role:'QA Head', phone:'+880-1812-XXXXXX' }
+    ]
+  },
+  'Saigon Stitch Co.': {
+    audits: [
+      { type:'Factory Audit', standard:'WRAP', grade:'Gold', body:'Bureau Veritas', validUntil:'2027-05-01', status:'valid' },
+      { type:'Social Compliance', standard:'SA8000', grade:'Certified', body:'SGS', validUntil:'2027-08-15', status:'valid' }
+    ],
+    approval: { tier:'Approved', categories:['Garments'], approvedDate:'2026-01-20', approvedBy:'James Liu', nextReview:'2027-01-20' },
+    vendorStatus:'active', vendorStatusReason:'',
+    metrics: { defectRate:'1.8%', otd:'92%', totalPOs:4, ncrs:0 },
+    capacity: { monthly:12000, utilization:65 },
+    contacts: [
+      { name:'Linh Nguyen', role:'Factory Director', phone:'+84-90-XXXXXXX' },
+      { name:'Tran Minh', role:'QC Manager', phone:'+84-91-XXXXXXX' }
+    ]
+  },
+  'Phnom Penh Garments': {
+    audits: [
+      { type:'Factory Audit', standard:'BSCI', grade:'C', body:'TUV', validUntil:'2027-02-28', status:'valid' },
+      { type:'Social Compliance', standard:'SMETA 2-Pillar', grade:'Pass', body:'Intertek', validUntil:'2026-11-15', status:'expiring_soon' }
+    ],
+    approval: { tier:'Approved', categories:['Garments'], approvedDate:'2026-03-15', approvedBy:'Sarah Chen', nextReview:'2027-03-15' },
+    vendorStatus:'active', vendorStatusReason:'',
+    metrics: { defectRate:'3.2%', otd:'85%', totalPOs:3, ncrs:1 },
+    capacity: { monthly:8000, utilization:80 },
+    contacts: [
+      { name:'Sok Chea', role:'General Manager', phone:'+855-12-XXXXXX' }
+    ]
+  },
+  'Guangzhou Yufeng Shoes': {
+    audits: [
+      { type:'Factory Audit', standard:'--', grade:'--', body:'--', validUntil:'--', status:'missing' }
+    ],
+    approval: { tier:'Pending', categories:['Footwear'], approvedDate:'--', approvedBy:'--', nextReview:'--' },
+    vendorStatus:'active', vendorStatusReason:'New vendor — audit scheduling in progress',
+    metrics: { defectRate:'--', otd:'--', totalPOs:1, ncrs:0 },
+    capacity: { monthly:20000, utilization:40 },
+    contacts: [
+      { name:'Wang Lei', role:'Export Manager', phone:'+86-138-XXXXXXXX' }
+    ]
+  },
+  'Tirupur Knits Pvt. Ltd.': {
+    audits: [
+      { type:'Factory Audit', standard:'BSCI', grade:'A', body:'SGS', validUntil:'2027-09-01', status:'valid' },
+      { type:'Social Compliance', standard:'SA8000', grade:'Certified', body:'Bureau Veritas', validUntil:'2027-07-10', status:'valid' },
+      { type:'Environmental', standard:'GOTS', grade:'Certified', body:'Control Union', validUntil:'2027-04-20', status:'valid' }
+    ],
+    approval: { tier:'Preferred', categories:['Garments'], approvedDate:'2025-06-01', approvedBy:'Sarah Chen', nextReview:'2026-06-01' },
+    vendorStatus:'active', vendorStatusReason:'',
+    metrics: { defectRate:'1.4%', otd:'94%', totalPOs:3, ncrs:0 },
+    capacity: { monthly:25000, utilization:58 },
+    contacts: [
+      { name:'Ramesh Kumar', role:'MD', phone:'+91-98422-XXXXX' },
+      { name:'Priya Devi', role:'Quality Head', phone:'+91-98433-XXXXX' }
+    ]
+  },
+  'Istanbul Konfeksiyon A.S.': {
+    audits: [
+      { type:'Factory Audit', standard:'WRAP', grade:'Silver', body:'Bureau Veritas', validUntil:'2027-01-31', status:'valid' },
+      { type:'Social Compliance', standard:'SMETA 4-Pillar', grade:'Pass', body:'SGS', validUntil:'2027-04-15', status:'valid' }
+    ],
+    approval: { tier:'Approved', categories:['Garments'], approvedDate:'2026-02-10', approvedBy:'James Liu', nextReview:'2027-02-10' },
+    vendorStatus:'active', vendorStatusReason:'',
+    metrics: { defectRate:'2.5%', otd:'90%', totalPOs:2, ncrs:0 },
+    capacity: { monthly:10000, utilization:70 },
+    contacts: [
+      { name:'Emre Yilmaz', role:'Operations Director', phone:'+90-532-XXXXXXX' }
+    ]
+  },
+  'Sialkot Sports Mfg.': {
+    audits: [
+      { type:'Factory Audit', standard:'BSCI', grade:'B', body:'TUV', validUntil:'2027-06-30', status:'valid' },
+      { type:'Social Compliance', standard:'SMETA 2-Pillar', grade:'Pass', body:'Intertek', validUntil:'2027-03-20', status:'valid' }
+    ],
+    approval: { tier:'Conditional', categories:['Headwear','Gloves'], approvedDate:'2026-05-01', approvedBy:'Sarah Chen', nextReview:'2026-11-01' },
+    vendorStatus:'active', vendorStatusReason:'Conditional — awaiting environmental certification',
+    metrics: { defectRate:'3.8%', otd:'82%', totalPOs:3, ncrs:1 },
+    capacity: { monthly:18000, utilization:55 },
+    contacts: [
+      { name:'Imran Ali', role:'Factory Manager', phone:'+92-300-XXXXXXX' },
+      { name:'Saba Noor', role:'QA Lead', phone:'+92-301-XXXXXXX' }
+    ]
+  },
+  'Addis Ababa Garments PLC': {
+    audits: [
+      { type:'Factory Audit', standard:'--', grade:'--', body:'--', validUntil:'--', status:'missing' }
+    ],
+    approval: { tier:'Pending', categories:['Accessories'], approvedDate:'--', approvedBy:'--', nextReview:'--' },
+    vendorStatus:'probation', vendorStatusReason:'New factory — probation until first audit completes',
+    metrics: { defectRate:'--', otd:'--', totalPOs:1, ncrs:0 },
+    capacity: { monthly:6000, utilization:35 },
+    contacts: [
+      { name:'Abebe Tadesse', role:'General Manager', phone:'+251-91-XXXXXXX' }
+    ]
+  },
+  'Shenzhen Footwear Co.': {
+    audits: [
+      { type:'Factory Audit', standard:'BSCI', grade:'C', body:'SGS', validUntil:'2027-02-15', status:'valid' },
+      { type:'Environmental', standard:'OEKO-TEX 100', grade:'Class II', body:'Hohenstein', validUntil:'2026-11-30', status:'expiring_soon' }
+    ],
+    approval: { tier:'Conditional', categories:['Footwear'], approvedDate:'2026-04-10', approvedBy:'James Liu', nextReview:'2026-10-10' },
+    vendorStatus:'on_hold', vendorStatusReason:'On hold — brand approval review overdue',
+    metrics: { defectRate:'4.1%', otd:'78%', totalPOs:2, ncrs:1 },
+    capacity: { monthly:30000, utilization:45 },
+    contacts: [
+      { name:'Chen Wei', role:'Sales Director', phone:'+86-755-XXXXXXXX' },
+      { name:'Li Fang', role:'QC Manager', phone:'+86-755-XXXXXXXX' }
+    ]
+  }
+};
 var CAT_ICONS = {Garments:'\u{1F9E5}',Footwear:'\u{1F45F}',Gloves:'\u{1F9E4}',Headwear:'\u{1F9E2}',Accessories:'\u{1F45C}'};
 var STATUSES = {
   draft:['Draft','muted'], pending_factory:['Pending','muted'], accepted:['Accepted','accent'],
@@ -1812,103 +1936,96 @@ var FACTORY_DETAILS = {
 };
 
 function openFactoryDetail(factoryName) {
+  var fInfo = FACTORIES[factoryName] || {};
   var fd = FACTORY_DETAILS[factoryName];
-  if (!fd) { showToast('Factory details not available'); return; }
-  var fi = FACTORIES[factoryName] || {};
+  if (!fd) { showToast('No detailed profile available for this factory'); return; }
+  var flag = COUNTRY_FLAGS[fInfo.country] || '';
+  var coo = COUNTRIES[fInfo.country] || fInfo.country;
+
+  document.getElementById('fdIcon').textContent = fInfo.img || '\u{1F3ED}';
   document.getElementById('fdName').textContent = factoryName;
-  var tierCls = fd.approvalTier.toLowerCase().replace(/ /g,'_');
-  document.getElementById('fdTierBadge').className = 'fd-badge-tier ' + tierCls;
-  document.getElementById('fdTierBadge').textContent = fd.approvalTier;
-  var statusCls = fd.vendorStatus.toLowerCase().replace(/ /g,'_');
-  document.getElementById('fdStatusBadge').className = 'fd-badge-status ' + statusCls;
-  document.getElementById('fdStatusBadge').textContent = fd.vendorStatus;
+  document.getElementById('fdLocation').textContent = flag + ' ' + fInfo.city + ', ' + coo;
 
-  var html = '<div class="fd-grid">';
-
-  // Audits & Certifications
-  html += '<div class="fd-section"><div class="fd-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Audits & Certifications</div>';
-  if (fd.audits.length) {
-    fd.audits.forEach(function(a) {
-      var gradeColor = (a.grade==='B'||a.grade==='Gold'||a.grade==='Certified'||a.grade==='Class I'||a.grade==='4-Pillar'||a.grade==='6.0') ? 'var(--ok)' : (a.grade==='C'||a.grade==='Silver'||a.grade==='2-Pillar') ? 'var(--warn)' : 'var(--fg-muted)';
-      html += '<div class="fd-audit-row"><span style="font-weight:600;min-width:90px">'+a.standard+'</span><span class="badge" style="background:color-mix(in srgb,'+gradeColor+' 15%,transparent);color:'+gradeColor+'">'+a.grade+'</span><span style="color:var(--fg-muted);margin-left:auto;font-size:12px">'+a.body+' · Exp '+new Date(a.expiry).toLocaleDateString('en-GB',{month:'short',year:'numeric'})+'</span></div>';
-    });
+  var isBrand = currentPortal === 'brand';
+  var actHtml = '';
+  if (isBrand) {
+    actHtml += '<button onclick="showToast(\'Edit factory — coming in full platform\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</button>';
+    actHtml += '<button onclick="showToast(\'Status change — coming in full platform\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Change Status</button>';
+    actHtml += '<button class="danger" onclick="showToast(\'Deactivate vendor — coming in full platform\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg> Deactivate</button>';
   } else {
-    html += '<div style="color:var(--fg-faint);font-size:13px;padding:8px 0">No audits on file. Initial audit pending.</div>';
+    actHtml += '<span style="font-size:12px;color:var(--fg-faint);display:flex;align-items:center;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> View Only</span>';
   }
-  if (fd.certifications.length) {
-    html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--divider)">';
-    fd.certifications.forEach(function(c) {
-      html += '<div class="fd-audit-row"><span style="font-weight:600">'+c.name+'</span><span style="color:var(--fg-muted);margin-left:auto;font-size:12px">Exp '+new Date(c.expiry).toLocaleDateString('en-GB',{month:'short',year:'numeric'})+'</span></div>';
-    });
-    html += '</div>';
-  }
+  document.getElementById('fdActions').innerHTML = actHtml;
+
+  var vsClass = 'fd-vs-' + fd.vendorStatus;
+  var vsLabel = {active:'Active',on_hold:'On Hold',probation:'Probation',deactivated:'Deactivated'}[fd.vendorStatus] || fd.vendorStatus;
+  var atClass = 'fd-at-' + fd.approval.tier;
+
+  var html = '';
+
+  html += '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:20px">';
+  html += '<span class="fd-vendor-status '+vsClass+'"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="currentColor"/></svg> '+vsLabel+'</span>';
+  html += '<span class="fd-approval-tier '+atClass+'">'+fd.approval.tier+' Vendor</span>';
+  if (fd.vendorStatusReason) html += '<span style="font-size:12px;color:var(--fg-faint);font-style:italic">'+fd.vendorStatusReason+'</span>';
   html += '</div>';
 
-  // Brand Approval
-  html += '<div class="fd-section"><div class="fd-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M7.835 4.697A3.42 3.42 0 001.946 9.12a3.42 3.42 0 00-1.946 6.535 3.42 3.42 0 001.958 6.523 3.42 3.42 0 006.524 1.958 3.42 3.42 0 006.535-1.958 3.42 3.42 0 001.958-6.523 3.42 3.42 0 00-1.946-6.535 3.42 3.42 0 00-5.901-4.424z"/></svg>Brand Approval</div>';
-  html += '<div style="display:flex;gap:12px;margin-bottom:14px"><div class="fd-badge-tier '+tierCls+'" style="font-size:14px;padding:6px 16px">'+fd.approvalTier+'</div></div>';
-  if (fd.approvalDate) html += '<div style="font-size:13px;color:var(--fg-muted);margin-bottom:6px">Approved: '+new Date(fd.approvalDate).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'</div>';
-  html += '<div style="font-size:13px;color:var(--fg);line-height:1.5">'+fd.approvalNotes+'</div>';
+  html += '<div class="fd-kpi-row">';
+  html += '<div class="fd-kpi"><div class="fd-kpi-label">Defect Rate</div><div class="fd-kpi-value" style="color:'+(parseFloat(fd.metrics.defectRate)>3?'var(--bad)':'var(--ok)')+'">'+fd.metrics.defectRate+'</div></div>';
+  html += '<div class="fd-kpi"><div class="fd-kpi-label">On-Time Delivery</div><div class="fd-kpi-value" style="color:'+(parseFloat(fd.metrics.otd)<85?'var(--warn)':'var(--ok)')+'">'+fd.metrics.otd+'</div></div>';
+  html += '<div class="fd-kpi"><div class="fd-kpi-label">Active POs</div><div class="fd-kpi-value" style="color:var(--accent)">'+fd.metrics.totalPOs+'</div></div>';
+  html += '<div class="fd-kpi"><div class="fd-kpi-label">Open NCRs</div><div class="fd-kpi-value" style="color:'+(fd.metrics.ncrs>0?'var(--bad)':'var(--ok)')+'">'+fd.metrics.ncrs+'</div></div>';
   html += '</div>';
 
-  // Performance KPIs
-  html += '<div class="fd-section"><div class="fd-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8v8m-4-5v5m-4-2v2m-2 4h16a2 2 0 002-2V4a2 2 0 00-2-2H4a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>Performance KPIs</div>';
-  var p = fd.performance;
-  var qColor = p.qualityScore>=90?'var(--ok)':p.qualityScore>=80?'var(--warn)':'var(--bad)';
-  var dColor = p.onTimeDelivery>=90?'var(--ok)':p.onTimeDelivery>=80?'var(--warn)':'var(--bad)';
-  var drColor = p.defectRate<=2.5?'var(--ok)':p.defectRate<=4?'var(--warn)':'var(--bad)';
-  var rtColor = p.responseTime<=3?'var(--ok)':p.responseTime<=5?'var(--warn)':'var(--bad)';
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">';
-  html += '<div class="fd-kpi"><div class="fd-kpi-val" style="color:'+qColor+'">'+p.qualityScore+'%</div><div class="fd-kpi-label">Quality Score</div></div>';
-  html += '<div class="fd-kpi"><div class="fd-kpi-val" style="color:'+dColor+'">'+p.onTimeDelivery+'%</div><div class="fd-kpi-label">On-Time Delivery</div></div>';
-  html += '<div class="fd-kpi"><div class="fd-kpi-val" style="color:'+drColor+'">'+p.defectRate+'%</div><div class="fd-kpi-label">Defect Rate</div></div>';
-  html += '<div class="fd-kpi"><div class="fd-kpi-val" style="color:'+rtColor+'">'+p.responseTime+'h</div><div class="fd-kpi-label">Avg Response</div></div>';
-  html += '</div></div>';
+  html += '<div class="fd-grid">';
 
-  // Vendor Status & Timeline
-  html += '<div class="fd-section"><div class="fd-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Vendor Status</div>';
-  html += '<div style="display:flex;gap:12px;align-items:center;margin-bottom:14px"><div class="fd-badge-status '+statusCls+'" style="font-size:14px;padding:6px 16px">'+fd.vendorStatus+'</div></div>';
-  html += '<div style="font-size:13px;color:var(--fg-muted)">Vendor since: '+new Date(fd.vendorSince).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'</div>';
-  var years = ((new Date() - new Date(fd.vendorSince)) / (365.25*24*60*60*1000)).toFixed(1);
-  html += '<div style="font-size:13px;color:var(--fg-muted);margin-top:4px">Relationship: '+years+' years</div>';
-  html += '</div>';
+  html += '<div>';
 
-  // Capacity
-  html += '<div class="fd-section"><div class="fd-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>Capacity</div>';
-  var cap = fd.capacity;
-  html += '<div style="display:flex;gap:20px;margin-bottom:14px">';
-  html += '<div><div style="font-size:20px;font-weight:700;font-family:var(--font-display);color:var(--accent)">'+cap.monthlyUnits.toLocaleString()+'</div><div style="font-size:11px;color:var(--fg-faint)">Monthly Units</div></div>';
-  html += '<div><div style="font-size:20px;font-weight:700;font-family:var(--font-display);color:'+(cap.currentLoad>85?'var(--bad)':cap.currentLoad>70?'var(--warn)':'var(--ok)')+'">'+cap.currentLoad+'%</div><div style="font-size:11px;color:var(--fg-faint)">Current Load</div></div>';
-  html += '<div><div style="font-size:14px;font-weight:600;color:var(--fg);margin-top:4px">'+cap.peakSeason+'</div><div style="font-size:11px;color:var(--fg-faint)">Peak Season</div></div>';
-  html += '</div>';
-  html += '<div style="display:flex;flex-wrap:wrap;gap:8px">';
-  cap.machinery.forEach(function(m) {
-    html += '<span style="background:var(--bg-dim);padding:4px 10px;border-radius:var(--radius-pill);font-size:12px">'+m.type+' <strong>'+m.count+'</strong></span>';
+  html += '<div class="fd-section"><div class="fd-section-title">Audit & Compliance Certificates</div>';
+  html += '<table class="fd-audit-table"><thead><tr><th>Type</th><th>Standard</th><th>Grade</th><th>Body</th><th>Valid Until</th><th>Status</th></tr></thead><tbody>';
+  fd.audits.forEach(function(a) {
+    var sc = a.status === 'valid' ? 'color:var(--ok)' : (a.status === 'expiring_soon' ? 'color:var(--warn)' : 'color:var(--bad)');
+    var sl = a.status === 'valid' ? 'Valid' : (a.status === 'expiring_soon' ? 'Expiring Soon' : 'Missing');
+    html += '<tr><td>'+a.type+'</td><td style="font-weight:600">'+a.standard+'</td><td>'+a.grade+'</td><td>'+a.body+'</td><td>'+a.validUntil+'</td><td style="'+sc+';font-weight:600">'+sl+'</td></tr>';
   });
+  html += '</tbody></table></div>';
+
+  html += '<div class="fd-section"><div class="fd-section-title">Brand Approval</div>';
+  html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px">';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">';
+  html += '<div><span style="color:var(--fg-faint)">Tier:</span> <strong>'+fd.approval.tier+'</strong></div>';
+  html += '<div><span style="color:var(--fg-faint)">Categories:</span> '+fd.approval.categories.join(', ')+'</div>';
+  html += '<div><span style="color:var(--fg-faint)">Approved:</span> '+fd.approval.approvedDate+'</div>';
+  html += '<div><span style="color:var(--fg-faint)">By:</span> '+fd.approval.approvedBy+'</div>';
+  html += '<div><span style="color:var(--fg-faint)">Next Review:</span> '+fd.approval.nextReview+'</div>';
+  html += '</div></div></div>';
+
+  html += '</div>';
+
+  html += '<div>';
+
+  html += '<div class="fd-section"><div class="fd-section-title">Production Capacity</div>';
+  html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px">';
+  html += '<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--fg-faint)">Monthly Capacity</span><strong>'+fd.capacity.monthly.toLocaleString()+' pcs</strong></div>';
+  html += '<div style="display:flex;justify-content:space-between;font-size:13px;margin-top:8px"><span style="color:var(--fg-faint)">Current Utilization</span><strong style="color:'+(fd.capacity.utilization>80?'var(--warn)':'var(--ok)')+'">'+fd.capacity.utilization+'%</strong></div>';
+  var capColor = fd.capacity.utilization > 80 ? 'var(--warn)' : (fd.capacity.utilization > 60 ? 'var(--accent)' : 'var(--ok)');
+  html += '<div class="fd-cap-bar"><div class="fd-cap-fill" style="width:'+fd.capacity.utilization+'%;background:'+capColor+'"></div></div>';
   html += '</div></div>';
 
-  // Key Contacts
-  html += '<div class="fd-section" style="grid-column:1/-1"><div class="fd-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>Key Contacts</div>';
+  html += '<div class="fd-section"><div class="fd-section-title">Key Contacts</div>';
   fd.contacts.forEach(function(c) {
-    html += '<div class="fd-contact-row"><div><div style="font-weight:600">'+c.name+'</div><div style="font-size:12px;color:var(--fg-muted)">'+c.role+'</div></div><div style="text-align:right"><div style="font-size:12px;color:var(--accent)">'+c.email+'</div><div style="font-size:12px;color:var(--fg-muted)">'+c.phone+'</div></div></div>';
+    var initials = c.name.split(' ').map(function(w){return w[0];}).join('');
+    html += '<div class="fd-contact">'
+      +'<div class="fd-contact-avatar">'+initials+'</div>'
+      +'<div style="flex:1"><div style="font-weight:600;font-size:13px">'+c.name+'</div><div style="font-size:12px;color:var(--fg-faint)">'+c.role+'</div></div>'
+      +'<div style="font-family:var(--font-mono);font-size:12px;color:var(--fg-muted)">'+c.phone+'</div>'
+      +'</div>';
   });
   html += '</div>';
 
   html += '</div>';
+  html += '</div>';
+
   document.getElementById('fdBody').innerHTML = html;
-
-  // Footer: Brand gets action buttons, Factory gets view-only
-  var footer = document.getElementById('fdFooter');
-  if (currentPortal === 'brand') {
-    footer.innerHTML = '<button class="btn-dl secondary" onclick="closeFactoryDetail()">Close</button>'
-      +'<button class="btn-dl secondary" onclick="showToast(\'Status change — Coming in full platform\')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Change Status</button>'
-      +'<button class="btn-dl primary" onclick="showToast(\'Edit factory details — Coming in full platform\')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg> Edit Details</button>';
-  } else if (currentPortal === 'factory') {
-    footer.innerHTML = '<div class="fd-view-only"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> View Only — Contact brand for changes</div>';
-  } else {
-    footer.innerHTML = '<button class="btn-dl secondary" onclick="closeFactoryDetail()">Close</button>';
-  }
-
   document.getElementById('factoryDetailOverlay').classList.add('show');
 }
 
