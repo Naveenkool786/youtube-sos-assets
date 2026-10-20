@@ -69,6 +69,51 @@
   --border: #253330; --divider: #1E2A27;
   color-scheme: dark;
 }
+:root[data-theme="high-contrast"] {
+  --bg: #000000; --bg-card: #111111; --bg-dim: #0A0A0A; --bg-ink: #FFFFFF;
+  --fg: #FFFFFF; --fg-muted: #CCCCCC; --fg-faint: #999999;
+  --accent: #00E676; --accent-ink: #000000; --accent-soft: #003D20;
+  --accent-glow: rgba(0,230,118,0.12);
+  --warm: #FF9100; --warm-ink: #000000; --warm-soft: #3D2200;
+  --ok: #00E676; --ok-soft: #003D20;
+  --warn: #FFD600; --warn-soft: #3D3300;
+  --bad: #FF1744; --bad-soft: #3D0011;
+  --border: #333333; --divider: #222222;
+  color-scheme: dark;
+}
+:root[data-theme="ocean"] {
+  --bg: #EFF6FC; --bg-card: #FFFFFF; --bg-dim: #E1EDF8; --bg-ink: #0B2545;
+  --fg: #0B2545; --fg-muted: #4A6B8A; --fg-faint: #7A95AD;
+  --accent: #1565C0; --accent-ink: #FFFFFF; --accent-soft: #BBDEFB;
+  --accent-glow: rgba(21,101,192,0.08);
+  --warm: #E65100; --warm-ink: #FFFFFF; --warm-soft: #FFE0B2;
+  --ok: #2E7D32; --ok-soft: #C8E6C9;
+  --warn: #F9A825; --warn-soft: #FFF9C4;
+  --bad: #C62828; --bad-soft: #FFCDD2;
+  --border: #C8DFF0; --divider: #D6E8F5;
+}
+:root[data-theme="earth"] {
+  --bg: #FAF5F0; --bg-card: #FFFFFF; --bg-dim: #F0E8DD; --bg-ink: #3E2723;
+  --fg: #3E2723; --fg-muted: #6D4C41; --fg-faint: #A1887F;
+  --accent: #5D4037; --accent-ink: #FFFFFF; --accent-soft: #D7CCC8;
+  --accent-glow: rgba(93,64,55,0.08);
+  --warm: #BF360C; --warm-ink: #FFFFFF; --warm-soft: #FFE0B2;
+  --ok: #558B2F; --ok-soft: #DCEDC8;
+  --warn: #F9A825; --warn-soft: #FFF9C4;
+  --bad: #B71C1C; --bad-soft: #FFCDD2;
+  --border: #E0D5C8; --divider: #ECDDD0;
+}
+:root[data-theme="soft"] {
+  --bg: #F5F0FF; --bg-card: #FFFFFF; --bg-dim: #EDE5FF; --bg-ink: #2D1B69;
+  --fg: #2D1B69; --fg-muted: #6B5B8D; --fg-faint: #9B8FB5;
+  --accent: #7C4DFF; --accent-ink: #FFFFFF; --accent-soft: #E8DEFF;
+  --accent-glow: rgba(124,77,255,0.08);
+  --warm: #FF6E40; --warm-ink: #FFFFFF; --warm-soft: #FFE0D6;
+  --ok: #66BB6A; --ok-soft: #E0F2E0;
+  --warn: #FFCA28; --warn-soft: #FFF8E1;
+  --bad: #EF5350; --bad-soft: #FFEBEE;
+  --border: #DDD5F0; --divider: #E8E0F5;
+}
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
@@ -830,10 +875,54 @@ body {
 .fd-at-Pending { background: var(--bg-dim); color: var(--fg-faint); }
 .fd-cap-bar { height: 8px; border-radius: 4px; background: var(--bg-dim); overflow: hidden; margin-top: 8px; }
 .fd-cap-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+/* Settings */
+.settings-wrap { max-width: 720px; }
+.settings-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px; }
+.settings-section-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--fg); }
+.theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.theme-card { border: 2px solid var(--border); border-radius: var(--radius-sm); padding: 12px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; position: relative; }
+.theme-card:hover { border-color: var(--accent); }
+.theme-card.active { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.theme-card.active::after { content: '\2713'; position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.theme-preview { height: 48px; border-radius: 6px; margin-bottom: 8px; display: flex; overflow: hidden; }
+.theme-preview-bar { flex: 1; }
+.theme-card-name { font-size: 12px; font-weight: 600; text-align: center; }
+.lang-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.lang-card { border: 2px solid var(--border); border-radius: var(--radius-sm); padding: 10px; cursor: pointer; text-align: center; transition: border-color 0.2s, box-shadow 0.2s; }
+.lang-card:hover { border-color: var(--accent); }
+.lang-card.active { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); background: var(--accent-soft); }
+.lang-card-flag { font-size: 24px; margin-bottom: 4px; }
+.lang-card-name { font-size: 11px; font-weight: 600; }
+.lang-card-native { font-size: 10px; color: var(--fg-faint); }
+.lang-suggestion { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+.lang-suggestion-text { flex: 1; font-size: 13px; }
+.lang-suggestion-btn { padding: 6px 16px; border-radius: var(--radius-pill); border: none; background: var(--accent); color: var(--accent-ink); font-weight: 600; font-size: 12px; cursor: pointer; font-family: var(--font-body); }
+.lang-suggestion-btn:hover { opacity: 0.9; }
+.lang-suggestion-dismiss { border: none; background: none; color: var(--fg-faint); cursor: pointer; font-size: 16px; padding: 4px; }
+.settings-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--divider); }
+.settings-toggle-row:last-child { border-bottom: none; }
+.settings-toggle-label { font-size: 13px; font-weight: 500; }
+.settings-toggle-desc { font-size: 11px; color: var(--fg-faint); margin-top: 2px; }
+.settings-toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+.settings-toggle input { opacity: 0; width: 0; height: 0; }
+.settings-toggle-track { position: absolute; inset: 0; background: var(--bg-dim); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: background 0.2s; }
+.settings-toggle-track::after { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: white; top: 2px; left: 2px; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.settings-toggle input:checked + .settings-toggle-track { background: var(--accent); border-color: var(--accent); }
+.settings-toggle input:checked + .settings-toggle-track::after { transform: translateX(18px); }
+.settings-select { padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 13px; cursor: pointer; min-width: 180px; }
+.settings-select:focus { outline: none; border-color: var(--accent); }
+.settings-profile-card { display: flex; align-items: center; gap: 16px; }
+.settings-profile-avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; font-family: var(--font-display); }
+.settings-profile-info { flex: 1; }
+.settings-profile-name { font-size: 16px; font-weight: 700; }
+.settings-profile-role { font-size: 12px; color: var(--fg-faint); margin-top: 2px; }
+.settings-profile-email { font-size: 12px; color: var(--accent); margin-top: 2px; }
 @media (max-width: 860px) {
   .factory-detail-box { margin: 0; border-radius: 0; max-width: 100%; }
   .fd-kpi-row { grid-template-columns: repeat(2, 1fr); }
   .fd-header-actions { flex-wrap: wrap; }
+  .theme-grid { grid-template-columns: repeat(2, 1fr); }
+  .lang-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* Mobile responsive */
@@ -870,6 +959,8 @@ body {
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .dash-cols { grid-template-columns: 1fr; }
   .detail-panel { width: 100%; max-width: 100vw; }
+  .theme-grid { grid-template-columns: repeat(2, 1fr); }
+  .lang-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1076,6 +1167,41 @@ body {
           <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.3;margin-bottom:12px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
           <div style="font-size:15px;font-weight:600;margin-bottom:4px">Inspection Reports</div>
           <div style="font-size:13px">Past reports and export functionality will be available in the full platform.</div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="settings-wrap">
+          <div class="settings-section">
+            <div class="settings-section-title"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>Appearance</div>
+            <div class="theme-grid" id="themeGrid"></div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-section-title"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>Language</div>
+            <div id="langSuggestion"></div>
+            <div class="lang-grid" id="langGrid"></div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-section-title"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Notifications</div>
+            <div class="settings-toggles" id="notifToggles"></div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-section-title"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Date &amp; Time</div>
+            <div class="settings-toggles" id="dateTimeSettings"></div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-section-title"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Currency</div>
+            <div class="settings-toggles" id="currencySettings"></div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-section-title"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
+            <div id="profileSection"></div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-section-title"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Data Export</div>
+            <div class="settings-toggles" id="exportSettings"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1532,17 +1658,20 @@ var NAV_ITEMS = {
     { id:'brand-dashboard', label:'Dashboard', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>' },
     { id:'brand-pos', label:'Purchase Orders', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>' },
     { id:'brand-inspections', label:'Inspections', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>' },
-    { id:'brand-analytics', label:'Analytics', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 6-6"/></svg>' }
+    { id:'brand-analytics', label:'Analytics', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 6-6"/></svg>' },
+    { id:'settings', label:'Settings', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>' }
   ],
   factory: [
     { id:'factory-floor', label:'Production Floor', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>' },
     { id:'factory-orders', label:'Active Orders', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>' },
-    { id:'factory-milestones', label:'Milestones', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>' }
+    { id:'factory-milestones', label:'Milestones', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>' },
+    { id:'settings', label:'Settings', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>' }
   ],
   inspector: [
     { id:'inspector-schedule', label:'Schedule', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' },
     { id:'inspector-results', label:'Inspection Results', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>' },
-    { id:'inspector-reports', label:'Reports', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>' }
+    { id:'inspector-reports', label:'Reports', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>' },
+    { id:'settings', label:'Settings', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>' }
   ]
 };
 
@@ -1562,8 +1691,205 @@ var PAGE_TITLES = {
   'factory-milestones':'Milestones',
   'inspector-schedule':'Schedule',
   'inspector-results':'Inspection Results',
-  'inspector-reports':'Reports'
+  'inspector-reports':'Reports',
+  'settings':'Settings'
 };
+
+var THEMES = [
+  { id:'light', name:'Light Classic', colors:['#FAF7F1','#FFFFFF','#0F4238','#C67952','#1B7A4E','#C0392B'] },
+  { id:'dark', name:'Dark Professional', colors:['#0D1512','#152220','#4DBEA2','#E39670','#3EC786','#E74C3C'] },
+  { id:'high-contrast', name:'High Contrast', colors:['#000000','#111111','#00E676','#FF9100','#00E676','#FF1744'] },
+  { id:'ocean', name:'Ocean Gradient', colors:['#EFF6FC','#FFFFFF','#1565C0','#E65100','#2E7D32','#C62828'] },
+  { id:'earth', name:'Earth Tones', colors:['#FAF5F0','#FFFFFF','#5D4037','#BF360C','#558B2F','#B71C1C'] },
+  { id:'soft', name:'Soft Vision', colors:['#F5F0FF','#FFFFFF','#7C4DFF','#FF6E40','#66BB6A','#EF5350'] }
+];
+
+var LANGUAGES = [
+  { code:'en', name:'English', native:'English', flag:'🇬🇧' },
+  { code:'zh', name:'Chinese', native:'中文', flag:'🇨🇳' },
+  { code:'bn', name:'Bengali', native:'বাংলা', flag:'🇧🇩' },
+  { code:'vi', name:'Vietnamese', native:'Tiếng Việt', flag:'🇻🇳' },
+  { code:'hi', name:'Hindi', native:'हिन्दी', flag:'🇮🇳' },
+  { code:'tr', name:'Turkish', native:'Türkçe', flag:'🇹🇷' },
+  { code:'es', name:'Spanish', native:'Español', flag:'🇪🇸' },
+  { code:'pt', name:'Portuguese', native:'Português', flag:'🇧🇷' }
+];
+
+var LOCALE_TO_LANG = {
+  'zh':{ code:'zh', msg:'We detected you may prefer Chinese. Switch to 中文?' },
+  'bn':{ code:'bn', msg:'We detected you may prefer Bengali. Switch to বাংলা?' },
+  'vi':{ code:'vi', msg:'We detected you may prefer Vietnamese. Switch to Tiếng Việt?' },
+  'hi':{ code:'hi', msg:'We detected you may prefer Hindi. Switch to हिन्दी?' },
+  'tr':{ code:'tr', msg:'We detected you may prefer Turkish. Switch to Türkçe?' },
+  'es':{ code:'es', msg:'We detected you may prefer Spanish. Switch to Español?' },
+  'pt':{ code:'pt', msg:'We detected you may prefer Portuguese. Switch to Português?' }
+};
+
+function getStoredSetting(key, fallback) {
+  try { var v = localStorage.getItem('fabriq_'+key); return v !== null ? v : fallback; } catch(e) { return fallback; }
+}
+function storeSetting(key, val) {
+  try { localStorage.setItem('fabriq_'+key, val); } catch(e) {}
+}
+
+function applyTheme(themeId) {
+  if (themeId === 'light') {
+    document.documentElement.removeAttribute('data-theme');
+  } else {
+    document.documentElement.setAttribute('data-theme', themeId);
+  }
+  storeSetting('theme', themeId);
+  var cards = document.querySelectorAll('.theme-card');
+  cards.forEach(function(c) { c.classList.toggle('active', c.dataset.theme === themeId); });
+}
+
+function renderThemeGrid() {
+  var grid = document.getElementById('themeGrid');
+  if (!grid) return;
+  var current = getStoredSetting('theme', 'light');
+  grid.innerHTML = THEMES.map(function(t) {
+    var active = t.id === current ? ' active' : '';
+    var bars = t.colors.map(function(c) { return '<div class="theme-preview-bar" style="background:'+c+'"></div>'; }).join('');
+    return '<div class="theme-card'+active+'" data-theme="'+t.id+'" onclick="applyTheme(\''+t.id+'\')">'
+      +'<div class="theme-preview">'+bars+'</div>'
+      +'<div class="theme-card-name">'+t.name+'</div></div>';
+  }).join('');
+}
+
+function applyLanguage(langCode) {
+  storeSetting('language', langCode);
+  var cards = document.querySelectorAll('.lang-card');
+  cards.forEach(function(c) { c.classList.toggle('active', c.dataset.lang === langCode); });
+  var suggestion = document.getElementById('langSuggestion');
+  if (suggestion) suggestion.style.display = 'none';
+  storeSetting('langDismissed', 'true');
+  showToast('Language set to ' + LANGUAGES.find(function(l){return l.code===langCode;}).name + ' — Full i18n coming in platform');
+}
+
+function renderLangGrid() {
+  var grid = document.getElementById('langGrid');
+  if (!grid) return;
+  var current = getStoredSetting('language', 'en');
+  grid.innerHTML = LANGUAGES.map(function(l) {
+    var active = l.code === current ? ' active' : '';
+    return '<div class="lang-card'+active+'" data-lang="'+l.code+'" onclick="applyLanguage(\''+l.code+'\')">'
+      +'<div class="lang-card-flag">'+l.flag+'</div>'
+      +'<div class="lang-card-name">'+l.name+'</div>'
+      +'<div class="lang-card-native">'+l.native+'</div></div>';
+  }).join('');
+}
+
+function detectLanguageSuggestion() {
+  var el = document.getElementById('langSuggestion');
+  if (!el) return;
+  if (getStoredSetting('langDismissed','') === 'true') { el.style.display = 'none'; return; }
+  var browserLang = (navigator.language || navigator.userLanguage || 'en').split('-')[0].toLowerCase();
+  var suggestion = LOCALE_TO_LANG[browserLang];
+  if (suggestion && getStoredSetting('language','en') === 'en') {
+    el.innerHTML = '<div class="lang-suggestion">'
+      +'<div class="lang-suggestion-text">'+suggestion.msg+'</div>'
+      +'<button class="lang-suggestion-btn" onclick="applyLanguage(\''+suggestion.code+'\')">Switch</button>'
+      +'<button class="lang-suggestion-dismiss" onclick="this.parentElement.parentElement.style.display=\'none\';storeSetting(\'langDismissed\',\'true\')">×</button>'
+      +'</div>';
+    el.style.display = 'block';
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+function renderNotifToggles() {
+  var el = document.getElementById('notifToggles');
+  if (!el) return;
+  var items = [
+    { key:'notif_email', label:'Email Notifications', desc:'Receive PO updates, NCR alerts via email', def:'true' },
+    { key:'notif_push', label:'Push Notifications', desc:'Browser push for real-time alerts', def:'true' },
+    { key:'notif_sms', label:'SMS Alerts', desc:'Critical alerts via SMS (NCRs, failed inspections)', def:'false' },
+    { key:'notif_milestone', label:'Milestone Updates', desc:'Notify when production milestones change', def:'true' },
+    { key:'notif_inspection', label:'Inspection Reminders', desc:'Upcoming and overdue inspection alerts', def:'true' },
+    { key:'notif_digest', label:'Daily Digest', desc:'Summary email of all activity at end of day', def:'false' }
+  ];
+  el.innerHTML = items.map(function(it) {
+    var checked = getStoredSetting(it.key, it.def) === 'true' ? ' checked' : '';
+    return '<div class="settings-toggle-row"><div><div class="settings-toggle-label">'+it.label+'</div><div class="settings-toggle-desc">'+it.desc+'</div></div>'
+      +'<label class="settings-toggle"><input type="checkbox"'+checked+' onchange="storeSetting(\''+it.key+'\',this.checked?\'true\':\'false\')"><span class="settings-toggle-track"></span></label></div>';
+  }).join('');
+}
+
+function renderDateTimeSettings() {
+  var el = document.getElementById('dateTimeSettings');
+  if (!el) return;
+  var dateFmt = getStoredSetting('date_format','DD/MM/YYYY');
+  var timeFmt = getStoredSetting('time_format','24h');
+  el.innerHTML = '<div class="settings-toggle-row"><div><div class="settings-toggle-label">Date Format</div><div class="settings-toggle-desc">How dates appear across the platform</div></div>'
+    +'<select class="settings-select" onchange="storeSetting(\'date_format\',this.value);showToast(\'Date format updated\')">'
+    +'<option value="DD/MM/YYYY"'+(dateFmt==='DD/MM/YYYY'?' selected':'')+'>DD/MM/YYYY (31/12/2026)</option>'
+    +'<option value="MM/DD/YYYY"'+(dateFmt==='MM/DD/YYYY'?' selected':'')+'>MM/DD/YYYY (12/31/2026)</option>'
+    +'<option value="YYYY-MM-DD"'+(dateFmt==='YYYY-MM-DD'?' selected':'')+'>YYYY-MM-DD (2026-12-31)</option>'
+    +'</select></div>'
+    +'<div class="settings-toggle-row"><div><div class="settings-toggle-label">Time Format</div><div class="settings-toggle-desc">12-hour or 24-hour clock</div></div>'
+    +'<select class="settings-select" onchange="storeSetting(\'time_format\',this.value);showToast(\'Time format updated\')">'
+    +'<option value="24h"'+(timeFmt==='24h'?' selected':'')+'>24-hour (14:30)</option>'
+    +'<option value="12h"'+(timeFmt==='12h'?' selected':'')+'>12-hour (2:30 PM)</option>'
+    +'</select></div>';
+}
+
+function renderCurrencySettings() {
+  var el = document.getElementById('currencySettings');
+  if (!el) return;
+  var curr = getStoredSetting('currency','USD');
+  el.innerHTML = '<div class="settings-toggle-row"><div><div class="settings-toggle-label">Default Currency</div><div class="settings-toggle-desc">Primary currency for PO values and reports</div></div>'
+    +'<select class="settings-select" onchange="storeSetting(\'currency\',this.value);showToast(\'Currency updated to \'+this.value)">'
+    +'<option value="USD"'+(curr==='USD'?' selected':'')+'>USD ($) — US Dollar</option>'
+    +'<option value="EUR"'+(curr==='EUR'?' selected':'')+'>EUR (€) — Euro</option>'
+    +'<option value="GBP"'+(curr==='GBP'?' selected':'')+'>GBP (£) — British Pound</option>'
+    +'<option value="CNY"'+(curr==='CNY'?' selected':'')+'>CNY (¥) — Chinese Yuan</option>'
+    +'<option value="BDT"'+(curr==='BDT'?' selected':'')+'>BDT (৳) — Bangladeshi Taka</option>'
+    +'<option value="VND"'+(curr==='VND'?' selected':'')+'>VND (₫) — Vietnamese Dong</option>'
+    +'<option value="INR"'+(curr==='INR'?' selected':'')+'>INR (₹) — Indian Rupee</option>'
+    +'<option value="TRY"'+(curr==='TRY'?' selected':'')+'>TRY (₺) — Turkish Lira</option>'
+    +'</select></div>';
+}
+
+function renderProfileSection() {
+  var el = document.getElementById('profileSection');
+  if (!el) return;
+  var user = USERS[currentPortal];
+  var roles = { brand:'Brand Quality Manager', factory:'Factory Production Manager', inspector:'3rd Party Inspector' };
+  el.innerHTML = '<div class="settings-profile-card">'
+    +'<div class="settings-profile-avatar">'+user.initials+'</div>'
+    +'<div class="settings-profile-info">'
+    +'<div class="settings-profile-name">'+user.name+'</div>'
+    +'<div class="settings-profile-role">'+roles[currentPortal]+'</div>'
+    +'<div class="settings-profile-email">'+user.name.toLowerCase().replace(' ','.')+'@fabriq.io</div>'
+    +'</div>'
+    +'<button style="padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:12px;font-weight:600;cursor:pointer" onclick="showToast(\'Profile editing — Coming in full platform\')">Edit Profile</button>'
+    +'</div>';
+}
+
+function renderExportSettings() {
+  var el = document.getElementById('exportSettings');
+  if (!el) return;
+  var fmt = getStoredSetting('export_format','xlsx');
+  el.innerHTML = '<div class="settings-toggle-row"><div><div class="settings-toggle-label">Default Export Format</div><div class="settings-toggle-desc">Preferred format when downloading reports and data</div></div>'
+    +'<select class="settings-select" onchange="storeSetting(\'export_format\',this.value);showToast(\'Export format updated\')">'
+    +'<option value="xlsx"'+(fmt==='xlsx'?' selected':'')+'>Excel (.xlsx)</option>'
+    +'<option value="csv"'+(fmt==='csv'?' selected':'')+'>CSV (.csv)</option>'
+    +'<option value="pdf"'+(fmt==='pdf'?' selected':'')+'>PDF (.pdf)</option>'
+    +'</select></div>'
+    +'<div class="settings-toggle-row"><div><div class="settings-toggle-label">Include Photos in Export</div><div class="settings-toggle-desc">Attach inspection photos to PDF/Excel reports</div></div>'
+    +'<label class="settings-toggle"><input type="checkbox"'+(getStoredSetting('export_photos','true')==='true'?' checked':'')+' onchange="storeSetting(\'export_photos\',this.checked?\'true\':\'false\')"><span class="settings-toggle-track"></span></label></div>';
+}
+
+function renderSettingsPage() {
+  renderThemeGrid();
+  renderLangGrid();
+  detectLanguageSuggestion();
+  renderNotifToggles();
+  renderDateTimeSettings();
+  renderCurrencySettings();
+  renderProfileSection();
+  renderExportSettings();
+}
 
 function init() {
   document.getElementById('sidebar').classList.add('collapsed');
@@ -1582,6 +1908,9 @@ function init() {
   pushNotif('NCR raised on PO-2611-BB-002 — <strong>8% defect rate</strong> on back yoke stitching','red',{type:'po',id:'PO-2611-BB-002'});
   pushNotif('Inspector <strong>Priya Sharma</strong> assigned for Nov 10 in-line at Dhaka Textiles','blue',{type:'inspection',id:'INS-2611-DT-001'});
   pushNotif('Final inspection <strong>overdue</strong> on PO-2611-AW-002 — Saigon Stitch Co.','orange',{type:'po',id:'PO-2611-AW-002'});
+  renderSettingsPage();
+  var savedTheme = getStoredSetting('theme', 'light');
+  if (savedTheme !== 'light') applyTheme(savedTheme);
 }
 
 function renderSidebarNav() {
@@ -1621,6 +1950,7 @@ function showPage(pageId) {
   if (el) el.classList.add('active');
   document.getElementById('pageTitle').textContent = PAGE_TITLES[pageId] || 'Dashboard';
   document.getElementById('contentArea').scrollTop = 0;
+  if (pageId === 'settings') renderSettingsPage();
 }
 
 function toggleSidebar() {
