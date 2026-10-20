@@ -141,7 +141,7 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { height: 100%; }
+html { height: 100%; overflow: hidden; }
 body {
   height: 100%; background: var(--bg); color: var(--fg);
   font-family: var(--font-body); font-size: 14px; line-height: 1.5;
@@ -484,10 +484,11 @@ body {
   background: var(--bg-card); border-left: 1px solid var(--border);
   box-shadow: -4px 0 30px rgba(0,0,0,0.3);
   display: flex; flex-direction: column; overflow: hidden;
-  transform: translateX(100%);
+  transform: translateX(110%);
   transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+  visibility: hidden;
 }
-.ai-sidebar.show { transform: translateX(0); }
+.ai-sidebar.show { transform: translateX(0); visibility: visible; }
 .ai-sidebar-header {
   display: flex; align-items: center; gap: 10px;
   padding: 18px 20px; border-bottom: 1px solid var(--divider);
@@ -631,7 +632,7 @@ body {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             Web
           </a>
-          <a class="launch-btn" href="../pwa/" target="_blank">
+          <a class="launch-btn" href="../" target="_blank">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
             Mobile
           </a>
