@@ -1014,7 +1014,7 @@ function askAi(q) {
   document.getElementById(‘aiSuggestions’).style.display=’none’;
   if(aiAutoCloseTimer) clearTimeout(aiAutoCloseTimer);
   setTimeout(function(){
-    var ans = AI_RESPONSES[q] || ‘I’m analyzing your data... Based on the current portfolio of 12 active POs across 9 factories, I\’d need more specific criteria to give you actionable insights. Try asking about delay risks, defect rates, NCRs, or delivery trends.’;
+    var ans = AI_RESPONSES[q] || ‘I\’m analyzing your data... Based on the current portfolio of 12 active POs across 9 factories, I\’d need more specific criteria to give you actionable insights. Try asking about delay risks, defect rates, NCRs, or delivery trends.’;
     body.innerHTML += ‘<div class="ai-msg bot">’+ans+’</div>’;
     body.scrollTop = body.scrollHeight;
     aiAutoCloseTimer = setTimeout(closeAi, 8000);
