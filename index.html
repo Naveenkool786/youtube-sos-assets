@@ -240,6 +240,79 @@
     font-size: 11px; color: rgba(255,255,255,0.4);
   }
 
+  /* AI FAB — Gemini-style animated sparkle */
+  @keyframes ai-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+  @keyframes ai-glow { 0%,100%{box-shadow:0 4px 16px rgba(15,66,56,0.35)} 50%{box-shadow:0 4px 28px rgba(15,66,56,0.6), 0 0 40px rgba(15,66,56,0.2)} }
+  @keyframes ai-sparkle { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+  @keyframes ai-gradient { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+  .ai-fab {
+    position:fixed; bottom:24px; right:16px; z-index:80;
+    width:52px; height:52px; border-radius:50%; border:none; cursor:pointer;
+    background: linear-gradient(135deg, var(--accent), #1B7A4E, var(--accent), #2AAF7F);
+    background-size: 300% 300%;
+    animation: ai-pulse 2s ease-in-out infinite, ai-glow 2s ease-in-out infinite, ai-gradient 6s ease infinite;
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    -webkit-tap-highlight-color:transparent;
+    transition: width 0.4s cubic-bezier(0.16,1,0.3,1), height 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease, bottom 0.3s ease;
+  }
+  .ai-fab svg { width:24px; height:24px; }
+  .ai-fab .ai-sparkle-inner { display:flex; align-items:center; justify-content:center; animation: ai-sparkle 8s linear infinite; }
+  .ai-fab.dimmed { width:34px; height:34px; opacity:0.35; animation:none; }
+  .ai-fab.dimmed .ai-sparkle-inner { animation:none; }
+  .ai-fab.dnd-hidden { display:none!important; }
+
+  /* AI Chat Bottom Sheet */
+  .ai-backdrop {
+    position:fixed; inset:0; z-index:85;
+    background:rgba(0,0,0,0.4); opacity:0;
+    pointer-events:none; transition:opacity 0.3s;
+  }
+  .ai-backdrop.show { opacity:1; pointer-events:auto; }
+  .ai-chat-sheet {
+    position:fixed; bottom:0; left:0; right:0; z-index:88;
+    max-height:75vh; max-width:480px; margin:0 auto;
+    background:var(--bg-card); border:1px solid var(--border); border-bottom:none;
+    border-radius:20px 20px 0 0;
+    display:flex; flex-direction:column; overflow:hidden;
+    transform:translateY(100%);
+    transition:transform 0.35s cubic-bezier(0.16,1,0.3,1);
+    box-shadow:0 -4px 30px rgba(0,0,0,0.15);
+  }
+  .ai-chat-sheet.show { transform:translateY(0); }
+  .ai-sheet-handle { width:36px; height:4px; border-radius:2px; background:var(--border); margin:10px auto 0; flex-shrink:0; }
+  .ai-sheet-header {
+    padding:10px 16px 12px; display:flex; align-items:center; gap:10px;
+    border-bottom:1px solid var(--divider);
+  }
+  .ai-sheet-dot { width:10px; height:10px; border-radius:50%; background:var(--ok); flex-shrink:0; animation: ai-pulse 2s ease-in-out infinite; }
+  .ai-sheet-header span { font-weight:700; font-size:15px; flex:1; color:var(--fg); }
+  .ai-sheet-close { border:none; background:none; color:var(--fg-faint); cursor:pointer; font-size:22px; padding:4px 8px; -webkit-tap-highlight-color:transparent; }
+  .ai-chat-body { flex:1; overflow-y:auto; padding:14px 16px; display:flex; flex-direction:column; gap:10px; min-height:120px; }
+  .ai-msg { padding:10px 14px; border-radius:16px; font-size:13px; line-height:1.5; max-width:88%; word-break:break-word; }
+  .ai-msg.bot { background:var(--accent-soft); color:var(--fg); border-bottom-left-radius:4px; align-self:flex-start; }
+  .ai-msg.user { background:var(--accent); color:var(--accent-ink); border-bottom-right-radius:4px; align-self:flex-end; }
+  .ai-suggestions { display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 10px; }
+  .ai-sug {
+    padding:7px 14px; border-radius:var(--radius-pill); border:1px solid var(--border);
+    background:var(--bg); color:var(--fg); font-size:12px; font-weight:500;
+    cursor:pointer; font-family:var(--font-body); transition:all 0.15s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .ai-sug:active { background:var(--accent-soft); border-color:var(--accent); color:var(--accent); }
+  .ai-chat-footer { display:flex; gap:8px; padding:10px 16px; border-top:1px solid var(--divider); padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .ai-chat-footer input {
+    flex:1; padding:10px 14px; border-radius:var(--radius-pill);
+    border:1.5px solid var(--border); background:var(--bg); color:var(--fg);
+    font-size:14px; font-family:var(--font-body); outline:none;
+  }
+  .ai-chat-footer input:focus { border-color:var(--accent); }
+  .ai-chat-footer .ai-send {
+    width:40px; height:40px; border-radius:50%; border:none;
+    background:var(--accent); color:var(--accent-ink);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; flex-shrink:0; -webkit-tap-highlight-color:transparent;
+  }
+
   .section-pad { padding: 20px 16px; }
   .section-title { font-family: var(--font-display); font-size: 26px; line-height: 1.15; color: var(--fg); margin-bottom: 4px; }
   .section-sub { font-size: 13px; color: var(--fg-muted); margin-bottom: 16px; }
@@ -829,6 +902,35 @@
     </div>
     <div class="drawer-footer">FABRIQ QMS v0.1 demo</div>
   </nav>
+
+  <!-- AI FAB — Gemini-style sparkle -->
+  <button class="ai-fab" id="aiFab" onclick="toggleMobileAi()" title="Ask FABRIQ AI">
+    <span class="ai-sparkle-inner"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 1C12 1 14.5 8.5 16 10C17.5 11.5 23 12 23 12C23 12 17.5 12.5 16 14C14.5 15.5 12 23 12 23C12 23 9.5 15.5 8 14C6.5 12.5 1 12 1 12C1 12 6.5 11.5 8 10C9.5 8.5 12 1 12 1Z"/></svg></span>
+  </button>
+
+  <!-- AI Chat Bottom Sheet -->
+  <div class="ai-backdrop" id="aiBackdrop" onclick="closeMobileAi()"></div>
+  <div class="ai-chat-sheet" id="aiSheet">
+    <div class="ai-sheet-handle"></div>
+    <div class="ai-sheet-header">
+      <div class="ai-sheet-dot"></div>
+      <span>FABRIQ AI</span>
+      <button class="ai-sheet-close" onclick="closeMobileAi()">&times;</button>
+    </div>
+    <div class="ai-chat-body" id="aiChatBody">
+      <div class="ai-msg bot">Hi! I'm your FABRIQ AI assistant. I can help with PO insights, factory analytics, defect trends, and more. What would you like to know?</div>
+    </div>
+    <div class="ai-suggestions" id="aiSuggestions">
+      <button class="ai-sug" onclick="askMobileAi('Which POs have the highest risk of delay?')">Delay risk POs</button>
+      <button class="ai-sug" onclick="askMobileAi('What is the current NCR summary?')">NCR summary</button>
+      <button class="ai-sug" onclick="askMobileAi('Compare factory defect rates')">Factory scores</button>
+      <button class="ai-sug" onclick="askMobileAi('Show on-time delivery trends')">OTD trends</button>
+    </div>
+    <div class="ai-chat-footer">
+      <input type="text" id="aiInput" placeholder="Ask FABRIQ AI..." onkeydown="if(event.key==='Enter')sendMobileAiMsg()">
+      <button class="ai-send" onclick="sendMobileAiMsg()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+    </div>
+  </div>
 </div>
 
 <div class="milestone-modal" id="milestoneModal" onclick="closeMilestoneModal(event)">
@@ -2075,11 +2177,18 @@
       {k:'notif_digest',l:'Daily Digest',d:'End-of-day summary email',v:'false'}
     ];
     var ne = document.getElementById('stgNotifToggles');
-    if(ne) ne.innerHTML = notifItems.map(function(it){
-      var ch = stgGet(it.k,it.v)==='true'?' checked':'';
-      return '<div class="stg-toggle-row"><div><div class="stg-toggle-label">'+it.l+'</div><div class="stg-toggle-desc">'+it.d+'</div></div>'
-        +'<label class="stg-toggle"><input type="checkbox"'+ch+' onchange="stgSet(\''+it.k+'\',this.checked?\'true\':\'false\')"><span class="stg-toggle-track"></span></label></div>';
-    }).join('');
+    if(ne) {
+      var dndChecked = stgGet('dnd','false')==='true'?' checked':'';
+      ne.innerHTML = '<div class="stg-toggle-row" style="background:var(--bad-soft);margin:-2px -10px 8px;padding:10px 10px;border-radius:var(--radius-sm);border-bottom:none">'
+        +'<div><div class="stg-toggle-label" style="color:var(--bad);font-weight:700">Do Not Disturb</div>'
+        +'<div class="stg-toggle-desc">Hide AI assistant &amp; mute all alerts</div></div>'
+        +'<label class="stg-toggle"><input type="checkbox"'+dndChecked+' onchange="toggleDnd(this.checked)"><span class="stg-toggle-track"></span></label></div>'
+        + notifItems.map(function(it){
+        var ch = stgGet(it.k,it.v)==='true'?' checked':'';
+        return '<div class="stg-toggle-row"><div><div class="stg-toggle-label">'+it.l+'</div><div class="stg-toggle-desc">'+it.d+'</div></div>'
+          +'<label class="stg-toggle"><input type="checkbox"'+ch+' onchange="stgSet(\''+it.k+'\',this.checked?\'true\':\'false\')"><span class="stg-toggle-track"></span></label></div>';
+      }).join('');
+    }
 
     var df=stgGet('date_format','DD/MM/YYYY'), tf=stgGet('time_format','24h');
     var de=document.getElementById('stgDateTime');
@@ -2130,6 +2239,74 @@
       +'</select></div>'
       +'<div class="stg-toggle-row"><div><div class="stg-toggle-label">Include Photos</div><div class="stg-toggle-desc">Attach inspection photos to reports</div></div>'
       +'<label class="stg-toggle"><input type="checkbox"'+(stgGet('export_photos','true')==='true'?' checked':'')+' onchange="stgSet(\'export_photos\',this.checked?\'true\':\'false\')"><span class="stg-toggle-track"></span></label></div>';
+  }
+
+  // ── AI Chat ──
+  var AI_RESPONSES = {
+    'Which POs have the highest risk of delay?': 'Based on current timelines, <strong>3 POs have elevated delay risk</strong>:<br><br>1. <strong>PO-2611-BB-002</strong> (Denim Jackets) — NCR open, 8% defect rate requires rework + re-inspection before Dec 1 ship date. <span style="color:var(--bad)">HIGH RISK</span><br>2. <strong>PO-2611-AW-002</strong> (Winter Parkas) — Final inspection overdue by 3 days at Saigon Stitch. <span style="color:var(--warn)">MEDIUM RISK</span><br>3. <strong>PO-2611-BB-003</strong> (Wool Overcoat) — NCR for lining puckering at Istanbul. Dec 10 deadline tight. <span style="color:var(--warn)">MEDIUM RISK</span>',
+    'What is the current NCR summary?': '<strong>4 NCRs currently open</strong> across the portfolio:<br><br>1. <strong>PO-2611-BB-002</strong> — Back yoke stitching (8% defect) at Dhaka Textiles. Rework in progress.<br>2. <strong>PO-2611-BB-003</strong> — Lining puckering at Istanbul Konfeksiyon.<br>3. <strong>PO-2611-AW-007</strong> — Leather grain inconsistency at Sialkot Sports.<br>4. <strong>PO-2611-BB-005</strong> — EVA sole delamination at Shenzhen Footwear.<br><br>Average resolution time: <strong>18 days</strong>. Cost of quality trending up $2.1k this month.',
+    'Compare factory defect rates': '<strong>Factory Defect Rate Comparison (YTD)</strong>:<br><br>Phnom Penh Garments: <strong>0.8%</strong> (excellent)<br>Sialkot Sports: <strong>1.2%</strong><br>Saigon Stitch: <strong>1.4%</strong><br>Dhaka Textiles: <strong>3.2%</strong> (trending up)<br>Tirupur Knits: <strong>3.5%</strong><br>Addis Ababa Garments: <strong>4.7%</strong> (new supplier)<br>Istanbul Konfeksiyon: <strong>5.1%</strong><br>Dhaka Textiles (Denim): <strong>8.2%</strong> (NCR active)',
+    'Show on-time delivery trends': '<strong>On-Time Delivery — Last 6 Months</strong>:<br><br>May: 94% &nbsp; Jun: 91% &nbsp; Jul: 89% &nbsp; Aug: 85% &nbsp; Sep: 83% &nbsp; Oct: 87%<br><br>OTD recovering after August dip caused by monsoon logistics delays in Bangladesh + Vietnam. Current 87% still below 90% target.'
+  };
+  window.toggleMobileAi = function() {
+    var sheet = document.getElementById('aiSheet');
+    var bd = document.getElementById('aiBackdrop');
+    sheet.classList.add('show');
+    bd.classList.add('show');
+    document.getElementById('aiFab').style.display = 'none';
+  };
+  window.closeMobileAi = function() {
+    document.getElementById('aiSheet').classList.remove('show');
+    document.getElementById('aiBackdrop').classList.remove('show');
+    var fab = document.getElementById('aiFab');
+    if(stgGet('dnd','false')!=='true') fab.style.display = 'flex';
+    resetAiFabTimer();
+  };
+  window.askMobileAi = function(question) {
+    var body = document.getElementById('aiChatBody');
+    body.innerHTML += '<div class="ai-msg user">'+question+'</div>';
+    document.getElementById('aiSuggestions').style.display = 'none';
+    body.scrollTop = body.scrollHeight;
+    setTimeout(function(){
+      var answer = AI_RESPONSES[question] || 'I\'m analyzing your data... Based on the current portfolio of 12 active POs across 9 factories, I\'d need more specific criteria. Try asking about delay risks, defect rates, NCRs, or delivery trends.';
+      body.innerHTML += '<div class="ai-msg bot">'+answer+'</div>';
+      body.scrollTop = body.scrollHeight;
+    }, 800);
+  };
+  window.sendMobileAiMsg = function() {
+    var inp = document.getElementById('aiInput');
+    var q = inp.value.trim();
+    if(!q) return;
+    inp.value = '';
+    askMobileAi(q);
+  };
+
+  // AI FAB auto-hide after 5s idle
+  var _aiFabTimer = null;
+  function resetAiFabTimer() {
+    var fab = document.getElementById('aiFab');
+    fab.classList.remove('dimmed');
+    clearTimeout(_aiFabTimer);
+    _aiFabTimer = setTimeout(function(){ fab.classList.add('dimmed'); }, 5000);
+  }
+  ['scroll','touchstart','mousemove','click'].forEach(function(evt){
+    document.addEventListener(evt, function(){
+      var fab = document.getElementById('aiFab');
+      if(fab && fab.style.display !== 'none') resetAiFabTimer();
+    }, {passive:true});
+  });
+  resetAiFabTimer();
+
+  // DND mode — check on load
+  window.toggleDnd = function(checked) {
+    stgSet('dnd', checked ? 'true' : 'false');
+    var fab = document.getElementById('aiFab');
+    if(checked) { fab.classList.add('dnd-hidden'); }
+    else { fab.classList.remove('dnd-hidden'); fab.style.display='flex'; resetAiFabTimer(); }
+    showToast(checked ? 'Do Not Disturb enabled' : 'Do Not Disturb disabled');
+  };
+  if(stgGet('dnd','false')==='true') {
+    document.getElementById('aiFab').classList.add('dnd-hidden');
   }
 
   // Apply saved theme on load

@@ -748,18 +748,30 @@ body {
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-/* AI Chat FAB */
+/* AI Chat FAB — Gemini-style animated sparkle */
+@keyframes ai-gradient { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes ai-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+@keyframes ai-glow { 0%,100%{box-shadow:0 4px 16px rgba(124,77,255,0.3), 0 0 0 0 rgba(124,77,255,0)} 50%{box-shadow:0 4px 20px rgba(124,77,255,0.5), 0 0 24px 4px rgba(124,77,255,0.15)} }
+@keyframes ai-sparkle { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
 .ai-fab {
   position: fixed; bottom: 24px; right: 24px; z-index: 40;
   width: 56px; height: 56px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent), #1B7A4E);
+  background: linear-gradient(135deg, #7C4DFF, #448AFF, #00BFA5, #7C4DFF);
+  background-size: 300% 300%;
+  animation: ai-gradient 4s ease infinite, ai-pulse 2.5s ease-in-out infinite, ai-glow 2.5s ease-in-out infinite;
   color: #fff; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 16px rgba(15,66,56,0.3);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: width 0.4s cubic-bezier(.4,0,.2,1), height 0.4s cubic-bezier(.4,0,.2,1), opacity 0.4s ease, transform 0.2s;
 }
-.ai-fab:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(15,66,56,0.4); }
-.ai-fab svg { width: 26px; height: 26px; }
+.ai-fab:hover { transform: scale(1.12); }
+.ai-fab svg { width: 28px; height: 28px; animation: ai-sparkle 8s linear infinite; }
+.ai-fab.dimmed {
+  width: 36px; height: 36px; opacity: 0.4;
+  animation: ai-gradient 4s ease infinite;
+}
+.ai-fab.dimmed:hover { opacity: 1; width: 56px; height: 56px; }
+.ai-fab.dimmed svg { width: 18px; height: 18px; }
+.ai-fab.dnd-hidden { display: none !important; }
 .ai-chat-panel {
   position: fixed; bottom: 92px; right: 24px; z-index: 41;
   width: 380px; max-height: 520px;
@@ -1278,7 +1290,7 @@ body {
 
 <!-- AI Chat FAB -->
 <button class="ai-fab" id="aiFab" onclick="toggleAiChat()" title="Ask FABRIQ AI">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a7 7 0 017 7c0 3-2 5.5-4 7l-3 4-3-4c-2-1.5-4-4-4-7a7 7 0 017-7z"/><circle cx="12" cy="9" r="1.5" fill="currentColor" stroke="none"/><path d="M9 9h.01M15 9h.01" stroke-width="2.5"/></svg>
+  <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 1C12 1 14.5 8 12 12C9.5 8 12 1 12 1Z"/><path d="M12 1C12 1 9.5 8 12 12C14.5 8 12 1 12 1Z" opacity="0.6"/><path d="M1 12C1 12 8 9.5 12 12C8 14.5 1 12 1 12Z"/><path d="M23 12C23 12 16 14.5 12 12C16 9.5 23 12 23 12Z"/><path d="M12 23C12 23 9.5 16 12 12C14.5 16 12 23 12 23Z"/><path d="M12 23C12 23 14.5 16 12 12C9.5 16 12 23 12 23Z" opacity="0.6"/><circle cx="12" cy="12" r="2.5" opacity="0.9"/><circle cx="5" cy="5" r="1" opacity="0.5"/><circle cx="19" cy="5" r="0.7" opacity="0.4"/></svg>
 </button>
 <div class="ai-chat-panel" id="aiChatPanel">
   <div class="ai-chat-header">
@@ -1828,9 +1840,18 @@ function detectLanguageSuggestion() {
   }
 }
 
+function applyDndMode(enabled) {
+  var fab = document.getElementById('aiFab');
+  if (!fab) return;
+  if (enabled) { fab.classList.add('dnd-hidden'); } else { fab.classList.remove('dnd-hidden'); }
+}
 function renderNotifToggles() {
   var el = document.getElementById('notifToggles');
   if (!el) return;
+  var dndChecked = getStoredSetting('dnd','false') === 'true' ? ' checked' : '';
+  var dndHtml = '<div class="settings-toggle-row" style="background:var(--warn-soft);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px">'
+    +'<div><div class="settings-toggle-label" style="color:var(--warn)">Do Not Disturb</div><div class="settings-toggle-desc">Hide AI assistant, mute all pop-ups and non-critical alerts</div></div>'
+    +'<label class="settings-toggle"><input type="checkbox"'+dndChecked+' onchange="storeSetting(\'dnd\',this.checked?\'true\':\'false\');applyDndMode(this.checked)"><span class="settings-toggle-track"></span></label></div>';
   var items = [
     { key:'notif_email', label:'Email Notifications', desc:'Receive PO updates, NCR alerts via email', def:'true' },
     { key:'notif_push', label:'Push Notifications', desc:'Browser push for real-time alerts', def:'true' },
@@ -1839,7 +1860,7 @@ function renderNotifToggles() {
     { key:'notif_inspection', label:'Inspection Reminders', desc:'Upcoming and overdue inspection alerts', def:'true' },
     { key:'notif_digest', label:'Daily Digest', desc:'Summary email of all activity at end of day', def:'false' }
   ];
-  el.innerHTML = items.map(function(it) {
+  el.innerHTML = dndHtml + items.map(function(it) {
     var checked = getStoredSetting(it.key, it.def) === 'true' ? ' checked' : '';
     return '<div class="settings-toggle-row"><div><div class="settings-toggle-label">'+it.label+'</div><div class="settings-toggle-desc">'+it.desc+'</div></div>'
       +'<label class="settings-toggle"><input type="checkbox"'+checked+' onchange="storeSetting(\''+it.key+'\',this.checked?\'true\':\'false\')"><span class="settings-toggle-track"></span></label></div>';
@@ -1942,6 +1963,7 @@ function init() {
   renderSettingsPage();
   var savedTheme = getStoredSetting('theme', 'light');
   if (savedTheme !== 'light') applyTheme(savedTheme);
+  if (getStoredSetting('dnd','false') === 'true') applyDndMode(true);
 }
 
 function renderSidebarNav() {
@@ -2415,7 +2437,23 @@ function clearPortalFilter(portal, col) {
 // AI Chat
 function toggleAiChat() {
   document.getElementById('aiChatPanel').classList.toggle('show');
+  resetAiFabTimer();
 }
+// AI FAB auto-hide after 5s of inactivity
+(function(){
+  var dimTimer;
+  function dimFab() { var f=document.getElementById('aiFab'); if(f && !document.getElementById('aiChatPanel').classList.contains('show')) f.classList.add('dimmed'); }
+  window.resetAiFabTimer = function() {
+    var f=document.getElementById('aiFab'); if(f) f.classList.remove('dimmed');
+    clearTimeout(dimTimer);
+    dimTimer = setTimeout(dimFab, 5000);
+  };
+  var mainContent = document.querySelector('.main-content') || document;
+  ['scroll','mousemove','touchstart','click','keydown'].forEach(function(evt){
+    mainContent.addEventListener(evt, resetAiFabTimer, {passive:true});
+  });
+  dimTimer = setTimeout(dimFab, 5000);
+})();
 var AI_RESPONSES = {
   'Which POs have the highest risk of delay?': 'Based on current timelines, <strong>3 POs have elevated delay risk</strong>:<br><br>1. <strong>PO-2611-BB-002</strong> (Denim Jackets) — NCR open, 8% defect rate requires rework + re-inspection before Dec 1 ship date. <span style="color:var(--bad)">HIGH RISK</span><br>2. <strong>PO-2611-AW-002</strong> (Winter Parkas) — Final inspection overdue by 3 days at Saigon Stitch. <span style="color:var(--warn)">MEDIUM RISK</span><br>3. <strong>PO-2611-BB-003</strong> (Wool Overcoat) — NCR for lining puckering at Istanbul. Dec 10 deadline tight. <span style="color:var(--warn)">MEDIUM RISK</span>',
   'What is the current NCR summary?': '<strong>4 NCRs currently open</strong> across the portfolio:<br><br>1. <strong>PO-2611-BB-002</strong> — Back yoke stitching (8% defect) at Dhaka Textiles. Rework in progress.<br>2. <strong>PO-2611-BB-003</strong> — Lining puckering at Istanbul Konfeksiyon.<br>3. <strong>PO-2611-AW-007</strong> — Leather grain inconsistency at Sialkot Sports.<br>4. <strong>PO-2611-BB-005</strong> — EVA sole delamination at Shenzhen Footwear.<br><br>Average resolution time: <strong>18 days</strong>. Cost of quality trending up $2.1k this month.',
