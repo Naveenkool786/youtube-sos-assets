@@ -475,50 +475,64 @@ body {
 .section-page-back:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ═══════════════════════════════════════════
-   BOTTOM-RIGHT FAB CLUSTER
+   BOTTOM-RIGHT FAB (auto-hide shortcuts)
    ═══════════════════════════════════════════ */
 .fab-cluster {
   position: fixed; bottom: 20px; right: 20px; z-index: 50;
-  display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: center;
   transition: opacity 0.3s, transform 0.3s;
 }
 .fab-cluster.hidden { opacity: 0; transform: translateY(20px); pointer-events: none; }
-.fab-shortcuts {
-  display: flex; gap: 4px;
-  background: rgba(30,30,46,0.7);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border-radius: var(--radius-pill); padding: 4px;
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+
+.fab-ai {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  background: var(--accent); border: 1px solid var(--border-accent);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 35%, transparent);
+  transition: all 0.25s; position: relative; z-index: 2;
 }
+.fab-ai:hover { box-shadow: 0 6px 24px color-mix(in srgb, var(--accent) 50%, transparent); transform: scale(1.08); }
+.fab-ai .sparkle-rotate { display: flex; animation: ai-spin 8s linear infinite; }
+.fab-ai svg { width: 18px; height: 18px; fill: var(--accent-ink); }
+@keyframes ai-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+.fab-tray {
+  display: flex; gap: 4px; overflow: hidden;
+  max-width: 0; opacity: 0; padding: 0;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow);
+  transition: max-width 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.25s, padding 0.35s;
+  margin-right: 6px;
+}
+.fab-cluster.expanded .fab-tray {
+  max-width: 200px; opacity: 1; padding: 4px;
+}
+
 .fab-shortcut {
-  width: 32px; height: 32px; border-radius: 50%; border: none;
-  background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s; padding: 0;
+  width: 30px; height: 30px; border-radius: 50%; border: none; position: relative;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; padding: 0; flex-shrink: 0;
+  transform: scale(0.5); opacity: 0;
+  transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
 }
-.fab-shortcut:hover { background: rgba(108,92,231,0.3); color: #fff; transform: scale(1.1); }
-.fab-shortcut svg { width: 15px; height: 15px; }
+.fab-cluster.expanded .fab-shortcut { transform: scale(1); opacity: 1; }
+.fab-cluster.expanded .fab-shortcut:nth-child(1) { transition-delay: 0.04s; }
+.fab-cluster.expanded .fab-shortcut:nth-child(2) { transition-delay: 0.08s; }
+.fab-cluster.expanded .fab-shortcut:nth-child(3) { transition-delay: 0.12s; }
+.fab-cluster.expanded .fab-shortcut:nth-child(4) { transition-delay: 0.16s; }
+.fab-shortcut:hover { background: var(--accent); color: var(--accent-ink); transform: scale(1.12); }
+.fab-shortcut svg { width: 14px; height: 14px; }
 .fab-shortcut .fab-label {
   position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
   background: var(--bg-card); color: var(--fg); font-size: 10px; font-weight: 600;
   padding: 4px 8px; border-radius: var(--radius-sm); white-space: nowrap;
   pointer-events: none; opacity: 0; transition: opacity 0.15s;
-  box-shadow: var(--shadow); margin-bottom: 6px;
+  box-shadow: var(--shadow); margin-bottom: 6px; border: 1px solid var(--border);
 }
 .fab-shortcut:hover .fab-label { opacity: 1; }
-.fab-ai {
-  width: 38px; height: 38px; border-radius: 50%;
-  background: linear-gradient(135deg, #1a1035, #2D1B69);
-  border: 1px solid rgba(108,92,231,0.4);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; box-shadow: 0 4px 16px rgba(108,92,231,0.3);
-  transition: all 0.2s; flex-shrink: 0;
-}
-.fab-ai:hover { box-shadow: 0 6px 24px rgba(108,92,231,0.5); transform: scale(1.08); }
-.fab-ai .sparkle-rotate { display: flex; animation: ai-spin 8s linear infinite; }
-.fab-ai svg { width: 18px; height: 18px; }
-@keyframes ai-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
 /* ═══════════════════════════════════════════
    AI RIGHT SIDEBAR PANEL
@@ -1048,9 +1062,9 @@ body {
   .topbar { padding: 10px 12px; }
   .fab-cluster { bottom: 12px; right: 12px; }
   .fab-shortcut { width: 28px; height: 28px; }
-  .fab-shortcut svg { width: 13px; height: 13px; }
+  .fab-shortcut svg { width: 12px; height: 12px; }
   .fab-ai { width: 34px; height: 34px; }
-  .fab-ai svg { width: 16px; height: 16px; }
+  .fab-ai svg { width: 15px; height: 15px; }
   .ai-sidebar { width: 100%; max-width: 100vw; }
   .modal-box { width: 96%; max-height: 92vh; }
 }
@@ -1233,16 +1247,16 @@ body {
   </div>
 </div>
 
-<!-- Bottom-Right FAB Cluster -->
+<!-- Bottom-Right FAB -->
 <div class="fab-cluster" id="bottomNav">
-  <div class="fab-shortcuts">
-    <button class="fab-shortcut" onclick="navTo('team')" style="position:relative" title="Team"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg><span class="fab-label">Team</span></button>
-    <button class="fab-shortcut" onclick="navTo('financials')" style="position:relative" title="Finance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><span class="fab-label">Finance</span></button>
-    <button class="fab-shortcut" onclick="navTo('sales')" style="position:relative" title="Sales"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span class="fab-label">Sales</span></button>
-    <button class="fab-shortcut" onclick="navTo('product')" style="position:relative" title="Product"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span class="fab-label">Product</span></button>
+  <div class="fab-tray">
+    <button class="fab-shortcut" onclick="fabNav('team')" title="Team"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg><span class="fab-label">Team</span></button>
+    <button class="fab-shortcut" onclick="fabNav('financials')" title="Finance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><span class="fab-label">Finance</span></button>
+    <button class="fab-shortcut" onclick="fabNav('sales')" title="Sales"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span class="fab-label">Sales</span></button>
+    <button class="fab-shortcut" onclick="fabNav('product')" title="Product"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span class="fab-label">Product</span></button>
   </div>
-  <div class="fab-ai" onclick="openAi()">
-    <span class="sparkle-rotate"><svg viewBox="0 0 24 24" fill="white"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg></span>
+  <div class="fab-ai" onclick="fabTap()">
+    <span class="sparkle-rotate"><svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg></span>
   </div>
 </div>
 
@@ -1360,6 +1374,32 @@ function navTo(pageId) {
 }
 
 /* ═══════════════════════════════════════════
+   FAB CLUSTER (auto-hide shortcuts)
+   ═══════════════════════════════════════════ */
+function fabTap() {
+  var cl = document.getElementById('bottomNav').classList;
+  if (cl.contains('expanded')) {
+    cl.remove('expanded');
+    openAi();
+  } else {
+    cl.add('expanded');
+  }
+}
+
+function fabNav(section) {
+  document.getElementById('bottomNav').classList.remove('expanded');
+  navTo(section);
+}
+
+function showAllSections() {
+  navTo('dashboard');
+  setTimeout(function() {
+    var el = document.getElementById('sectionGrid');
+    if (el) el.scrollIntoView({behavior: 'smooth'});
+  }, 100);
+}
+
+/* ═══════════════════════════════════════════
    SIDEBAR TOGGLE & MOBILE DRAWER
    ═══════════════════════════════════════════ */
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
@@ -1370,13 +1410,6 @@ function openMobileDrawer() {
 function closeMobileDrawer() {
   document.getElementById('sidebar').classList.remove('mobile-open');
   document.getElementById('drawerBackdrop').classList.remove('open');
-}
-function showAllSections() {
-  navTo('dashboard');
-  setTimeout(function() {
-    var el = document.getElementById('sectionGrid');
-    if (el) el.scrollIntoView({behavior: 'smooth'});
-  }, 100);
 }
 
 /* ═══════════════════════════════════════════
