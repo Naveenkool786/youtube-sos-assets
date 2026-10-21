@@ -911,39 +911,132 @@ body {
 .bot-card-expand:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 .bot-card-expand svg { width: 14px; height: 14px; }
 
-.bot-activity-section { margin-top: 8px; }
-.bot-log { display: flex; flex-direction: column; gap: 0; }
-.bot-log-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 14px; border-bottom: 1px solid var(--divider);
-  font-size: 13px; transition: background 0.15s;
+/* ── Capsule Timeline ── */
+.capsule-panel {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
 }
-.bot-log-item:hover { background: var(--bg-card-hover); }
-.bot-log-item:last-child { border-bottom: none; }
-.bot-log-time { font-family: var(--font-mono); font-size: 11px; color: var(--fg-faint); flex-shrink: 0; width: 52px; }
-.bot-log-icon { font-size: 14px; flex-shrink: 0; width: 20px; text-align: center; }
-.bot-log-text { flex: 1; color: var(--fg); }
-.bot-log-tag {
-  font-size: 10px; font-weight: 700; padding: 2px 8px;
-  border-radius: var(--radius-pill); flex-shrink: 0;
+.capsule-panel-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 15px 18px; border-bottom: 1px solid var(--divider); flex-wrap: wrap;
+}
+.capsule-panel-title { font-size: 13px; font-weight: 800; }
+.capsule-panel-sub { font-size: 10px; color: var(--fg-faint); margin-top: 3px; }
+.capsule-filters { display: flex; flex-wrap: wrap; gap: 5px; }
+.capsule-filter {
+  border: 1px solid var(--border); border-radius: var(--radius-pill);
+  background: var(--bg-card); color: var(--fg-muted); font-size: 10px;
+  padding: 6px 10px; cursor: pointer; font-family: var(--font-body);
+  transition: all 0.15s; font-weight: 600;
+}
+.capsule-filter:hover { border-color: var(--accent); color: var(--accent); }
+.capsule-filter.cf-active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+.capsule-rail { padding: 18px; position: relative; }
+.capsule-lane {
+  font-size: 9px; font-weight: 850; letter-spacing: 0.13em;
+  text-transform: uppercase; color: var(--fg-faint);
+  padding: 6px 0 10px; margin-top: 4px;
+}
+.capsule-lane:first-child { margin-top: 0; }
+
+.capsule-track { position: relative; padding-left: 28px; }
+
+/* Vertical connector line */
+.capsule-track::before {
+  content: ""; position: absolute; left: 12px; top: 0; bottom: 0;
+  width: 2px; background: var(--border); border-radius: 1px;
 }
 
-.bot-approvals { display: flex; flex-direction: column; gap: 0; }
-.bot-approval-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 14px; border-bottom: 1px solid var(--divider);
+.capsule-node {
+  position: relative; width: 100%;
+  display: flex; align-items: center; gap: 10px; text-align: left;
+  border: 1px solid var(--border); border-radius: var(--radius-pill);
+  background: var(--bg-card); padding: 9px 14px 9px 10px;
+  margin-bottom: 8px; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: all 0.18s; font-family: var(--font-body);
+  color: var(--fg);
 }
-.bot-approval-item:last-child { border-bottom: none; }
-.bot-approval-text { flex: 1; font-size: 13px; }
-.bot-approval-actions { display: flex; gap: 6px; flex-shrink: 0; }
-.bot-approval-btn {
-  width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+.capsule-node:hover {
+  transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+  border-color: var(--border-accent);
+}
+.capsule-node.cn-selected {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.capsule-node[hidden] { display: none; }
+
+/* Status variants */
+.capsule-node.cn-done { background: linear-gradient(110deg, var(--ok-soft), var(--bg-card) 70%); border-color: var(--ok); }
+.capsule-node.cn-pending { background: linear-gradient(110deg, var(--warn-soft), var(--bg-card) 70%); border-color: var(--warn); }
+.capsule-node.cn-alert { background: linear-gradient(110deg, var(--bad-soft), var(--bg-card) 70%); border-color: var(--bad); }
+
+/* Status dot with ring */
+.cn-dot {
+  width: 10px; height: 10px; flex: 0 0 10px; border-radius: 50%;
+  background: var(--fg-faint); box-shadow: 0 0 0 3px var(--bg-dim);
+  position: relative; z-index: 2;
+}
+.cn-done .cn-dot { background: var(--ok); box-shadow: 0 0 0 3px var(--ok-soft); }
+.cn-pending .cn-dot { background: var(--warn); box-shadow: 0 0 0 3px var(--warn-soft); }
+.cn-alert .cn-dot { background: var(--bad); box-shadow: 0 0 0 3px var(--bad-soft); }
+
+/* Connector dot overlaps vertical line */
+.capsule-node .cn-dot {
+  position: absolute; left: -22px; top: 50%; transform: translateY(-50%);
+}
+
+.cn-copy { flex: 1; min-width: 0; }
+.cn-name { font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cn-meta { font-size: 10px; color: var(--fg-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.cn-time {
+  font-family: var(--font-mono); font-size: 10px; color: var(--fg-faint);
+  flex-shrink: 0;
+}
+.cn-state {
+  font-size: 9px; font-weight: 850; white-space: nowrap; flex-shrink: 0;
+  padding: 3px 8px; border-radius: var(--radius-pill);
+}
+.cn-done .cn-state { background: var(--ok-soft); color: var(--ok); }
+.cn-pending .cn-state { background: var(--warn-soft); color: var(--warn); }
+.cn-alert .cn-state { background: var(--bad-soft); color: var(--bad); }
+
+/* Capsule legend */
+.capsule-legend {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  border-top: 1px solid var(--divider);
+  padding: 11px 18px; font-size: 10px; color: var(--fg-faint);
+}
+.capsule-legend span { display: flex; align-items: center; gap: 6px; }
+.capsule-legend i { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* Capsule detail inspector */
+.capsule-detail {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px; margin-top: 16px;
+  box-shadow: var(--shadow);
+}
+.cd-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+.cd-name { font-size: 15px; font-weight: 800; }
+.cd-desc { font-size: 12px; color: var(--fg-muted); line-height: 1.6; margin-bottom: 14px; }
+.cd-meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.cd-meta-box { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; }
+.cd-meta-label { font-size: 9px; font-weight: 700; color: var(--fg-faint); text-transform: uppercase; letter-spacing: 0.08em; }
+.cd-meta-val { font-size: 12px; font-weight: 700; margin-top: 4px; }
+
+/* Approval capsules */
+.capsule-node.cn-approval { border-color: var(--accent); background: linear-gradient(110deg, var(--accent-soft), var(--bg-card) 70%); }
+.capsule-node.cn-approval .cn-dot { background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.cn-approval-actions { display: flex; gap: 5px; flex-shrink: 0; }
+.cn-approval-btn {
+  width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border);
   background: var(--bg-dim); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  font-size: 16px; transition: all 0.15s;
+  font-size: 14px; transition: all 0.15s; color: var(--fg-muted);
 }
-.bot-approval-btn.approve:hover { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
-.bot-approval-btn.reject:hover { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
+.cn-approval-btn.cn-approve:hover { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
+.cn-approval-btn.cn-reject:hover { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
 
 /* ═══════════════════════════════════════════
    RESPONSIVE
@@ -1073,15 +1166,31 @@ body {
           </div>
           <div class="section-header"><h2>Bot Command Center</h2><span class="section-count">9 modules</span><div class="section-line"></div></div>
           <div class="bot-grid" id="botGrid"></div>
-          <div class="section-header"><h2>Overnight Activity</h2><span class="section-count" id="botLogCount">0</span><div class="section-line"></div></div>
-          <div class="sd-card" style="padding:0;overflow:hidden">
-            <div class="bot-log" id="botLog"></div>
-          </div>
-          <div style="margin-top:24px">
-            <div class="section-header"><h2>Pending Approvals</h2><span class="section-count" id="botApprovalCount">0</span><div class="section-line"></div></div>
-            <div class="sd-card" style="padding:0;overflow:hidden">
-              <div class="bot-approvals" id="botApprovals"></div>
+          <div class="capsule-panel" id="botLogPanel">
+            <div class="capsule-panel-head">
+              <div>
+                <div class="capsule-panel-title">Overnight Activity <span id="botLogCount" style="font-weight:400;color:var(--fg-faint)">0</span></div>
+                <div class="capsule-panel-sub">Auto-executed tasks from the last cycle</div>
+              </div>
+              <div class="capsule-filters" id="botLogFilters"></div>
             </div>
+            <div class="capsule-rail" id="botLogRail"></div>
+            <div class="capsule-legend">
+              <span><i style="background:var(--ok)"></i> Done</span>
+              <span><i style="background:var(--warn)"></i> Pending</span>
+              <span><i style="background:var(--bad)"></i> Alert</span>
+            </div>
+          </div>
+          <div id="botLogDetail"></div>
+
+          <div class="capsule-panel" style="margin-top:24px" id="botApprovalPanel">
+            <div class="capsule-panel-head">
+              <div>
+                <div class="capsule-panel-title">Pending Approvals <span id="botApprovalCount" style="font-weight:400;color:var(--fg-faint)">0</span></div>
+                <div class="capsule-panel-sub">Items waiting for your decision</div>
+              </div>
+            </div>
+            <div class="capsule-rail" id="botApprovalRail"></div>
           </div>
         </div>
 
@@ -1599,13 +1708,13 @@ var BOT_CARDS = [
 ];
 
 var BOT_LOG = [
-  {time:'06:00', icon:'✅', text:'Daily TODO digest generated — 68% completion, 3 overdue items', tag:'Auto', tagClass:'badge-ok'},
-  {time:'06:05', icon:'✅', text:'3 Gmail drafts prepared (SGS reply, CTO follow-up, H&M outreach)', tag:'Drafts', tagClass:'badge-blue'},
-  {time:'06:10', icon:'⚠️', text:'TODO item "CTO search" overdue by 5 days — flagged as alert', tag:'Alert', tagClass:'badge-warn'},
-  {time:'06:15', icon:'✅', text:'Competitor scan completed — no new funding rounds detected', tag:'Monitor', tagClass:'badge-ok'},
-  {time:'06:20', icon:'✅', text:'Site health: all 3 demo URLs responding (Web, Mobile, Founder)', tag:'Health', tagClass:'badge-ok'},
-  {time:'06:25', icon:'📄', text:'Weekly Founder Report generated — ready for review', tag:'Docs', tagClass:'badge-accent'},
-  {time:'06:30', icon:'✅', text:'GitHub: 12 commits this week, all CI passing, gh-pages deployed', tag:'GitHub', tagClass:'badge-ok'}
+  {time:'06:00', name:'TODO digest generated', meta:'68% completion, 3 overdue items flagged', status:'done', tag:'Auto', bot:'TODO Progress', desc:'Scanned TODO.md and generated the daily summary. Found 34 of 50 tasks complete. Flagged 3 overdue items for alert pipeline.'},
+  {time:'06:05', name:'3 Gmail drafts prepared', meta:'SGS reply, CTO follow-up, H&M outreach', status:'done', tag:'Drafts', bot:'Email Drafts', desc:'Analyzed pending threads and composed 3 draft replies. SGS quality partnership inquiry, CTO candidate LinkedIn follow-up, and H&M contact outreach. Ready in Gmail drafts.'},
+  {time:'06:10', name:'CTO search overdue 5 days', meta:'Flagged as alert — needs attention', status:'alert', tag:'Alert', bot:'Alerts', desc:'TODO item "CTO search: schedule 3 interviews" has been overdue for 5 days. Escalated to alert status. Recommend scheduling interviews this week.'},
+  {time:'06:15', name:'Competitor scan completed', meta:'No new funding rounds detected', status:'done', tag:'Auto', bot:'Actions', desc:'Scanned Crunchbase, TechCrunch, and LinkedIn for competitor activity in apparel QMS space. No new funding rounds or product launches detected in the last 24 hours.'},
+  {time:'06:20', name:'Site health check passed', meta:'All 3 demo URLs responding (< 1.2s)', status:'done', tag:'Health', bot:'Site Health', desc:'Pinged all 3 demo sites — Web Demo, Mobile PWA, and Founder Console. All returned 200 OK. Average response time 1.2s. SSL certificates valid.'},
+  {time:'06:25', name:'Weekly Founder Report ready', meta:'Oct 21 edition generated — awaiting review', status:'pending', tag:'Docs', bot:'Docs Generated', desc:'Generated the weekly founder report covering Oct 15-21. Includes: task completion metrics, outreach summary, financial model updates, and next week priorities.'},
+  {time:'06:30', name:'GitHub activity summary', meta:'12 commits, all CI passing, gh-pages live', status:'done', tag:'Auto', bot:'GitHub', desc:'Repository check: 12 commits this week, 0 failed builds, 1 active PR. gh-pages deployment healthy. No dependency vulnerabilities detected.'}
 ];
 
 var BOT_APPROVALS = [
@@ -1625,6 +1734,9 @@ var BOT_3D_OBJECTS = {
   'bot-health': '<span class="bot-3d-obj obj-heart"><span class="ht-shape"></span><span class="ht-pulse"><svg viewBox="0 0 42 14" width="42" height="14"><polyline class="ht-pulse-line" points="0,8 8,8 12,2 16,12 20,4 24,10 28,6 32,8 42,8"/></svg></span></span>',
   'bot-next': '<span class="bot-3d-obj obj-clock"><span class="cl-face"></span><span class="cl-inner"></span><span class="cl-hour"></span><span class="cl-min"></span><span class="cl-dot"></span></span>'
 };
+
+var _botLogFilter = 'All';
+var _botLogSelected = -1;
 
 function renderBotPage() {
   var now = new Date();
@@ -1647,25 +1759,79 @@ function renderBotPage() {
       + '</div></div>';
   }).join('');
 
-  document.getElementById('botLogCount').textContent = BOT_LOG.length;
-  document.getElementById('botLog').innerHTML = BOT_LOG.map(function(l) {
-    return '<div class="bot-log-item">'
-      + '<span class="bot-log-time">' + l.time + '</span>'
-      + '<span class="bot-log-icon">' + l.icon + '</span>'
-      + '<span class="bot-log-text">' + l.text + '</span>'
-      + '<span class="bot-log-tag ' + l.tagClass + '">' + l.tag + '</span>'
-      + '</div>';
+  renderBotLogCapsules();
+  renderBotApprovalCapsules();
+}
+
+function renderBotLogCapsules() {
+  var filters = ['All','Auto','Alert','Drafts','Docs','Health'];
+  document.getElementById('botLogFilters').innerHTML = filters.map(function(f) {
+    return '<button class="capsule-filter' + (f === _botLogFilter ? ' cf-active' : '') + '" onclick="setBotLogFilter(\'' + f + '\')">' + f + '</button>';
   }).join('');
 
-  document.getElementById('botApprovalCount').textContent = BOT_APPROVALS.length;
-  document.getElementById('botApprovals').innerHTML = BOT_APPROVALS.map(function(a, i) {
-    return '<div class="bot-approval-item">'
-      + '<span class="bot-approval-text">' + a.text + '</span>'
-      + '<div class="bot-approval-actions">'
-      + '<button class="bot-approval-btn approve" onclick="botApprove(' + i + ')" title="Approve">✓</button>'
-      + '<button class="bot-approval-btn reject" onclick="botReject(' + i + ')" title="Reject">✗</button>'
-      + '</div></div>';
+  var filtered = BOT_LOG.filter(function(l) {
+    if (_botLogFilter === 'All') return true;
+    if (_botLogFilter === 'Alert') return l.status === 'alert';
+    return l.tag === _botLogFilter;
+  });
+
+  document.getElementById('botLogCount').textContent = '· ' + filtered.length;
+
+  var stateLabel = {done:'Done', pending:'Pending', alert:'Alert'};
+  var html = '<div class="capsule-lane">Today — Morning Cycle</div><div class="capsule-track">';
+  html += filtered.map(function(l, i) {
+    var cls = 'cn-' + l.status;
+    var sel = (_botLogSelected === i) ? ' cn-selected' : '';
+    return '<button class="capsule-node ' + cls + sel + '" onclick="selectBotLog(' + i + ')">'
+      + '<span class="cn-dot"></span>'
+      + '<span class="cn-copy"><span class="cn-name">' + l.name + '</span><span class="cn-meta">' + l.bot + ' · ' + l.meta + '</span></span>'
+      + '<span class="cn-time">' + l.time + '</span>'
+      + '<span class="cn-state">' + stateLabel[l.status] + '</span>'
+      + '</button>';
   }).join('');
+  html += '</div>';
+  document.getElementById('botLogRail').innerHTML = html;
+
+  if (_botLogSelected >= 0 && _botLogSelected < filtered.length) {
+    var s = filtered[_botLogSelected];
+    document.getElementById('botLogDetail').innerHTML = '<div class="capsule-detail">'
+      + '<div class="cd-top"><span class="cd-name">' + s.name + '</span><span class="cn-state" style="background:var(--' + s.status.replace('done','ok').replace('alert','bad') + '-soft);color:var(--' + s.status.replace('done','ok').replace('alert','bad') + ')">' + (s.status === 'done' ? 'Done' : s.status === 'alert' ? 'Alert' : 'Pending') + '</span></div>'
+      + '<div class="cd-desc">' + s.desc + '</div>'
+      + '<div class="cd-meta-grid">'
+      + '<div class="cd-meta-box"><div class="cd-meta-label">Bot</div><div class="cd-meta-val">' + s.bot + '</div></div>'
+      + '<div class="cd-meta-box"><div class="cd-meta-label">Time</div><div class="cd-meta-val">' + s.time + '</div></div>'
+      + '<div class="cd-meta-box"><div class="cd-meta-label">Category</div><div class="cd-meta-val">' + s.tag + '</div></div>'
+      + '</div></div>';
+  } else {
+    document.getElementById('botLogDetail').innerHTML = '';
+  }
+}
+
+function renderBotApprovalCapsules() {
+  document.getElementById('botApprovalCount').textContent = '· ' + BOT_APPROVALS.length;
+  var html = '<div class="capsule-track">';
+  html += BOT_APPROVALS.map(function(a, i) {
+    return '<button class="capsule-node cn-approval" style="cursor:default">'
+      + '<span class="cn-dot"></span>'
+      + '<span class="cn-copy"><span class="cn-name">' + a.text + '</span><span class="cn-meta">Type: ' + a.type + '</span></span>'
+      + '<span class="cn-approval-actions">'
+      + '<button class="cn-approval-btn cn-approve" onclick="event.stopPropagation();botApprove(' + i + ')" title="Approve">✓</button>'
+      + '<button class="cn-approval-btn cn-reject" onclick="event.stopPropagation();botReject(' + i + ')" title="Reject">✗</button>'
+      + '</span></button>';
+  }).join('');
+  html += '</div>';
+  document.getElementById('botApprovalRail').innerHTML = html;
+}
+
+function setBotLogFilter(f) {
+  _botLogFilter = f;
+  _botLogSelected = -1;
+  renderBotLogCapsules();
+}
+
+function selectBotLog(idx) {
+  _botLogSelected = (_botLogSelected === idx) ? -1 : idx;
+  renderBotLogCapsules();
 }
 
 function openBotDetail(id) {
@@ -1678,13 +1844,13 @@ function openBotDetail(id) {
 
 function botApprove(idx) {
   BOT_APPROVALS.splice(idx, 1);
-  renderBotPage();
+  renderBotApprovalCapsules();
   showToast('Approved! Bot will execute the action.');
 }
 
 function botReject(idx) {
   BOT_APPROVALS.splice(idx, 1);
-  renderBotPage();
+  renderBotApprovalCapsules();
   showToast('Rejected. Bot will skip this action.');
 }
 
