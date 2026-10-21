@@ -618,29 +618,280 @@ body {
 .bot-status-bar .bot-timestamp { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--fg-faint); flex-shrink: 0; }
 
 .bot-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 16px;
+  margin-bottom: 28px; padding-top: 32px;
 }
 .bot-card {
+  position: relative; isolation: isolate;
   background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 22px 20px;
-  cursor: pointer; transition: all 0.3s ease; position: relative;
+  border-radius: var(--radius); padding: 24px 18px 18px;
+  cursor: pointer; transition: all 0.35s ease;
   display: flex; flex-direction: column;
+  transform-style: preserve-3d;
+}
+.bot-card::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  border-radius: inherit; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 0%, var(--card-glow, rgba(108,92,231,0.1)), transparent 60%);
+  opacity: 0.8;
 }
 .bot-card:hover {
-  border-color: var(--border-accent); background: var(--bg-card-hover);
-  transform: translateY(-3px); box-shadow: var(--shadow-lg);
+  border-color: var(--card-edge, var(--border-accent)); background: var(--bg-card-hover);
+  transform: translateY(-7px) rotateX(2deg);
+  box-shadow: 0 28px 55px rgba(0,0,0,0.25), 0 0 28px var(--card-glow, rgba(108,92,231,0.15));
 }
-.bot-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
-.bot-card-icon {
-  width: 44px; height: 44px; border-radius: 12px;
+
+/* Per-card color theming */
+.bot-card[data-bot="bot-status"]  { --card-glow: rgba(0,214,143,0.15); --card-edge: rgba(0,214,143,0.5); }
+.bot-card[data-bot="bot-actions"] { --card-glow: rgba(108,92,231,0.15); --card-edge: rgba(139,92,246,0.5); }
+.bot-card[data-bot="bot-alerts"]  { --card-glow: rgba(255,184,34,0.15); --card-edge: rgba(255,195,80,0.5); }
+.bot-card[data-bot="bot-email"]   { --card-glow: rgba(51,154,240,0.15); --card-edge: rgba(51,154,240,0.5); }
+.bot-card[data-bot="bot-docs"]    { --card-glow: rgba(139,92,246,0.15); --card-edge: rgba(124,77,255,0.5); }
+.bot-card[data-bot="bot-todo"]    { --card-glow: rgba(0,214,143,0.15); --card-edge: rgba(0,214,143,0.5); }
+.bot-card[data-bot="bot-github"]  { --card-glow: rgba(90,101,119,0.15); --card-edge: rgba(90,101,119,0.5); }
+.bot-card[data-bot="bot-health"]  { --card-glow: rgba(45,212,191,0.15); --card-edge: rgba(45,212,191,0.5); }
+.bot-card[data-bot="bot-next"]    { --card-glow: rgba(92,107,192,0.15); --card-edge: rgba(92,107,192,0.5); }
+
+/* 3D floating object container */
+.bot-3d-obj {
+  position: absolute; top: -24px; left: 18px;
+  width: 60px; height: 60px;
+  transform-style: preserve-3d;
+  pointer-events: none; z-index: 2;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.35));
+  transition: transform 0.35s ease;
+}
+.bot-card:hover .bot-3d-obj {
+  transform: translateY(-6px) rotate(-3deg);
+}
+
+/* ── 1. Robot Head (Bot Status) ── */
+.obj-robot { width: 62px; height: 64px; }
+.obj-robot .rb-head {
+  position: absolute; top: 12px; left: 3px; width: 56px; height: 40px;
+  border-radius: 14px 14px 10px 10px;
+  background: linear-gradient(145deg, #3ee8a5, #00b87a 60%, #008f5f);
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), inset 0 -4px 8px rgba(0,0,0,0.2);
+}
+.obj-robot .rb-eye {
+  position: absolute; top: 22px; width: 12px; height: 12px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fff, #b8f5db 60%, #00d68f);
+  box-shadow: 0 0 8px rgba(0,214,143,0.6);
+}
+.obj-robot .rb-eye-l { left: 15px; }
+.obj-robot .rb-eye-r { left: 35px; }
+.obj-robot .rb-antenna {
+  position: absolute; top: 0; left: 26px; width: 10px; height: 16px;
+  border-radius: 5px 5px 0 0;
+  background: linear-gradient(180deg, #5dffc4, #00d68f);
+  box-shadow: 0 -2px 8px rgba(0,214,143,0.5);
+}
+.obj-robot .rb-mouth {
+  position: absolute; top: 39px; left: 18px; width: 26px; height: 6px;
+  border-radius: 0 0 8px 8px;
+  background: #005a3a;
+}
+
+/* ── 2. Checkmark Badge (Actions) ── */
+.obj-check { width: 58px; height: 58px; }
+.obj-check .ck-circle {
+  position: absolute; top: 4px; left: 4px; width: 50px; height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #9b7dff, #6c5ce7 55%, #5240b8);
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), inset 0 -4px 8px rgba(0,0,0,0.25);
+  transform: perspective(200px) rotateX(-8deg) rotateY(5deg);
+}
+.obj-check .ck-tick {
+  position: absolute; top: 14px; left: 14px; width: 24px; height: 14px;
+  border-left: 5px solid #fff; border-bottom: 5px solid #fff;
+  border-radius: 0 0 0 3px;
+  transform: rotate(-45deg) perspective(200px) rotateX(-5deg);
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.5));
+}
+
+/* ── 3. Warning Pyramid (Alerts) ── */
+.obj-warn { width: 60px; height: 60px; }
+.obj-warn .wr-body {
+  position: absolute; top: 6px; left: 5px; width: 50px; height: 48px;
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  background: linear-gradient(145deg, #ffcf5a, #ffb822 45%, #e8a000);
+  box-shadow: inset 0 2px 3px rgba(255,255,255,0.5);
+  transform: perspective(300px) rotateX(-5deg) rotateY(4deg);
+}
+.obj-warn .wr-side {
+  position: absolute; top: 6px; left: 30px; width: 25px; height: 48px;
+  clip-path: polygon(0% 0%, 100% 100%, 0% 100%);
+  background: linear-gradient(90deg, #e8a000, #c68600);
+  transform: perspective(300px) rotateY(-8deg);
+}
+.obj-warn .wr-bang {
+  position: absolute; top: 22px; left: 24px; width: 5px; height: 14px;
+  background: #6b4500; border-radius: 2px;
+}
+.obj-warn .wr-dot {
+  position: absolute; top: 40px; left: 24px; width: 5px; height: 5px;
+  background: #6b4500; border-radius: 50%;
+}
+
+/* ── 4. 3D Envelope (Email) ── */
+.obj-envelope { width: 62px; height: 52px; }
+.obj-envelope .env-body {
+  position: absolute; top: 14px; left: 3px; width: 56px; height: 36px;
+  border-radius: 4px 4px 8px 8px;
+  background: linear-gradient(160deg, #5ab3ff, #339af0 50%, #1c7ed6);
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.35), inset 0 -3px 6px rgba(0,0,0,0.2);
+  transform: perspective(300px) rotateX(-8deg) rotateY(4deg);
+}
+.obj-envelope .env-flap {
+  position: absolute; top: 6px; left: 3px; width: 56px; height: 28px;
+  clip-path: polygon(0% 0%, 50% 75%, 100% 0%);
+  background: linear-gradient(180deg, #74c0ff, #4dabf7 60%);
+  transform: perspective(300px) rotateX(15deg);
+  transform-origin: top center;
+}
+.obj-envelope .env-line1 {
+  position: absolute; top: 28px; left: 12px; width: 38px; height: 3px;
+  background: rgba(255,255,255,0.35); border-radius: 2px;
+}
+.obj-envelope .env-line2 {
+  position: absolute; top: 34px; left: 12px; width: 24px; height: 3px;
+  background: rgba(255,255,255,0.2); border-radius: 2px;
+}
+
+/* ── 5. Stacked Papers (Docs) ── */
+.obj-docs { width: 56px; height: 62px; }
+.obj-docs .doc-back {
+  position: absolute; top: 0; left: 8px; width: 42px; height: 52px;
+  border-radius: 4px;
+  background: linear-gradient(145deg, #9b7dff, #7c4dff);
+  transform: rotate(6deg) perspective(300px) rotateY(5deg);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.obj-docs .doc-mid {
+  position: absolute; top: 4px; left: 5px; width: 42px; height: 52px;
+  border-radius: 4px;
+  background: linear-gradient(145deg, #b29aff, #8b5cf6);
+  transform: rotate(2deg);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.obj-docs .doc-front {
+  position: absolute; top: 8px; left: 2px; width: 42px; height: 52px;
+  border-radius: 4px;
+  background: linear-gradient(145deg, #d4c4ff, #b29aff 70%);
+  transform: rotate(-2deg) perspective(300px) rotateX(-3deg);
+  box-shadow: inset 0 2px 3px rgba(255,255,255,0.5), 0 6px 16px rgba(0,0,0,0.2);
+}
+.obj-docs .doc-line {
+  position: absolute; background: rgba(108,92,231,0.4); border-radius: 2px; height: 3px;
+  transform: rotate(-2deg);
+}
+.obj-docs .doc-l1 { top: 24px; left: 10px; width: 28px; }
+.obj-docs .doc-l2 { top: 31px; left: 10px; width: 22px; }
+.obj-docs .doc-l3 { top: 38px; left: 10px; width: 26px; }
+
+/* ── 6. Progress Ring (TODO) ── */
+.obj-progress { width: 58px; height: 58px; }
+.obj-progress .pg-ring {
+  position: absolute; top: 4px; left: 4px; width: 50px; height: 50px;
+  border-radius: 50%;
+  background: conic-gradient(#00d68f 0deg, #00d68f 245deg, rgba(0,214,143,0.15) 245deg);
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);
+  transform: perspective(200px) rotateX(-8deg) rotateY(5deg);
+}
+.obj-progress .pg-inner {
+  position: absolute; top: 12px; left: 12px; width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  color: var(--ok);
 }
-.bot-card-icon svg { width: 20px; height: 20px; color: #fff; }
+
+/* ── 7. Code Bracket Cube (GitHub) ── */
+.obj-code { width: 56px; height: 56px; }
+.obj-code .cd-face {
+  position: absolute; top: 6px; left: 4px; width: 48px; height: 42px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #6b7a8f, #5a6577 55%, #475569);
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.25);
+  transform: perspective(300px) rotateX(-6deg) rotateY(6deg);
+}
+.obj-code .cd-side {
+  position: absolute; top: 10px; left: 52px; width: 8px; height: 36px;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(90deg, #475569, #374151);
+  transform: perspective(300px) rotateY(-15deg);
+}
+.obj-code .cd-bracket {
+  position: absolute; font-family: var(--font-mono); font-size: 22px;
+  font-weight: 700; color: rgba(255,255,255,0.8);
+  text-shadow: 0 0 8px rgba(255,255,255,0.3);
+}
+.obj-code .cd-left { top: 16px; left: 12px; }
+.obj-code .cd-right { top: 16px; left: 36px; }
+.obj-code .cd-slash {
+  position: absolute; top: 18px; left: 24px; width: 2px; height: 16px;
+  background: rgba(255,255,255,0.4); border-radius: 1px;
+  transform: rotate(15deg);
+}
+
+/* ── 8. Heart + Pulse (Site Health) ── */
+.obj-heart { width: 58px; height: 56px; }
+.obj-heart .ht-shape {
+  position: absolute; top: 6px; left: 5px; width: 48px; height: 44px;
+  background: linear-gradient(145deg, #5df5d4, #2dd4bf 50%, #0d9488);
+  clip-path: path('M24 42 C24 42 4 28 4 16 A10 10 0 0 1 24 10 A10 10 0 0 1 44 16 C44 28 24 42 24 42Z');
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.4);
+  transform: perspective(200px) rotateX(-5deg) rotateY(3deg);
+}
+.obj-heart .ht-pulse {
+  position: absolute; top: 22px; left: 8px; width: 42px; height: 14px;
+}
+.obj-heart .ht-pulse-line {
+  fill: none; stroke: rgba(255,255,255,0.85); stroke-width: 2.5;
+  stroke-linecap: round; stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,0.5));
+}
+
+/* ── 9. 3D Clock (Next Run) ── */
+.obj-clock { width: 58px; height: 58px; }
+.obj-clock .cl-face {
+  position: absolute; top: 4px; left: 4px; width: 50px; height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #7b8bc7, #5c6bc0 55%, #3f51b5);
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), inset 0 -4px 8px rgba(0,0,0,0.25),
+    0 0 0 3px rgba(92,107,192,0.3);
+  transform: perspective(200px) rotateX(-8deg) rotateY(5deg);
+}
+.obj-clock .cl-inner {
+  position: absolute; top: 9px; left: 9px; width: 40px; height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, rgba(255,255,255,0.1), transparent 70%);
+}
+.obj-clock .cl-hour {
+  position: absolute; top: 16px; left: 27px; width: 3px; height: 14px;
+  background: #fff; border-radius: 2px;
+  transform-origin: bottom center; transform: rotate(-30deg);
+  box-shadow: 0 0 4px rgba(255,255,255,0.4);
+}
+.obj-clock .cl-min {
+  position: absolute; top: 12px; left: 27px; width: 2px; height: 18px;
+  background: rgba(255,255,255,0.8); border-radius: 2px;
+  transform-origin: bottom center; transform: rotate(60deg);
+}
+.obj-clock .cl-dot {
+  position: absolute; top: 27px; left: 26px; width: 6px; height: 6px;
+  border-radius: 50%; background: #fff;
+  box-shadow: 0 0 6px rgba(255,255,255,0.6);
+}
+
 .bot-card-badge {
+  position: absolute; top: 10px; right: 14px;
   font-size: 10px; font-weight: 700; padding: 3px 9px;
   border-radius: var(--radius-pill); text-transform: uppercase; letter-spacing: 0.04em;
 }
+.bot-card-body { margin-top: 20px; }
 .bot-card-value {
   font-family: var(--font-display); font-size: 32px; line-height: 1.1; margin-bottom: 4px;
 }
@@ -650,11 +901,11 @@ body {
 }
 .bot-card-desc { font-size: 12px; color: var(--fg-muted); line-height: 1.4; }
 .bot-card-expand {
-  position: absolute; top: 12px; right: 12px; width: 28px; height: 28px;
+  position: absolute; top: 10px; right: 46px; width: 28px; height: 28px;
   border: 1px solid var(--border); border-radius: 6px; background: var(--bg-dim);
   color: var(--fg-faint); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity 0.2s;
+  opacity: 0; transition: opacity 0.2s; z-index: 3;
 }
 .bot-card:hover .bot-card-expand { opacity: 1; }
 .bot-card-expand:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
@@ -1363,6 +1614,18 @@ var BOT_APPROVALS = [
   {text:'Send follow-up email to CTO candidate via LinkedIn', type:'email'}
 ];
 
+var BOT_3D_OBJECTS = {
+  'bot-status': '<span class="bot-3d-obj obj-robot"><span class="rb-antenna"></span><span class="rb-head"></span><span class="rb-eye rb-eye-l"></span><span class="rb-eye rb-eye-r"></span><span class="rb-mouth"></span></span>',
+  'bot-actions': '<span class="bot-3d-obj obj-check"><span class="ck-circle"></span><span class="ck-tick"></span></span>',
+  'bot-alerts': '<span class="bot-3d-obj obj-warn"><span class="wr-body"></span><span class="wr-side"></span><span class="wr-bang"></span><span class="wr-dot"></span></span>',
+  'bot-email': '<span class="bot-3d-obj obj-envelope"><span class="env-body"></span><span class="env-flap"></span><span class="env-line1"></span><span class="env-line2"></span></span>',
+  'bot-docs': '<span class="bot-3d-obj obj-docs"><span class="doc-back"></span><span class="doc-mid"></span><span class="doc-front"></span><span class="doc-line doc-l1"></span><span class="doc-line doc-l2"></span><span class="doc-line doc-l3"></span></span>',
+  'bot-todo': '<span class="bot-3d-obj obj-progress"><span class="pg-ring"></span><span class="pg-inner">68%</span></span>',
+  'bot-github': '<span class="bot-3d-obj obj-code"><span class="cd-face"></span><span class="cd-side"></span><span class="cd-bracket cd-left">&lt;</span><span class="cd-slash"></span><span class="cd-bracket cd-right">&gt;</span></span>',
+  'bot-health': '<span class="bot-3d-obj obj-heart"><span class="ht-shape"></span><span class="ht-pulse"><svg viewBox="0 0 42 14" width="42" height="14"><polyline class="ht-pulse-line" points="0,8 8,8 12,2 16,12 20,4 24,10 28,6 32,8 42,8"/></svg></span></span>',
+  'bot-next': '<span class="bot-3d-obj obj-clock"><span class="cl-face"></span><span class="cl-inner"></span><span class="cl-hour"></span><span class="cl-min"></span><span class="cl-dot"></span></span>'
+};
+
 function renderBotPage() {
   var now = new Date();
   var timeStr = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
@@ -1372,16 +1635,16 @@ function renderBotPage() {
 
   document.getElementById('botGrid').innerHTML = BOT_CARDS.map(function(c) {
     var vc = c.color ? ' ' + c.color : '';
-    return '<div class="bot-card" onclick="openBotDetail(\'' + c.id + '\')">'
-      + '<button class="bot-card-expand" onclick="event.stopPropagation();openBotDetail(\'' + c.id + '\')">' + expandSvg + '</button>'
-      + '<div class="bot-card-top">'
-      + '<div class="bot-card-icon" style="background:' + c.grad + '">' + c.icon + '</div>'
+    var obj3d = BOT_3D_OBJECTS[c.id] || '';
+    return '<div class="bot-card" data-bot="' + c.id + '" onclick="openBotDetail(\'' + c.id + '\')">'
+      + obj3d
       + '<span class="bot-card-badge ' + c.badgeClass + '">' + c.badge + '</span>'
-      + '</div>'
+      + '<button class="bot-card-expand" onclick="event.stopPropagation();openBotDetail(\'' + c.id + '\')">' + expandSvg + '</button>'
+      + '<div class="bot-card-body">'
       + '<div class="bot-card-label">' + c.label + '</div>'
       + '<div class="bot-card-value' + vc + '">' + c.value + '</div>'
       + '<div class="bot-card-desc">' + c.desc + '</div>'
-      + '</div>';
+      + '</div></div>';
   }).join('');
 
   document.getElementById('botLogCount').textContent = BOT_LOG.length;
