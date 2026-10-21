@@ -1468,6 +1468,283 @@ body {
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<!-- ═══ 3D HERO SCRIPT ═══ -->
+<script>
+(function() {
+  'use strict';
+  var heroEl = document.getElementById('heroWelcome');
+  var wrap = document.getElementById('heroCanvasWrap');
+  if (!heroEl || !wrap) return;
+
+  var renderer, scene, camera, productGroup, particles, animId;
+  var isDragging = false, prevX = 0, userRotY = 0;
+  var clock, currentProduct = 'jacket';
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function waitForThree(cb) {
+    if (typeof THREE !== 'undefined') return cb();
+    var t = setInterval(function() { if (typeof THREE !== 'undefined') { clearInterval(t); cb(); } }, 50);
+  }
+
+  waitForThree(function() { initHero(); });
+
+  function initHero() {
+    clock = new THREE.Clock();
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x061a14, 0.08);
+
+    camera = new THREE.PerspectiveCamera(40, wrap.clientWidth / wrap.clientHeight, 0.1, 100);
+    camera.position.set(0, 1.5, 5.5);
+    camera.lookAt(0, 0.5, 0);
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+    wrap.appendChild(renderer.domElement);
+
+    var ambient = new THREE.AmbientLight(0x1a3a30, 0.6);
+    scene.add(ambient);
+    var dir = new THREE.DirectionalLight(0xffffff, 1.2);
+    dir.position.set(3, 5, 4);
+    dir.castShadow = true;
+    dir.shadow.mapSize.set(1024, 1024);
+    dir.shadow.camera.near = 0.5;
+    dir.shadow.camera.far = 20;
+    scene.add(dir);
+    var pt = new THREE.PointLight(0x2DD4BF, 0.8, 10);
+    pt.position.set(-3, 2, 2);
+    scene.add(pt);
+    var pt2 = new THREE.PointLight(0x7C4DFF, 0.4, 10);
+    pt2.position.set(2, 1, -3);
+    scene.add(pt2);
+
+    var floorGeo = new THREE.CircleGeometry(3, 64);
+    var floorMat = new THREE.MeshStandardMaterial({ color: 0x0a2e24, roughness: 0.9, metalness: 0.1 });
+    var floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -0.8;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    var gridGeo = new THREE.RingGeometry(0.3, 3, 64, 8);
+    var gridMat = new THREE.MeshBasicMaterial({ color: 0x1a5a4a, wireframe: true, transparent: true, opacity: 0.15 });
+    var grid = new THREE.Mesh(gridGeo, gridMat);
+    grid.rotation.x = -Math.PI / 2;
+    grid.position.y = -0.79;
+    scene.add(grid);
+
+    createParticles();
+    productGroup = new THREE.Group();
+    scene.add(productGroup);
+    buildProduct('jacket');
+    setupDrag();
+    setupPills();
+
+    window.addEventListener('resize', onResize);
+    if (!reducedMotion) animate();
+    else { renderer.render(scene, camera); }
+  }
+
+  function createParticles() {
+    var geo = new THREE.BufferGeometry();
+    var count = 80;
+    var pos = new Float32Array(count * 3);
+    for (var i = 0; i < count * 3; i += 3) {
+      pos[i] = (Math.random() - 0.5) * 10;
+      pos[i+1] = Math.random() * 6 - 1;
+      pos[i+2] = (Math.random() - 0.5) * 10;
+    }
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    var mat = new THREE.PointsMaterial({ color: 0x2DD4BF, size: 0.03, transparent: true, opacity: 0.5 });
+    particles = new THREE.Points(geo, mat);
+    scene.add(particles);
+  }
+
+  var productMats = {
+    jacket: { color: 0x0F4238, metalness: 0.3, roughness: 0.6 },
+    pants: { color: 0x1B5E4A, metalness: 0.2, roughness: 0.7 },
+    boot: { color: 0x3E2723, metalness: 0.4, roughness: 0.5 },
+    gloves: { color: 0x2E7D5A, metalness: 0.25, roughness: 0.65 }
+  };
+
+  function makeMat(key) {
+    var p = productMats[key];
+    return new THREE.MeshStandardMaterial({ color: p.color, metalness: p.metalness, roughness: p.roughness });
+  }
+
+  function buildProduct(type) {
+    while (productGroup.children.length) {
+      var c = productGroup.children[0];
+      productGroup.remove(c);
+      if (c.geometry) c.geometry.dispose();
+      if (c.material) c.material.dispose();
+    }
+    currentProduct = type;
+    var mat = makeMat(type);
+    var g;
+
+    if (type === 'jacket') {
+      g = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.4, 0.6), mat);
+      g.position.y = 0.2;
+      g.castShadow = true;
+      productGroup.add(g);
+      var armL = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.12, 1.2, 12), mat);
+      armL.position.set(-0.8, 0.1, 0);
+      armL.rotation.z = 0.3;
+      armL.castShadow = true;
+      productGroup.add(armL);
+      var armR = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.12, 1.2, 12), mat);
+      armR.position.set(0.8, 0.1, 0);
+      armR.rotation.z = -0.3;
+      armR.castShadow = true;
+      productGroup.add(armR);
+      var collar = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.25, 0.65), mat);
+      collar.position.y = 1.0;
+      collar.castShadow = true;
+      productGroup.add(collar);
+      var hood = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), mat);
+      hood.position.set(0, 1.1, -0.15);
+      hood.castShadow = true;
+      productGroup.add(hood);
+    } else if (type === 'pants') {
+      var waist = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.4, 0.5), mat);
+      waist.position.y = 0.7;
+      waist.castShadow = true;
+      productGroup.add(waist);
+      var legL = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.16, 1.5, 12), mat);
+      legL.position.set(-0.25, -0.15, 0);
+      legL.castShadow = true;
+      productGroup.add(legL);
+      var legR = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.16, 1.5, 12), mat);
+      legR.position.set(0.25, -0.15, 0);
+      legR.castShadow = true;
+      productGroup.add(legR);
+      var belt = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.08, 0.52), new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0.5, roughness: 0.4 }));
+      belt.position.y = 0.92;
+      belt.castShadow = true;
+      productGroup.add(belt);
+    } else if (type === 'boot') {
+      var sole = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.15, 1.1), new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.8 }));
+      sole.position.y = -0.72;
+      sole.castShadow = true;
+      productGroup.add(sole);
+      var body = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.3, 0.8, 16), mat);
+      body.position.y = -0.25;
+      body.castShadow = true;
+      productGroup.add(body);
+      var shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.28, 0.6, 16), mat);
+      shaft.position.y = 0.35;
+      shaft.castShadow = true;
+      productGroup.add(shaft);
+      var top = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.03, 8, 24), mat);
+      top.position.y = 0.65;
+      top.rotation.x = Math.PI / 2;
+      productGroup.add(top);
+      var tongue = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.4, 0.04), mat);
+      tongue.position.set(0, 0.45, 0.28);
+      tongue.rotation.x = -0.2;
+      tongue.castShadow = true;
+      productGroup.add(tongue);
+    } else if (type === 'gloves') {
+      var palm = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.7, 0.15), mat);
+      palm.position.y = 0;
+      palm.castShadow = true;
+      productGroup.add(palm);
+      var fPos = [[-0.2,0.55,0],[-.07,0.6,0],[0.07,0.6,0],[0.2,0.55,0],[-.35,0.05,0]];
+      var fLen = [0.4, 0.45, 0.48, 0.42, 0.3];
+      var fRot = [0.05, 0.02, -0.02, -0.05, 0.8];
+      for (var i = 0; i < 5; i++) {
+        var finger = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, fLen[i], 8), mat);
+        finger.position.set(fPos[i][0], fPos[i][1], fPos[i][2]);
+        finger.rotation.z = fRot[i];
+        finger.castShadow = true;
+        productGroup.add(finger);
+      }
+      var cuff = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.15, 0.17), new THREE.MeshStandardMaterial({ color: 0x1a3a2f, roughness: 0.7 }));
+      cuff.position.y = -0.42;
+      productGroup.add(cuff);
+    }
+  }
+
+  function animate() {
+    animId = requestAnimationFrame(animate);
+    var t = clock.getElapsedTime();
+    if (productGroup) {
+      productGroup.rotation.y = userRotY + t * 0.4;
+      productGroup.position.y = Math.sin(t * 0.8) * 0.08;
+    }
+    if (particles) {
+      var pa = particles.geometry.attributes.position.array;
+      for (var i = 1; i < pa.length; i += 3) {
+        pa[i] += Math.sin(t + i) * 0.001;
+      }
+      particles.geometry.attributes.position.needsUpdate = true;
+      particles.rotation.y = t * 0.02;
+    }
+    renderer.render(scene, camera);
+  }
+
+  function onResize() {
+    if (!renderer) return;
+    var w = wrap.clientWidth, h = wrap.clientHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  }
+
+  function setupDrag() {
+    var canvas = renderer.domElement;
+    canvas.addEventListener('pointerdown', function(e) { isDragging = true; prevX = e.clientX; canvas.setPointerCapture(e.pointerId); });
+    canvas.addEventListener('pointermove', function(e) { if (!isDragging) return; userRotY += (e.clientX - prevX) * 0.008; prevX = e.clientX; });
+    canvas.addEventListener('pointerup', function() { isDragging = false; });
+  }
+
+  function setupPills() {
+    var pills = document.querySelectorAll('.hero-pill');
+    pills.forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        pills.forEach(function(p) { p.classList.remove('hp-active'); });
+        pill.classList.add('hp-active');
+        buildProduct(pill.getAttribute('data-product'));
+      });
+    });
+  }
+
+  window.heroSurpriseMe = function() {
+    var types = ['jacket', 'pants', 'boot', 'gloves'];
+    var next = types[Math.floor(Math.random() * types.length)];
+    buildProduct(next);
+    document.querySelectorAll('.hero-pill').forEach(function(p) {
+      p.classList.toggle('hp-active', p.getAttribute('data-product') === next);
+    });
+  };
+
+  window.enterDashboard = function() {
+    heroEl.classList.add('hero-exit');
+    setTimeout(function() {
+      heroEl.style.display = 'none';
+      document.getElementById('mainLayout').style.display = '';
+      if (animId) cancelAnimationFrame(animId);
+      if (renderer) { renderer.dispose(); renderer.domElement.remove(); renderer = null; }
+      if (scene) {
+        scene.traverse(function(obj) {
+          if (obj.geometry) obj.geometry.dispose();
+          if (obj.material) {
+            if (Array.isArray(obj.material)) obj.material.forEach(function(m) { m.dispose(); });
+            else obj.material.dispose();
+          }
+        });
+        scene = null;
+      }
+    }, 600);
+  };
+})();
+</script>
+
 <script>
 var POS = [
   { id:'PO-2611-AW-001', cat:'Garments', styles:[{name:'Summer Tee V-Neck',sku:'TEE-VN-BLK',colors:['Black','White','Navy'],sizes:'S–XXL',pcs:2400},{name:'Summer Tee Crew',sku:'TEE-CR-GRY',colors:['Grey Marl','Olive'],sizes:'S–XL',pcs:1600},{name:'Summer Tee Henley',sku:'TEE-HN-BLU',colors:['Sky Blue'],sizes:'M–XL',pcs:1000}], factory:'Dhaka Textiles Ltd.', country:'BD', qty:5000, status:'in_production', date:'2026-12-15', brand:'ActiveWave' },
