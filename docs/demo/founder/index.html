@@ -601,6 +601,100 @@ body {
 .theme-card .theme-name { font-weight: 600; font-size: 13px; }
 
 /* ═══════════════════════════════════════════
+   BOT COMMAND CENTER
+   ═══════════════════════════════════════════ */
+.bot-status-bar {
+  display: flex; align-items: center; gap: 12px;
+  background: linear-gradient(135deg, rgba(0,214,143,0.08), rgba(108,92,231,0.08));
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius); padding: 14px 20px; margin-bottom: 24px;
+}
+.bot-status-bar .bot-pulse {
+  width: 12px; height: 12px; border-radius: 50%; background: var(--ok);
+  box-shadow: 0 0 8px var(--ok); animation: pulse 2s infinite; flex-shrink: 0;
+}
+.bot-status-bar .bot-label { font-size: 13px; color: var(--fg-muted); }
+.bot-status-bar .bot-label strong { color: var(--fg); }
+.bot-status-bar .bot-timestamp { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--fg-faint); flex-shrink: 0; }
+
+.bot-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px;
+}
+.bot-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 22px 20px;
+  cursor: pointer; transition: all 0.3s ease; position: relative;
+  display: flex; flex-direction: column;
+}
+.bot-card:hover {
+  border-color: var(--border-accent); background: var(--bg-card-hover);
+  transform: translateY(-3px); box-shadow: var(--shadow-lg);
+}
+.bot-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+.bot-card-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+}
+.bot-card-icon svg { width: 20px; height: 20px; color: #fff; }
+.bot-card-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 9px;
+  border-radius: var(--radius-pill); text-transform: uppercase; letter-spacing: 0.04em;
+}
+.bot-card-value {
+  font-family: var(--font-display); font-size: 32px; line-height: 1.1; margin-bottom: 4px;
+}
+.bot-card-label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--fg-faint); margin-bottom: 4px;
+}
+.bot-card-desc { font-size: 12px; color: var(--fg-muted); line-height: 1.4; }
+.bot-card-expand {
+  position: absolute; top: 12px; right: 12px; width: 28px; height: 28px;
+  border: 1px solid var(--border); border-radius: 6px; background: var(--bg-dim);
+  color: var(--fg-faint); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s;
+}
+.bot-card:hover .bot-card-expand { opacity: 1; }
+.bot-card-expand:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.bot-card-expand svg { width: 14px; height: 14px; }
+
+.bot-activity-section { margin-top: 8px; }
+.bot-log { display: flex; flex-direction: column; gap: 0; }
+.bot-log-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; border-bottom: 1px solid var(--divider);
+  font-size: 13px; transition: background 0.15s;
+}
+.bot-log-item:hover { background: var(--bg-card-hover); }
+.bot-log-item:last-child { border-bottom: none; }
+.bot-log-time { font-family: var(--font-mono); font-size: 11px; color: var(--fg-faint); flex-shrink: 0; width: 52px; }
+.bot-log-icon { font-size: 14px; flex-shrink: 0; width: 20px; text-align: center; }
+.bot-log-text { flex: 1; color: var(--fg); }
+.bot-log-tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px;
+  border-radius: var(--radius-pill); flex-shrink: 0;
+}
+
+.bot-approvals { display: flex; flex-direction: column; gap: 0; }
+.bot-approval-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-bottom: 1px solid var(--divider);
+}
+.bot-approval-item:last-child { border-bottom: none; }
+.bot-approval-text { flex: 1; font-size: 13px; }
+.bot-approval-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.bot-approval-btn {
+  width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--bg-dim); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; transition: all 0.15s;
+}
+.bot-approval-btn.approve:hover { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
+.bot-approval-btn.reject:hover { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
+
+/* ═══════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════ */
 @media (max-width: 768px) {
@@ -614,6 +708,7 @@ body {
   .hamburger-btn { display: flex; }
   .content { padding: 16px 12px; }
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .bot-grid { grid-template-columns: 1fr; }
   .section-grid { grid-template-columns: 1fr; }
   .quick-grid { grid-template-columns: 1fr 1fr; }
   .topbar { padding: 10px 12px; }
@@ -717,6 +812,27 @@ body {
 
         <!-- Section detail (populated by JS) -->
         <div class="page" id="page-section"></div>
+
+        <!-- Bots -->
+        <div class="page" id="page-bots">
+          <div class="bot-status-bar">
+            <div class="bot-pulse"></div>
+            <div class="bot-label"><strong>Founder Bot</strong> &mdash; Monitoring &amp; executing tasks 24/7</div>
+            <div class="bot-timestamp" id="botLastRun"></div>
+          </div>
+          <div class="section-header"><h2>Bot Command Center</h2><span class="section-count">9 modules</span><div class="section-line"></div></div>
+          <div class="bot-grid" id="botGrid"></div>
+          <div class="section-header"><h2>Overnight Activity</h2><span class="section-count" id="botLogCount">0</span><div class="section-line"></div></div>
+          <div class="sd-card" style="padding:0;overflow:hidden">
+            <div class="bot-log" id="botLog"></div>
+          </div>
+          <div style="margin-top:24px">
+            <div class="section-header"><h2>Pending Approvals</h2><span class="section-count" id="botApprovalCount">0</span><div class="section-line"></div></div>
+            <div class="sd-card" style="padding:0;overflow:hidden">
+              <div class="bot-approvals" id="botApprovals"></div>
+            </div>
+          </div>
+        </div>
 
         <!-- Settings -->
         <div class="page" id="page-settings">
@@ -835,6 +951,7 @@ function lockConsole() {
    ═══════════════════════════════════════════ */
 var NAV_ITEMS = [
   {id:'dashboard', label:'Dashboard', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>'},
+  {id:'bots', label:'Bots', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="8.5" cy="16" r="1.5"/><circle cx="15.5" cy="16" r="1.5"/><path d="M12 2v4"/><path d="M9 6h6"/><path d="M12 6v5"/></svg>'},
   {id:'_sep'},
   {id:'settings', label:'Settings', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>'}
 ];
@@ -857,7 +974,7 @@ function navTo(pageId) {
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
 
   var titles = {
-    dashboard:'Dashboard', team:'Team & Hiring', financials:'Financials',
+    dashboard:'Dashboard', bots:'Bots', team:'Team & Hiring', financials:'Financials',
     sales:'Sales Pipeline', customers:'Customer Discovery', marketing:'Marketing & Brand',
     product:'Product & Development', analytics:'Business Analytics', assets:'Assets & IP',
     investors:'Investor Relations', legal:'Legal & Compliance', support:'Support & Operations',
@@ -868,6 +985,10 @@ function navTo(pageId) {
   if (pageId === 'dashboard') {
     document.getElementById('page-dashboard').classList.add('active');
     document.getElementById('bottomNav').classList.remove('hidden');
+  } else if (pageId === 'bots') {
+    document.getElementById('page-bots').classList.add('active');
+    document.getElementById('bottomNav').classList.add('hidden');
+    renderBotPage();
   } else if (pageId === 'settings') {
     document.getElementById('page-settings').classList.add('active');
     document.getElementById('bottomNav').classList.add('hidden');
@@ -1146,6 +1267,162 @@ function sendAiMsg() {
   if (!q) return;
   inp.value = '';
   askAi(q);
+}
+
+/* ═══════════════════════════════════════════
+   BOT COMMAND CENTER
+   ═══════════════════════════════════════════ */
+var BOT_CARDS = [
+  {
+    id:'bot-status', label:'Bot Status', value:'Active', color:'ok',
+    badge:'Online', badgeClass:'badge-ok',
+    desc:'24/7 monitoring + auto-execute engine',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+    grad:'linear-gradient(135deg,#00D68F,#20C997)',
+    detail:'<div class="sd-kpi-grid"><div class="sd-kpi"><div class="sd-kpi-label">Engine</div><div class="sd-kpi-val" style="color:var(--ok)">Active</div><div class="sd-kpi-sub">Running 24/7</div></div><div class="sd-kpi"><div class="sd-kpi-label">Uptime</div><div class="sd-kpi-val">99.8%</div><div class="sd-kpi-sub">Last 30 days</div></div><div class="sd-kpi"><div class="sd-kpi-label">Total Runs</div><div class="sd-kpi-val">142</div><div class="sd-kpi-sub">Since activation</div></div><div class="sd-kpi"><div class="sd-kpi-label">Error Rate</div><div class="sd-kpi-val" style="color:var(--ok)">0.2%</div><div class="sd-kpi-sub">Very low</div></div></div><div class="sd-card"><div class="sd-card-title">Bot Configuration</div><div class="sd-row"><span>Run Schedule</span><span class="sd-row-val">Every 4 hours</span></div><div class="sd-row"><span>Monitor Mode</span><span class="sd-pill sd-pill-ok">Active</span></div><div class="sd-row"><span>Auto-Execute</span><span class="sd-pill sd-pill-ok">Enabled</span></div><div class="sd-row"><span>Approval Required</span><span class="sd-pill sd-pill-warn">High-risk only</span></div><div class="sd-row"><span>Notifications</span><span class="sd-pill sd-pill-ok">Push + Email</span></div></div>'
+  },
+  {
+    id:'bot-actions', label:'Actions Today', value:'7', color:'accent',
+    badge:'Active', badgeClass:'badge-accent',
+    desc:'Tasks completed by the bot today',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+    grad:'linear-gradient(135deg,#6C5CE7,#8B5CF6)',
+    detail:'<div class="sd-kpi-grid"><div class="sd-kpi"><div class="sd-kpi-label">Today</div><div class="sd-kpi-val" style="color:var(--accent)">7</div><div class="sd-kpi-sub">Actions taken</div></div><div class="sd-kpi"><div class="sd-kpi-label">This Week</div><div class="sd-kpi-val">34</div><div class="sd-kpi-sub">Actions total</div></div><div class="sd-kpi"><div class="sd-kpi-label">Auto-Executed</div><div class="sd-kpi-val" style="color:var(--ok)">29</div><div class="sd-kpi-sub">No approval needed</div></div><div class="sd-kpi"><div class="sd-kpi-label">Awaiting</div><div class="sd-kpi-val" style="color:var(--warn)">5</div><div class="sd-kpi-sub">Your approval</div></div></div><div class="sd-card"><div class="sd-card-title">Today\'s Actions</div><div class="sd-row"><span>TODO digest generated</span><span class="sd-pill sd-pill-ok">Done</span></div><div class="sd-row"><span>3 Gmail drafts prepared</span><span class="sd-pill sd-pill-ok">Done</span></div><div class="sd-row"><span>Competitor scan completed</span><span class="sd-pill sd-pill-ok">Done</span></div><div class="sd-row"><span>Site health check (3 URLs)</span><span class="sd-pill sd-pill-ok">Done</span></div><div class="sd-row"><span>CTO candidate research</span><span class="sd-pill sd-pill-warn">Pending</span></div></div>'
+  },
+  {
+    id:'bot-alerts', label:'Alerts', value:'2', color:'warn',
+    badge:'New', badgeClass:'badge-warn',
+    desc:'Items needing your attention',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    grad:'linear-gradient(135deg,#FFB822,#F39C12)',
+    detail:'<div class="sd-kpi-grid"><div class="sd-kpi"><div class="sd-kpi-label">Active Alerts</div><div class="sd-kpi-val" style="color:var(--warn)">2</div><div class="sd-kpi-sub">Need attention</div></div><div class="sd-kpi"><div class="sd-kpi-label">Resolved Today</div><div class="sd-kpi-val" style="color:var(--ok)">3</div><div class="sd-kpi-sub">Auto-resolved</div></div><div class="sd-kpi"><div class="sd-kpi-label">This Week</div><div class="sd-kpi-val">8</div><div class="sd-kpi-sub">Total alerts</div></div><div class="sd-kpi"><div class="sd-kpi-label">Avg Response</div><div class="sd-kpi-val">2.4h</div><div class="sd-kpi-sub">Resolution time</div></div></div><div class="sd-card"><div class="sd-card-title">Active Alerts</div><div class="sd-row"><span>TODO: "CTO search" overdue 5 days</span><span class="sd-pill sd-pill-warn">Overdue</span></div><div class="sd-row"><span>No Gmail replies to 3 outreach emails (7d)</span><span class="sd-pill sd-pill-warn">Follow-up</span></div></div><div class="sd-card"><div class="sd-card-title">Resolved Today</div><div class="sd-row"><span>Demo site SSL certificate renewed</span><span class="sd-pill sd-pill-ok">Auto-fixed</span></div><div class="sd-row"><span>GitHub Actions build warning cleared</span><span class="sd-pill sd-pill-ok">Auto-fixed</span></div><div class="sd-row"><span>Weekly report generated on schedule</span><span class="sd-pill sd-pill-ok">Complete</span></div></div>'
+  },
+  {
+    id:'bot-email', label:'Email Drafts', value:'3', color:'blue',
+    badge:'Ready', badgeClass:'badge-blue',
+    desc:'Drafts prepared for your review & send',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
+    grad:'linear-gradient(135deg,#339AF0,#228BE6)',
+    detail:'<div class="sd-kpi-grid"><div class="sd-kpi"><div class="sd-kpi-label">Ready to Send</div><div class="sd-kpi-val" style="color:var(--blue)">3</div><div class="sd-kpi-sub">In Gmail drafts</div></div><div class="sd-kpi"><div class="sd-kpi-label">Sent This Week</div><div class="sd-kpi-val" style="color:var(--ok)">8</div><div class="sd-kpi-sub">After your approval</div></div><div class="sd-kpi"><div class="sd-kpi-label">Reply Rate</div><div class="sd-kpi-val">32%</div><div class="sd-kpi-sub">From outreach</div></div><div class="sd-kpi"><div class="sd-kpi-label">Avg Draft Time</div><div class="sd-kpi-val">12s</div><div class="sd-kpi-sub">Per email</div></div></div><div class="sd-card"><div class="sd-card-title">Pending Drafts</div><div class="sd-row"><span>Reply: SGS quality partnership inquiry</span><span class="sd-pill sd-pill-blue">Review</span></div><div class="sd-row"><span>Follow-up: CTO candidate (LinkedIn)</span><span class="sd-pill sd-pill-blue">Review</span></div><div class="sd-row"><span>Outreach: Tier 2 brand — H&M contact</span><span class="sd-pill sd-pill-blue">Review</span></div></div>'
+  },
+  {
+    id:'bot-docs', label:'Docs Generated', value:'2', color:'accent',
+    badge:'New', badgeClass:'badge-accent',
+    desc:'Reports & documents auto-generated',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+    grad:'linear-gradient(135deg,#8B5CF6,#7C4DFF)',
+    detail:'<div class="sd-kpi-grid"><div class="sd-kpi"><div class="sd-kpi-label">Ready</div><div class="sd-kpi-val" style="color:var(--accent)">2</div><div class="sd-kpi-sub">For review</div></div><div class="sd-kpi"><div class="sd-kpi-label">This Week</div><div class="sd-kpi-val">5</div><div class="sd-kpi-sub">Generated</div></div><div class="sd-kpi"><div class="sd-kpi-label">Types</div><div class="sd-kpi-val">4</div><div class="sd-kpi-sub">Doc categories</div></div><div class="sd-kpi"><div class="sd-kpi-label">Saved Hours</div><div class="sd-kpi-val" style="color:var(--ok)">6.5</div><div class="sd-kpi-sub">This week</div></div></div><div class="sd-grid-2"><div class="sd-card"><div class="sd-card-title">Ready for Review</div><div class="sd-row"><span>Weekly Founder Report (Oct 21)</span><span class="sd-pill sd-pill-accent">New</span></div><div class="sd-row"><span>Customer Discovery Tracker Update</span><span class="sd-pill sd-pill-accent">New</span></div></div><div class="sd-card"><div class="sd-card-title">Doc Types</div><div class="sd-row"><span>Weekly Reports</span><span class="sd-row-val">Auto (Monday)</span></div><div class="sd-row"><span>Financial Updates</span><span class="sd-row-val">Auto (Weekly)</span></div><div class="sd-row"><span>Pitch Deck Refresh</span><span class="sd-row-val">On change</span></div><div class="sd-row"><span>Meeting Briefs</span><span class="sd-row-val">On demand</span></div></div></div>'
+  },
+  {
+    id:'bot-todo', label:'TODO Progress', value:'68%', color:'ok',
+    badge:'On Track', badgeClass:'badge-ok',
+    desc:'Task completion rate from TODO.md',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',
+    grad:'linear-gradient(135deg,#00D68F,#0CA678)',
+    detail:'<div class="sd-kpi-grid"><div class="sd-kpi"><div class="sd-kpi-label">Completion</div><div class="sd-kpi-val" style="color:var(--ok)">68%</div><div class="sd-kpi-sub">Overall progress</div></div><div class="sd-kpi"><div class="sd-kpi-label">Done</div><div class="sd-kpi-val" style="color:var(--ok)">34</div><div class="sd-kpi-sub">Tasks completed</div></div><div class="sd-kpi"><div class="sd-kpi-label">In Progress</div><div class="sd-kpi-val" style="color:var(--warn)">8</div><div class="sd-kpi-sub">Active tasks</div></div><div class="sd-kpi"><div class="sd-kpi-label">Overdue</div><div class="sd-kpi-val" style="color:var(--bad)">3</div><div class="sd-kpi-sub">Need attention</div></div></div><div class="sd-card" style="margin-bottom:16px"><div class="sd-card-title">Overall Progress</div><div class="sd-row"><span>Completed</span><span class="sd-row-val">34 / 50</span></div><div class="sd-progress"><div class="sd-progress-fill" style="width:68%;background:var(--ok)"></div></div></div><div class="sd-card"><div class="sd-card-title">Overdue Items</div><div class="sd-row"><span>CTO search: schedule 3 interviews</span><span class="sd-pill sd-pill-bad">5 days</span></div><div class="sd-row"><span>Name decision: finalize from 15</span><span class="sd-pill sd-pill-bad">3 days</span></div><div class="sd-row"><span>Legal entity: pick jurisdiction</span><span class="sd-pill sd-pill-warn">2 days</span></div></div>'
+  },
+  {
+    id:'bot-github', label:'GitHub', value:'OK', color:'ok',
+    badge:'Healthy', badgeClass:'badge-ok',
+    desc:'Repository activity & CI status',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>',
+    grad:'linear-gradient(135deg,#5A6577,#475569)',
+    detail:'<div class="sd-kpi-grid"><div class="sd-kpi"><div class="sd-kpi-label">Repo Status</div><div class="sd-kpi-val" style="color:var(--ok)">OK</div><div class="sd-kpi-sub">All green</div></div><div class="sd-kpi"><div class="sd-kpi-label">Commits (7d)</div><div class="sd-kpi-val">12</div><div class="sd-kpi-sub">This week</div></div><div class="sd-kpi"><div class="sd-kpi-label">Open PRs</div><div class="sd-kpi-val">1</div><div class="sd-kpi-sub">Active</div></div><div class="sd-kpi"><div class="sd-kpi-label">Deploy</div><div class="sd-kpi-val" style="color:var(--ok)">Live</div><div class="sd-kpi-sub">gh-pages</div></div></div><div class="sd-card"><div class="sd-card-title">Recent Activity</div><div class="sd-row"><span>Founder Console bot tab added</span><span class="sd-pill sd-pill-ok">Merged</span></div><div class="sd-row"><span>KPI grid 4x3 layout fix</span><span class="sd-pill sd-pill-ok">Merged</span></div><div class="sd-row"><span>Service worker cache bust</span><span class="sd-pill sd-pill-ok">Merged</span></div><div class="sd-row"><span>Full-width layout fix</span><span class="sd-pill sd-pill-ok">Merged</span></div></div>'
+  },
+  {
+    id:'bot-health', label:'Site Health', value:'100%', color:'ok',
+    badge:'All Up', badgeClass:'badge-ok',
+    desc:'Uptime monitoring for all 3 demo sites',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+    grad:'linear-gradient(135deg,#2DD4BF,#0D9488)',
+    detail:'<div class="sd-kpi-grid"><div class="sd-kpi"><div class="sd-kpi-label">Overall</div><div class="sd-kpi-val" style="color:var(--ok)">100%</div><div class="sd-kpi-sub">All sites up</div></div><div class="sd-kpi"><div class="sd-kpi-label">Avg Load</div><div class="sd-kpi-val">1.2s</div><div class="sd-kpi-sub">Page load time</div></div><div class="sd-kpi"><div class="sd-kpi-label">Last Check</div><div class="sd-kpi-val" style="color:var(--ok)">2m</div><div class="sd-kpi-sub">ago</div></div><div class="sd-kpi"><div class="sd-kpi-label">30d Uptime</div><div class="sd-kpi-val" style="color:var(--ok)">99.9%</div><div class="sd-kpi-sub">Excellent</div></div></div><div class="sd-card"><div class="sd-card-title">Site Status</div><div class="sd-row"><span>Web Demo (/web/)</span><span class="sd-pill sd-pill-ok">UP</span></div><div class="sd-row"><span>Mobile PWA (/)</span><span class="sd-pill sd-pill-ok">UP</span></div><div class="sd-row"><span>Founder Console (/founder/)</span><span class="sd-pill sd-pill-ok">UP</span></div></div>'
+  },
+  {
+    id:'bot-next', label:'Next Run', value:'3h 42m', color:'',
+    badge:'Scheduled', badgeClass:'badge-blue',
+    desc:'Countdown to next automated cycle',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+    grad:'linear-gradient(135deg,#5C6BC0,#3F51B5)',
+    detail:'<div class="sd-kpi-grid"><div class="sd-kpi"><div class="sd-kpi-label">Next Run</div><div class="sd-kpi-val">3h 42m</div><div class="sd-kpi-sub">Countdown</div></div><div class="sd-kpi"><div class="sd-kpi-label">Frequency</div><div class="sd-kpi-val">4h</div><div class="sd-kpi-sub">Cycle interval</div></div><div class="sd-kpi"><div class="sd-kpi-label">Last Run</div><div class="sd-kpi-val" style="color:var(--ok)">18m</div><div class="sd-kpi-sub">ago</div></div><div class="sd-kpi"><div class="sd-kpi-label">Runs Today</div><div class="sd-kpi-val">4</div><div class="sd-kpi-sub">Of 6 scheduled</div></div></div><div class="sd-card"><div class="sd-card-title">Schedule</div><div class="sd-row"><span>Morning Digest</span><span class="sd-row-val">06:00 AM</span></div><div class="sd-row"><span>Mid-Morning Check</span><span class="sd-row-val">10:00 AM</span></div><div class="sd-row"><span>Afternoon Scan</span><span class="sd-row-val">02:00 PM</span></div><div class="sd-row"><span>Evening Wrap-up</span><span class="sd-row-val">06:00 PM</span></div><div class="sd-row"><span>Night Monitor</span><span class="sd-row-val">10:00 PM</span></div><div class="sd-row"><span>Overnight Sweep</span><span class="sd-row-val">02:00 AM</span></div></div>'
+  }
+];
+
+var BOT_LOG = [
+  {time:'06:00', icon:'✅', text:'Daily TODO digest generated — 68% completion, 3 overdue items', tag:'Auto', tagClass:'badge-ok'},
+  {time:'06:05', icon:'✅', text:'3 Gmail drafts prepared (SGS reply, CTO follow-up, H&M outreach)', tag:'Drafts', tagClass:'badge-blue'},
+  {time:'06:10', icon:'⚠️', text:'TODO item "CTO search" overdue by 5 days — flagged as alert', tag:'Alert', tagClass:'badge-warn'},
+  {time:'06:15', icon:'✅', text:'Competitor scan completed — no new funding rounds detected', tag:'Monitor', tagClass:'badge-ok'},
+  {time:'06:20', icon:'✅', text:'Site health: all 3 demo URLs responding (Web, Mobile, Founder)', tag:'Health', tagClass:'badge-ok'},
+  {time:'06:25', icon:'📄', text:'Weekly Founder Report generated — ready for review', tag:'Docs', tagClass:'badge-accent'},
+  {time:'06:30', icon:'✅', text:'GitHub: 12 commits this week, all CI passing, gh-pages deployed', tag:'GitHub', tagClass:'badge-ok'}
+];
+
+var BOT_APPROVALS = [
+  {text:'Send email draft: Reply to SGS quality partnership inquiry', type:'email'},
+  {text:'Update TODO.md: Mark "pitch deck v1" as complete', type:'todo'},
+  {text:'Send follow-up email to CTO candidate via LinkedIn', type:'email'}
+];
+
+function renderBotPage() {
+  var now = new Date();
+  var timeStr = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
+  document.getElementById('botLastRun').textContent = 'Last run: ' + timeStr;
+
+  var expandSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
+
+  document.getElementById('botGrid').innerHTML = BOT_CARDS.map(function(c) {
+    var vc = c.color ? ' ' + c.color : '';
+    return '<div class="bot-card" onclick="openBotDetail(\'' + c.id + '\')">'
+      + '<button class="bot-card-expand" onclick="event.stopPropagation();openBotDetail(\'' + c.id + '\')">' + expandSvg + '</button>'
+      + '<div class="bot-card-top">'
+      + '<div class="bot-card-icon" style="background:' + c.grad + '">' + c.icon + '</div>'
+      + '<span class="bot-card-badge ' + c.badgeClass + '">' + c.badge + '</span>'
+      + '</div>'
+      + '<div class="bot-card-label">' + c.label + '</div>'
+      + '<div class="bot-card-value' + vc + '">' + c.value + '</div>'
+      + '<div class="bot-card-desc">' + c.desc + '</div>'
+      + '</div>';
+  }).join('');
+
+  document.getElementById('botLogCount').textContent = BOT_LOG.length;
+  document.getElementById('botLog').innerHTML = BOT_LOG.map(function(l) {
+    return '<div class="bot-log-item">'
+      + '<span class="bot-log-time">' + l.time + '</span>'
+      + '<span class="bot-log-icon">' + l.icon + '</span>'
+      + '<span class="bot-log-text">' + l.text + '</span>'
+      + '<span class="bot-log-tag ' + l.tagClass + '">' + l.tag + '</span>'
+      + '</div>';
+  }).join('');
+
+  document.getElementById('botApprovalCount').textContent = BOT_APPROVALS.length;
+  document.getElementById('botApprovals').innerHTML = BOT_APPROVALS.map(function(a, i) {
+    return '<div class="bot-approval-item">'
+      + '<span class="bot-approval-text">' + a.text + '</span>'
+      + '<div class="bot-approval-actions">'
+      + '<button class="bot-approval-btn approve" onclick="botApprove(' + i + ')" title="Approve">✓</button>'
+      + '<button class="bot-approval-btn reject" onclick="botReject(' + i + ')" title="Reject">✗</button>'
+      + '</div></div>';
+  }).join('');
+}
+
+function openBotDetail(id) {
+  var card = BOT_CARDS.find(function(c) { return c.id === id; });
+  if (!card) return;
+  document.getElementById('modalTitle').textContent = card.label;
+  document.getElementById('modalBody').innerHTML = card.detail;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function botApprove(idx) {
+  BOT_APPROVALS.splice(idx, 1);
+  renderBotPage();
+  showToast('Approved! Bot will execute the action.');
+}
+
+function botReject(idx) {
+  BOT_APPROVALS.splice(idx, 1);
+  renderBotPage();
+  showToast('Rejected. Bot will skip this action.');
 }
 
 /* ═══════════════════════════════════════════
