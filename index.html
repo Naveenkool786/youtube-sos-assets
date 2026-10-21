@@ -6,7 +6,7 @@
   <title>FABRIQ - FashionHub</title>
 
   <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#0F4238">
   <meta name="mobile-web-app-capable" content="yes">
 
@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="FABRIQ">
-  <link rel="apple-touch-icon" href="icon-192.svg">
+  <link rel="apple-touch-icon" href="/icon-192.svg">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -246,8 +246,8 @@
   @keyframes ai-sparkle { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
   @keyframes ai-gradient { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
   .ai-fab {
-    position:fixed; bottom:24px; right:16px; z-index:80;
-    width:52px; height:52px; border-radius:50%; border:none; cursor:pointer;
+    position:fixed; bottom:20px; right:16px; z-index:80;
+    width:36px; height:36px; border-radius:50%; border:none; cursor:pointer;
     background: linear-gradient(135deg, var(--accent), #1B7A4E, var(--accent), #2AAF7F);
     background-size: 300% 300%;
     animation: ai-pulse 2s ease-in-out infinite, ai-glow 2s ease-in-out infinite, ai-gradient 6s ease infinite;
@@ -255,9 +255,9 @@
     -webkit-tap-highlight-color:transparent;
     transition: width 0.4s cubic-bezier(0.16,1,0.3,1), height 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease, bottom 0.3s ease;
   }
-  .ai-fab svg { width:24px; height:24px; }
+  .ai-fab svg { width:18px; height:18px; }
   .ai-fab .ai-sparkle-inner { display:flex; align-items:center; justify-content:center; animation: ai-sparkle 8s linear infinite; }
-  .ai-fab.dimmed { width:34px; height:34px; opacity:0.35; animation:none; }
+  .ai-fab.dimmed { width:28px; height:28px; opacity:0.35; animation:none; }
   .ai-fab.dimmed .ai-sparkle-inner { animation:none; }
   .ai-fab.dnd-hidden { display:none!important; }
 
