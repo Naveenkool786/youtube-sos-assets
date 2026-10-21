@@ -398,18 +398,6 @@ body {
 .quick-btn svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.6; }
 
 /* ═══════════════════════════════════════════
-   ACTIVITY TIMELINE
-   ═══════════════════════════════════════════ */
-.timeline { display: flex; flex-direction: column; margin-bottom: 32px; }
-.tl-item { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--divider); }
-.tl-dot-col { display: flex; flex-direction: column; align-items: center; width: 20px; flex-shrink: 0; padding-top: 4px; }
-.tl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.tl-line { width: 2px; flex: 1; background: var(--divider); margin-top: 4px; }
-.tl-content { flex: 1; min-width: 0; }
-.tl-title { font-size: 13px; font-weight: 500; }
-.tl-meta { font-size: 11px; color: var(--fg-faint); margin-top: 2px; }
-
-/* ═══════════════════════════════════════════
    DETAIL MODAL
    ═══════════════════════════════════════════ */
 .modal-overlay {
@@ -1150,8 +1138,6 @@ body {
           <div class="section-grid" id="sectionGrid"></div>
           <div class="section-header"><h2>Quick Actions</h2><div class="section-line"></div></div>
           <div class="quick-grid" id="quickGrid"></div>
-          <div class="section-header"><h2>Activity Log</h2><span class="section-count" id="activityCount">0</span><div class="section-line"></div></div>
-          <div class="timeline" id="timeline"></div>
         </div>
 
         <!-- Section detail (populated by JS) -->
@@ -1521,34 +1507,6 @@ function renderQuickActions() {
 }
 
 /* ═══════════════════════════════════════════
-   ACTIVITY LOG
-   ═══════════════════════════════════════════ */
-var ACTIVITIES = [
-  {text:'Founder Console launched', meta:'PIN-protected command center with sidebar, themes, 3D cards', color:'var(--accent)', date:'Today'},
-  {text:'Prototype v0.1 deployed to gh-pages', meta:'Settings page, hamburger sidebar, AI FAB added', color:'var(--ok)', date:'Today'},
-  {text:'Sidebar theme fix shipped', meta:'All 6 themes now update sidebar colors', color:'var(--ok)', date:'Today'},
-  {text:'AI Assistant added to mobile PWA', meta:'Gemini-style FAB with chat sheet + DND mode', color:'var(--accent)', date:'Today'},
-  {text:'Settings page built for web + mobile', meta:'6 themes, 8 languages, smart geo-detection, notifications', color:'var(--ok)', date:'Recent'},
-  {text:'Factory detail modal with contact cards', meta:'Photo placeholders, initials, email addresses', color:'var(--blue)', date:'Recent'},
-  {text:'Customer discovery package completed', meta:'95 target companies across 5 tiers identified', color:'var(--ok)', date:'Completed'},
-  {text:'Financial model v1 locked', meta:'5-year projections, unit economics, funding scenarios', color:'var(--ok)', date:'Completed'},
-  {text:'Blueprint v1.0 finalized', meta:'190 entities, 33 roles, 12 topics, 4 portals', color:'var(--accent)', date:'Completed'},
-  {text:'Pitch deck v1 ready', meta:'12 slides, problem/solution/market/team/ask', color:'var(--ok)', date:'Completed'},
-  {text:'CTO hiring package ready', meta:'Job description, compensation, interview guide', color:'var(--ok)', date:'Completed'},
-  {text:'Naming package: 15 candidates shortlisted', meta:'Domain availability checked, trademark pre-screen done', color:'var(--warn)', date:'Pending Decision'},
-  {text:'Term sheet negotiation guide completed', meta:'Deep-dive on valuation, vesting, board, pro-rata', color:'var(--ok)', date:'Completed'}
-];
-
-function renderTimeline() {
-  document.getElementById('activityCount').textContent = ACTIVITIES.length;
-  document.getElementById('timeline').innerHTML = ACTIVITIES.map(function(a, i) {
-    return '<div class="tl-item"><div class="tl-dot-col"><div class="tl-dot" style="background:' + a.color + '"></div>'
-      + (i < ACTIVITIES.length - 1 ? '<div class="tl-line"></div>' : '')
-      + '</div><div class="tl-content"><div class="tl-title">' + a.text + '</div><div class="tl-meta">' + a.meta + ' &middot; ' + a.date + '</div></div></div>';
-  }).join('');
-}
-
-/* ═══════════════════════════════════════════
    DETAIL DATA (section KPI cards)
    ═══════════════════════════════════════════ */
 var DETAIL_DATA = {
@@ -1890,7 +1848,6 @@ renderSidebarNav();
 renderKpis();
 renderSections();
 renderQuickActions();
-renderTimeline();
 </script>
 </body>
 </html>
