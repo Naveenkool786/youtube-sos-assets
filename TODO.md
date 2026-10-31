@@ -1,6 +1,6 @@
 # Founder To-Do Tracker
 
-**For: Naveen Kool · Updated: 2026-10-21**
+**For: Naveen Kool · Updated: 2026-10-31**
 
 > **Strategy: BUILD-FIRST, HIRE-LATER** — Deploy a working product before hiring anyone. Prove the product works, get customer feedback with a live demo, then raise and hire from a position of strength.
 
@@ -12,17 +12,22 @@
 
 This is the #1 priority. Nothing else matters until the product is running on a real URL.
 
-### Supabase Deployment
-- [ ] 🔴 Create Supabase project (free tier)
-- [ ] 🔴 Set up Supabase Auth (email + magic link)
-- [ ] 🔴 Create PostgreSQL tables from Prototype v2 schema (`docs/prototype-v2/`)
-- [ ] 🔴 Deploy Next.js frontend to Vercel (connect to Supabase)
-- [ ] 🔴 Verify end-to-end: login → create PO → run inspection → view dashboard
-- [ ] 🔴 Test on mobile (PWA install, offline basics)
+### Code — DONE ✅
+- [x] ✅ Complete Next.js 15 project built and build-verified (`fabriq-pilot/`)
+- [x] ✅ Brand dashboard, Factory dashboard, Inspector dashboard
+- [x] ✅ Login (magic link + Google OAuth), auth middleware, role routing
+- [x] ✅ AI assistant (Claude Haiku server route)
+- [x] ✅ Supabase schema, RLS policies, seed data (2 brands, 3 factories, 5 POs)
+- [x] ✅ PWA manifest for mobile install
 
-### Polish Before Sharing
-- [ ] 🟡 Fix any broken flows discovered during deployment
-- [ ] 🟡 Add seed data (sample Brand, Factory, 3P company, demo inspections)
+### YOUR STEPS — Deploy to Live URL
+- [ ] 🔴 Create Supabase project at supabase.com (free tier)
+- [ ] 🔴 Run `supabase/schema.sql` → `policies.sql` → `seed.sql` in SQL Editor
+- [ ] 🔴 Deploy to Vercel (import repo, set Root Directory to `fabriq-pilot`)
+- [ ] 🔴 Add env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, `NEXT_PUBLIC_SITE_URL`
+- [ ] 🔴 Update Supabase auth redirect URLs to your Vercel URL
+- [ ] 🔴 Test: sign in → brand dashboard → AI chat → verify data loads
+- [ ] 🟡 Test on mobile (PWA install)
 - [ ] 🟡 Set up custom domain once purchased (Priority 4)
 
 ---
