@@ -2,39 +2,42 @@ import { getCurrentUser } from '@/lib/supabase';
 
 export default async function SettingsPage() {
   const session = await getCurrentUser();
+  const p = session?.profile;
+  const t = p?.tenant;
 
   return (
-    <div className="max-w-3xl mx-auto px-5 md:px-8 py-10">
-      <h1 className="font-serif text-4xl mb-8 pl-10 md:pl-0" style={{ color: '#171A17' }}>Settings</h1>
+    <div className="max-w-[800px] mx-auto px-4 md:px-8 py-8">
+      <h1 className="text-2xl font-bold mb-6 pl-10 md:pl-0" style={{ color: 'var(--text)' }}>Settings</h1>
 
-      <div className="bg-white rounded-2xl border p-6 mb-6" style={{ borderColor: '#E6DFCF' }}>
-        <h2 className="font-serif text-xl mb-4" style={{ color: '#171A17' }}>Profile</h2>
+      <div className="card p-5 mb-4">
+        <h2 className="font-semibold mb-4" style={{ color: 'var(--text)' }}>Profile</h2>
         <div className="space-y-3 text-sm">
-          <div className="flex justify-between py-2 border-b" style={{ borderColor: '#F2EDE2' }}>
-            <span style={{ color: '#5A635C' }}>Name</span>
-            <span style={{ color: '#171A17' }}>{session?.profile?.display_name || '—'}</span>
-          </div>
-          <div className="flex justify-between py-2 border-b" style={{ borderColor: '#F2EDE2' }}>
-            <span style={{ color: '#5A635C' }}>Email</span>
-            <span style={{ color: '#171A17' }}>{session?.profile?.email || '—'}</span>
-          </div>
-          <div className="flex justify-between py-2 border-b" style={{ borderColor: '#F2EDE2' }}>
-            <span style={{ color: '#5A635C' }}>Role</span>
-            <span style={{ color: '#171A17' }}>{session?.profile?.role?.replace(/_/g, ' ') || '—'}</span>
-          </div>
-          <div className="flex justify-between py-2 border-b" style={{ borderColor: '#F2EDE2' }}>
-            <span style={{ color: '#5A635C' }}>Organization</span>
-            <span style={{ color: '#171A17' }}>{session?.profile?.tenant?.name || '—'}</span>
-          </div>
+          <Row label="Display name" value={p?.display_name || '—'} />
+          <Row label="Email" value={p?.email || '—'} />
+          <Row label="Role" value={p?.role?.replace(/_/g, ' ') || '—'} />
+          <Row label="Locale" value={p?.locale || 'en'} />
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border p-6" style={{ borderColor: '#E6DFCF' }}>
-        <h2 className="font-serif text-xl mb-4" style={{ color: '#171A17' }}>Organization</h2>
-        <p className="text-sm" style={{ color: '#5A635C' }}>
-          Organization settings and team management coming soon.
-        </p>
+      <div className="card p-5">
+        <h2 className="font-semibold mb-4" style={{ color: 'var(--text)' }}>Organization</h2>
+        <div className="space-y-3 text-sm">
+          <Row label="Name" value={t?.name || '—'} />
+          <Row label="Type" value={t?.tenant_type?.replace(/_/g, ' ') || '—'} />
+          <Row label="Short code" value={t?.short_code || '—'} />
+          <Row label="Country" value={t?.country_code || '—'} />
+          <Row label="Website" value={t?.website || '—'} />
+        </div>
       </div>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between py-2" style={{ borderBottom: '1px solid var(--border)' }}>
+      <span style={{ color: 'var(--text-muted)' }}>{label}</span>
+      <span style={{ color: 'var(--text)' }}>{value}</span>
     </div>
   );
 }

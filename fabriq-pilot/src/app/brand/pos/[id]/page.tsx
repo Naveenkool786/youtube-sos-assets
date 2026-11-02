@@ -2,74 +2,46 @@ import Link from 'next/link';
 import { createServerSupabase } from '@/lib/supabase';
 import type { POStatus, InspectionStatus, Severity, NCRStatus, CoQBucket } from '@/types/database';
 
-const STATUS_COLORS: Record<POStatus, string> = {
-  draft: 'bg-gray-200 text-gray-700',
-  pending_factory: 'bg-amber-100 text-amber-700',
-  accepted: 'bg-blue-100 text-blue-700',
-  in_production: 'bg-blue-100 text-blue-700',
-  awaiting_inspection: 'bg-amber-100 text-amber-700',
-  inspected: 'bg-emerald-100 text-emerald-700',
-  released: 'bg-emerald-100 text-emerald-700',
-  shipped: 'bg-emerald-100 text-emerald-700',
-  ncr_open: 'bg-rose-100 text-rose-700',
-  closed: 'bg-gray-200 text-gray-700',
-  cancelled: 'bg-gray-200 text-gray-700',
+const STATUS_CHIP: Record<POStatus, string> = {
+  draft: 'chip-neutral', pending_factory: 'chip-warning', accepted: 'chip-primary',
+  in_production: 'chip-primary', awaiting_inspection: 'chip-warning', inspected: 'chip-success',
+  released: 'chip-success', shipped: 'chip-success', ncr_open: 'chip-danger',
+  closed: 'chip-neutral', cancelled: 'chip-neutral',
 };
-
 const STATUS_LABELS: Record<POStatus, string> = {
-  draft: 'Draft',
-  pending_factory: 'Pending factory',
-  accepted: 'Accepted',
-  in_production: 'In production',
-  awaiting_inspection: 'Awaiting inspection',
-  inspected: 'Inspected',
-  released: 'Released',
-  shipped: 'Shipped',
-  ncr_open: 'NCR open',
-  closed: 'Closed',
-  cancelled: 'Cancelled',
+  draft: 'Draft', pending_factory: 'Pending', accepted: 'Accepted',
+  in_production: 'In production', awaiting_inspection: 'Awaiting inspection',
+  inspected: 'Inspected', released: 'Released', shipped: 'Shipped',
+  ncr_open: 'NCR open', closed: 'Closed', cancelled: 'Cancelled',
 };
-
-const INSPECTION_STATUS_LABELS: Record<InspectionStatus, string> = {
-  scheduled: 'Scheduled',
-  started: 'Started',
-  in_progress: 'In progress',
-  paused: 'Paused',
-  completed_pass: 'Completed (Pass)',
-  completed_fail: 'Completed (Fail)',
-  cancelled: 'Cancelled',
+const INSP_CHIP: Record<InspectionStatus, string> = {
+  scheduled: 'chip-warning', started: 'chip-primary', in_progress: 'chip-primary',
+  paused: 'chip-neutral', completed_pass: 'chip-success', completed_fail: 'chip-danger', cancelled: 'chip-neutral',
 };
-
-const INSPECTION_TYPE_LABELS: Record<string, string> = {
-  in_line: 'In-line',
-  pre_final: 'Pre-final',
-  final_random: 'Final random',
-  '4_point_fabric': '4-point fabric',
-  ethical_audit: 'Ethical audit',
-  container_loading: 'Container loading',
+const INSP_LABELS: Record<InspectionStatus, string> = {
+  scheduled: 'Scheduled', started: 'Started', in_progress: 'In progress',
+  paused: 'Paused', completed_pass: 'Pass', completed_fail: 'Fail', cancelled: 'Cancelled',
 };
-
-const SEVERITY_COLORS: Record<Severity, string> = {
-  minor: 'bg-amber-100 text-amber-700',
-  major: 'bg-orange-100 text-orange-700',
-  critical: 'bg-red-100 text-red-700',
+const TYPE_LABELS: Record<string, string> = {
+  in_line: 'In-line', pre_final: 'Pre-final', final_random: 'Final random',
+  '4_point_fabric': '4-point fabric', ethical_audit: 'Ethical audit', container_loading: 'Container loading',
 };
-
-const NCR_STATUS_LABELS: Record<NCRStatus, string> = {
-  issued: 'Issued',
-  assigned: 'Assigned',
-  root_cause_analysis: 'Root cause analysis',
-  corrective_action: 'Corrective action',
-  verified: 'Verified',
-  closed: 'Closed',
-  rejected: 'Rejected',
+const SEV_CHIP: Record<Severity, string> = { minor: 'chip-info', major: 'chip-warning', critical: 'chip-danger' };
+const NCR_CHIP: Record<NCRStatus, string> = {
+  issued: 'chip-warning', assigned: 'chip-warning', root_cause_analysis: 'chip-primary',
+  corrective_action: 'chip-primary', verified: 'chip-success', closed: 'chip-success', rejected: 'chip-danger',
 };
-
+const NCR_LABELS: Record<NCRStatus, string> = {
+  issued: 'Issued', assigned: 'Assigned', root_cause_analysis: 'Root cause',
+  corrective_action: 'Corrective action', verified: 'Verified', closed: 'Closed', rejected: 'Rejected',
+};
 const BUCKET_LABELS: Record<CoQBucket, string> = {
-  prevention: 'Prevention',
-  appraisal: 'Appraisal',
-  internal_failure: 'Internal failure',
-  external_failure: 'External failure',
+  prevention: 'Prevention', appraisal: 'Appraisal',
+  internal_failure: 'Internal Failure', external_failure: 'External Failure',
+};
+const BUCKET_COLORS: Record<CoQBucket, string> = {
+  prevention: 'var(--success)', appraisal: 'var(--info)',
+  internal_failure: 'var(--warning)', external_failure: 'var(--danger)',
 };
 
 export default async function PODetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -84,36 +56,21 @@ export default async function PODetailPage({ params }: { params: Promise<{ id: s
 
   if (!po) {
     return (
-      <main className="min-h-screen flex items-center justify-center" style={{ background: '#FAF7F1' }}>
+      <main className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
         <div className="text-center">
-          <h1 className="font-serif text-3xl mb-4" style={{ color: '#171A17' }}>PO not found</h1>
-          <Link href="/brand/dashboard" className="text-sm underline" style={{ color: '#0F4238' }}>
-            Back to Dashboard
-          </Link>
+          <h1 className="text-2xl font-bold mb-4">PO not found</h1>
+          <Link href="/brand/pos" className="text-sm underline" style={{ color: 'var(--primary)' }}>Back to POs</Link>
         </div>
       </main>
     );
   }
 
   const [{ data: inspections }, { data: defects }, { data: ncrs }, { data: coqEntries }] = await Promise.all([
-    supabase
-      .from('inspections')
-      .select('*, inspector:profiles!inspections_inspector_id_fkey(display_name)')
-      .eq('po_id', id)
-      .order('scheduled_date', { ascending: false }),
-    supabase
-      .from('defects')
-      .select('*, category:defect_categories(*)')
-      .eq('po_id', id)
-      .order('logged_at', { ascending: false }),
-    supabase
-      .from('ncrs')
-      .select('*')
-      .eq('po_id', id),
-    supabase
-      .from('coq_entries')
-      .select('*')
-      .eq('po_id', id),
+    supabase.from('inspections').select('*, inspector:profiles!inspections_inspector_id_fkey(display_name)')
+      .eq('po_id', id).order('scheduled_date', { ascending: false }),
+    supabase.from('defects').select('*, category:defect_categories(*)').eq('po_id', id).order('logged_at', { ascending: false }),
+    supabase.from('ncrs').select('*').eq('po_id', id),
+    supabase.from('coq_entries').select('*').eq('po_id', id),
   ]);
 
   const coqByBucket: Record<string, number> = {};
@@ -126,197 +83,208 @@ export default async function PODetailPage({ params }: { params: Promise<{ id: s
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-5 md:px-8 py-8">
-      <Link href="/brand/pos" className="inline-flex items-center gap-1 text-sm mb-6 hover:underline pl-10 md:pl-0" style={{ color: '#0F4238' }}>
-        ← Back to Purchase Orders
-      </Link>
+    <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-8">
+      <button onClick={undefined} className="btn btn-ghost mb-4 pl-10 md:pl-0">
+        <Link href="/brand/pos" className="flex items-center gap-1 text-sm" style={{ color: 'var(--text-muted)' }}>
+          ← Back to Purchase Orders
+        </Link>
+      </button>
 
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-8">
-          <h1 className="font-serif text-3xl" style={{ color: '#171A17' }}>{po.po_number}</h1>
-          <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium w-fit ${STATUS_COLORS[po.status as POStatus]}`}>
-            {STATUS_LABELS[po.status as POStatus]}
-          </span>
-          {po.style_name && (
-            <span className="text-lg" style={{ color: '#5A635C' }}>{po.style_name}</span>
-          )}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+        <h1 className="text-2xl font-bold" style={{ color: 'var(--text)' }}>{po.po_number}</h1>
+        <span className={`chip ${STATUS_CHIP[po.status as POStatus]}`}>{STATUS_LABELS[po.status as POStatus]}</span>
+        {po.style_name && <span className="text-sm" style={{ color: 'var(--text-muted)' }}>{po.style_name}</span>}
+      </div>
+
+      {/* Details */}
+      <Section title="Details">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+          <InfoRow label="Factory" value={po.factory?.name || '—'} />
+          <InfoRow label="Quantity" value={po.quantity?.toLocaleString()} />
+          <InfoRow label="Unit price" value={po.unit_price ? `${po.currency} ${Number(po.unit_price).toFixed(2)}` : '—'} />
+          <InfoRow label="PO date" value={fmtDate(po.po_date)} />
+          <InfoRow label="Ex-factory date" value={fmtDate(po.ex_factory_date)} />
+          <InfoRow label="Ship mode" value={po.ship_mode || '—'} />
+          <InfoRow label="AQL level" value={po.aql_level || '—'} />
+          <InfoRow label="Inspection firm" value={po.inspection_firm?.name || '—'} />
         </div>
+      </Section>
 
-        {/* Info Grid */}
-        <Section title="Details">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
-            <InfoRow label="Factory" value={(po as any).factory?.name || '—'} />
-            <InfoRow label="Quantity" value={po.quantity.toLocaleString()} />
-            <InfoRow label="Unit price" value={po.unit_price ? `${po.currency} ${Number(po.unit_price).toFixed(2)}` : '—'} />
-            <InfoRow label="PO date" value={fmtDate(po.po_date)} />
-            <InfoRow label="Ex-factory date" value={fmtDate(po.ex_factory_date)} />
-            <InfoRow label="Ship mode" value={po.ship_mode || '—'} />
-            <InfoRow label="AQL level" value={po.aql_level || '—'} />
-            <InfoRow label="Inspection firm" value={(po as any).inspection_firm?.name || '—'} />
+      {/* Quality Standards */}
+      <Section title="Quality Standards">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-sm">
+          <div className="text-center"><div className="text-xs" style={{ color: 'var(--text-muted)' }}>Sampling</div><div className="font-bold">AQL Level II</div></div>
+          <div className="text-center"><div className="text-xs" style={{ color: 'var(--text-muted)' }}>Major AQL</div><div className="font-bold">2.5</div></div>
+          <div className="text-center"><div className="text-xs" style={{ color: 'var(--text-muted)' }}>Minor AQL</div><div className="font-bold">4.0</div></div>
+          <div className="text-center"><div className="text-xs" style={{ color: 'var(--text-muted)' }}>Critical</div><div className="font-bold">0 allowed</div></div>
+          <div className="text-center"><div className="text-xs" style={{ color: 'var(--text-muted)' }}>Lab tests</div><div className="font-bold">10 mandatory</div></div>
+        </div>
+      </Section>
+
+      {/* Inspections */}
+      <Section title="Inspections">
+        {inspections && inspections.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-xs" style={{ background: 'var(--bg)', color: 'var(--text-muted)' }}>
+                  <th className="px-4 py-2 text-left font-medium">Type</th>
+                  <th className="px-4 py-2 text-left font-medium">Date</th>
+                  <th className="px-4 py-2 text-left font-medium hidden sm:table-cell">Inspector</th>
+                  <th className="px-4 py-2 text-left font-medium">Status</th>
+                  <th className="px-4 py-2 text-left font-medium">Result</th>
+                  <th className="px-4 py-2 text-right font-medium">Maj</th>
+                  <th className="px-4 py-2 text-right font-medium">Min</th>
+                  <th className="px-4 py-2 text-right font-medium">Crit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inspections.map((insp: any) => (
+                  <tr key={insp.id} className="border-t" style={{ borderColor: 'var(--border)' }}>
+                    <td className="px-4 py-3">{TYPE_LABELS[insp.inspection_type] || insp.inspection_type}</td>
+                    <td className="px-4 py-3 text-xs" style={{ color: 'var(--text-muted)' }}>{fmtDate(insp.scheduled_date)}</td>
+                    <td className="px-4 py-3 text-xs hidden sm:table-cell" style={{ color: 'var(--text-muted)' }}>{insp.inspector?.display_name || '—'}</td>
+                    <td className="px-4 py-3"><span className={`chip ${INSP_CHIP[insp.status as InspectionStatus]}`}>{INSP_LABELS[insp.status as InspectionStatus]}</span></td>
+                    <td className="px-4 py-3">
+                      {insp.result === 'pass' && <span className="font-medium" style={{ color: 'var(--success)' }}>Pass</span>}
+                      {insp.result === 'fail' && <span className="font-medium" style={{ color: 'var(--danger)' }}>Fail</span>}
+                      {(!insp.result || insp.result === 'pending') && <span style={{ color: 'var(--text-muted)' }}>Pending</span>}
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono text-xs">{insp.major_defects_found}/{insp.major_defects_allowed ?? '—'}</td>
+                    <td className="px-4 py-3 text-right font-mono text-xs">{insp.minor_defects_found}/{insp.minor_defects_allowed ?? '—'}</td>
+                    <td className="px-4 py-3 text-right font-mono text-xs">{insp.critical_defects_found}/{insp.critical_defects_allowed ?? '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <Empty>No inspections recorded.</Empty>
+        )}
+      </Section>
+
+      {/* Defects */}
+      <Section title="Defects">
+        {defects && defects.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-xs" style={{ background: 'var(--bg)', color: 'var(--text-muted)' }}>
+                  <th className="px-4 py-2 text-left font-medium">Category</th>
+                  <th className="px-4 py-2 text-left font-medium">Severity</th>
+                  <th className="px-4 py-2 text-right font-medium">Qty</th>
+                  <th className="px-4 py-2 text-left font-medium hidden sm:table-cell">Location</th>
+                  <th className="px-4 py-2 text-right font-medium hidden sm:table-cell">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {defects.map((d: any) => (
+                  <tr key={d.id} className="border-t" style={{ borderColor: 'var(--border)' }}>
+                    <td className="px-4 py-3">{d.category?.name || '—'}</td>
+                    <td className="px-4 py-3"><span className={`chip ${SEV_CHIP[d.severity as Severity]}`}>{d.severity}</span></td>
+                    <td className="px-4 py-3 text-right font-mono font-bold">{d.quantity}</td>
+                    <td className="px-4 py-3 text-xs hidden sm:table-cell" style={{ color: 'var(--text-muted)' }}>{d.location || '—'}</td>
+                    <td className="px-4 py-3 text-right text-xs hidden sm:table-cell" style={{ color: 'var(--text-muted)' }}>{fmtDate(d.logged_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <Empty>No defects logged.</Empty>
+        )}
+      </Section>
+
+      {/* NCRs */}
+      <Section title="Non-Conformance Reports">
+        {ncrs && ncrs.length > 0 ? (
+          <div className="space-y-3">
+            {ncrs.map((ncr: any) => (
+              <div key={ncr.id} className="p-4 rounded-lg" style={{ border: '1px solid var(--border)' }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="font-mono text-xs" style={{ color: 'var(--text-muted)' }}>{ncr.ncr_number}</span>
+                  <span className={`chip ${SEV_CHIP[ncr.severity as Severity]}`}>{ncr.severity}</span>
+                  <span className={`chip ${NCR_CHIP[ncr.status as NCRStatus]}`}>{NCR_LABELS[ncr.status as NCRStatus]}</span>
+                </div>
+                <h3 className="font-medium mb-1">{ncr.title}</h3>
+                {ncr.description && <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{ncr.description}</p>}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Empty>No NCRs issued.</Empty>
+        )}
+      </Section>
+
+      {/* CoQ */}
+      {coqTotal > 0 && (
+        <Section title="Cost of Quality">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+            {(['prevention', 'appraisal', 'internal_failure', 'external_failure'] as CoQBucket[]).map((bucket) => (
+              <div key={bucket} className="text-center">
+                <div className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{BUCKET_LABELS[bucket]}</div>
+                <div className="text-xl font-bold" style={{ color: BUCKET_COLORS[bucket] }}>
+                  ${((coqByBucket[bucket] || 0) / 1000).toFixed(1)}k
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-right text-sm pt-3" style={{ borderTop: '1px solid var(--border)' }}>
+            Total: <span className="text-lg font-bold">${(coqTotal / 1000).toFixed(1)}k</span>
           </div>
         </Section>
+      )}
 
-        {/* Inspections */}
-        <Section title="Inspections">
-          {inspections && inspections.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-xs uppercase tracking-wider" style={{ color: '#5A635C', background: '#F2EDE2' }}>
-                    <th className="px-4 py-2 text-left font-medium">Type</th>
-                    <th className="px-4 py-2 text-left font-medium">Date</th>
-                    <th className="px-4 py-2 text-left font-medium">Inspector</th>
-                    <th className="px-4 py-2 text-left font-medium">Status</th>
-                    <th className="px-4 py-2 text-left font-medium">Result</th>
-                    <th className="px-4 py-2 text-right font-medium">Maj</th>
-                    <th className="px-4 py-2 text-right font-medium">Min</th>
-                    <th className="px-4 py-2 text-right font-medium">Crit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {inspections.map((insp: any) => (
-                    <tr key={insp.id} className="border-t" style={{ borderColor: '#ECE4D1' }}>
-                      <td className="px-4 py-3" style={{ color: '#171A17' }}>{INSPECTION_TYPE_LABELS[insp.inspection_type] || insp.inspection_type}</td>
-                      <td className="px-4 py-3" style={{ color: '#5A635C' }}>{fmtDate(insp.scheduled_date)}</td>
-                      <td className="px-4 py-3" style={{ color: '#5A635C' }}>{insp.inspector?.display_name || '—'}</td>
-                      <td className="px-4 py-3" style={{ color: '#5A635C' }}>{INSPECTION_STATUS_LABELS[insp.status as InspectionStatus] || insp.status}</td>
-                      <td className="px-4 py-3">
-                        {insp.result === 'pass' && <span className="text-emerald-600 font-medium">Pass</span>}
-                        {insp.result === 'fail' && <span className="text-red-600 font-medium">Fail</span>}
-                        {(!insp.result || insp.result === 'pending') && <span style={{ color: '#5A635C' }}>Pending</span>}
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-xs" style={{ color: '#171A17' }}>
-                        {insp.major_defects_found}/{insp.major_defects_allowed ?? '—'}
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-xs" style={{ color: '#171A17' }}>
-                        {insp.minor_defects_found}/{insp.minor_defects_allowed ?? '—'}
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-xs" style={{ color: '#171A17' }}>
-                        {insp.critical_defects_found}/{insp.critical_defects_allowed ?? '—'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <EmptyState>No inspections recorded.</EmptyState>
-          )}
-        </Section>
-
-        {/* Defects */}
-        <Section title="Defects">
-          {defects && defects.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-xs uppercase tracking-wider" style={{ color: '#5A635C', background: '#F2EDE2' }}>
-                    <th className="px-4 py-2 text-left font-medium">Category</th>
-                    <th className="px-4 py-2 text-left font-medium">Severity</th>
-                    <th className="px-4 py-2 text-right font-medium">Qty</th>
-                    <th className="px-4 py-2 text-left font-medium">Location</th>
-                    <th className="px-4 py-2 text-left font-medium">Source</th>
-                    <th className="px-4 py-2 text-right font-medium">Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {defects.map((d: any) => (
-                    <tr key={d.id} className="border-t" style={{ borderColor: '#ECE4D1' }}>
-                      <td className="px-4 py-3" style={{ color: '#171A17' }}>{d.category?.name || '—'}</td>
-                      <td className="px-4 py-3">
-                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${SEVERITY_COLORS[d.severity as Severity]}`}>
-                          {d.severity}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-xs" style={{ color: '#171A17' }}>{d.quantity}</td>
-                      <td className="px-4 py-3" style={{ color: '#5A635C' }}>{d.location || '—'}</td>
-                      <td className="px-4 py-3" style={{ color: '#5A635C' }}>{d.logged_from?.replace('_', ' ') || '—'}</td>
-                      <td className="px-4 py-3 text-right text-xs" style={{ color: '#5A635C' }}>{fmtDate(d.logged_at)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <EmptyState>No defects logged.</EmptyState>
-          )}
-        </Section>
-
-        {/* NCRs */}
-        <Section title="Non-Conformance Reports">
-          {ncrs && ncrs.length > 0 ? (
-            <div className="space-y-3">
-              {ncrs.map((ncr: any) => (
-                <div key={ncr.id} className="border rounded-xl p-4" style={{ borderColor: '#ECE4D1' }}>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                    <span className="font-mono text-xs" style={{ color: '#5A635C' }}>{ncr.ncr_number}</span>
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium w-fit ${SEVERITY_COLORS[ncr.severity as Severity]}`}>
-                      {ncr.severity}
-                    </span>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100" style={{ color: '#5A635C' }}>
-                      {NCR_STATUS_LABELS[ncr.status as NCRStatus] || ncr.status}
-                    </span>
-                  </div>
-                  <h3 className="font-medium mb-1" style={{ color: '#171A17' }}>{ncr.title}</h3>
-                  {ncr.description && <p className="text-sm" style={{ color: '#5A635C' }}>{ncr.description}</p>}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyState>No NCRs issued.</EmptyState>
-          )}
-        </Section>
-
-        {/* Cost of Quality */}
-        <Section title="Cost of Quality">
-          {coqTotal > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-              {(['prevention', 'appraisal', 'internal_failure', 'external_failure'] as CoQBucket[]).map((bucket) => (
-                <div key={bucket} className="text-center">
-                  <div className="text-xs uppercase tracking-wider mb-1" style={{ color: '#5A635C' }}>
-                    {BUCKET_LABELS[bucket]}
-                  </div>
-                  <div className="font-serif text-xl" style={{ color: bucket.includes('failure') ? '#D96060' : '#0F4238' }}>
-                    ${((coqByBucket[bucket] || 0) / 1000).toFixed(1)}k
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyState>No cost of quality data.</EmptyState>
-          )}
-          {coqTotal > 0 && (
-            <div className="text-right text-sm border-t pt-3" style={{ borderColor: '#ECE4D1', color: '#171A17' }}>
-              Total: <span className="font-serif text-lg font-medium">${(coqTotal / 1000).toFixed(1)}k</span>
-            </div>
-          )}
-        </Section>
+      {/* Timeline */}
+      <Section title="Timeline">
+        <div className="space-y-3">
+          <TimelineItem color="var(--primary)" title="Created" date={po.created_at} />
+          {(inspections || []).map((i: any) => (
+            <TimelineItem key={i.id} color="var(--info)" title={`Inspection ${INSP_LABELS[i.status as InspectionStatus] || i.status}`} date={i.created_at} />
+          ))}
+          {(ncrs || []).map((n: any) => (
+            <TimelineItem key={n.id} color="var(--danger)" title={`NCR ${NCR_LABELS[n.status as NCRStatus] || n.status}`} date={n.created_at} />
+          ))}
+        </div>
+      </Section>
     </div>
   );
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-2xl border overflow-hidden mb-6" style={{ borderColor: '#E6DFCF' }}>
-      <div className="px-6 py-4 border-b" style={{ borderColor: '#E6DFCF' }}>
-        <h2 className="font-serif text-xl" style={{ color: '#171A17' }}>{title}</h2>
+    <div className="card overflow-hidden mb-4">
+      <div className="px-5 py-3" style={{ borderBottom: '1px solid var(--border)' }}>
+        <h2 className="font-semibold" style={{ color: 'var(--text)' }}>{title}</h2>
       </div>
-      <div className="px-6 py-4">{children}</div>
+      <div className="px-5 py-4">{children}</div>
     </div>
   );
 }
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between py-1 border-b" style={{ borderColor: '#F2EDE2' }}>
-      <span style={{ color: '#5A635C' }}>{label}</span>
-      <span style={{ color: '#171A17' }}>{value}</span>
+    <div className="flex justify-between py-1.5" style={{ borderBottom: '1px solid var(--border)' }}>
+      <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{label}</span>
+      <span className="text-xs font-medium">{value}</span>
     </div>
   );
 }
 
-function EmptyState({ children }: { children: React.ReactNode }) {
-  return <p className="text-sm py-4 text-center" style={{ color: '#5A635C' }}>{children}</p>;
+function TimelineItem({ color, title, date }: { color: string; title: string; date: string }) {
+  return (
+    <div className="flex items-start gap-2">
+      <div className="w-2 h-2 rounded-full mt-1.5" style={{ background: color }} />
+      <div>
+        <div className="font-semibold text-sm">{title}</div>
+        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{date ? new Date(date).toLocaleString() : '—'}</div>
+      </div>
+    </div>
+  );
+}
+
+function Empty({ children }: { children: React.ReactNode }) {
+  return <p className="text-sm py-4 text-center" style={{ color: 'var(--text-subtle)' }}>{children}</p>;
 }
 
 function fmtDate(d: string | null): string {

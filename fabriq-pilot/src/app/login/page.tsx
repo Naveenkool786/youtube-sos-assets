@@ -51,92 +51,88 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-6" style={{ background: '#FAF7F1' }}>
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 border" style={{ borderColor: '#E6DFCF' }}>
+    <main className="min-h-screen flex items-center justify-center p-6" style={{ background: 'var(--bg)' }}>
+      <div className="w-full max-w-md card p-8 shadow-lg">
         <div className="flex items-center gap-2 mb-8">
-          <svg viewBox="0 0 30 30" className="w-7 h-7" style={{ color: '#0F4238' }}>
-            <rect x="3" y="3" width="24" height="24" rx="6" fill="currentColor" opacity="0.08" />
+          <svg viewBox="0 0 30 30" className="w-7 h-7" style={{ color: 'var(--primary)' }}>
+            <rect x="3" y="3" width="24" height="24" rx="6" fill="currentColor" opacity="0.15" />
             <path d="M7 10 L15 6 L23 10 L15 14 Z" fill="currentColor" opacity="0.9" />
             <path d="M7 15 L15 11 L23 15 L15 19 Z" fill="currentColor" opacity="0.6" />
             <path d="M7 20 L15 16 L23 20 L15 24 Z" fill="currentColor" opacity="0.3" />
           </svg>
-          <span className="font-serif text-2xl" style={{ color: '#171A17' }}>FABRIQ</span>
+          <span className="font-semibold text-2xl" style={{ color: 'var(--text)' }}>FABRIQ</span>
         </div>
 
         {sent ? (
           <>
-            <h1 className="font-serif text-3xl mb-2" style={{ color: '#171A17' }}>Check your inbox</h1>
-            <p className="text-sm mb-6" style={{ color: '#5A635C' }}>
+            <h1 className="text-2xl font-bold mb-2">Check your inbox</h1>
+            <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>
               We sent a magic link to <strong>{email}</strong>. Click it to sign in.
             </p>
-            <button onClick={() => { setSent(false); setEmail(''); }} className="text-sm underline" style={{ color: '#0F4238' }}>
+            <button onClick={() => { setSent(false); setEmail(''); }} className="text-sm underline" style={{ color: 'var(--primary)' }}>
               Use a different email
             </button>
           </>
         ) : (
           <>
-            <h1 className="font-serif text-3xl mb-2" style={{ color: '#171A17' }}>
+            <h1 className="text-2xl font-bold mb-2">
               {isSignUp ? 'Create account' : 'Sign in'}
             </h1>
-            <p className="text-sm mb-6" style={{ color: '#5A635C' }}>
+            <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>
               {mode === 'password' ? 'Enter your email and password.' : "We'll email you a magic link."}
             </p>
 
             <form onSubmit={mode === 'password' ? handlePassword : handleMagicLink} className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-1" style={{ color: '#171A17' }}>Email address</label>
+                <label htmlFor="email">Email address</label>
                 <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@company.com" className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2"
-                  style={{ borderColor: '#DED3BC', background: '#FFF' }} />
+                  placeholder="you@company.com" />
               </div>
 
               {mode === 'password' && (
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium mb-1" style={{ color: '#171A17' }}>Password</label>
+                  <label htmlFor="password">Password</label>
                   <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••" minLength={6} className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2"
-                    style={{ borderColor: '#DED3BC', background: '#FFF' }} />
+                    placeholder="••••••••" minLength={6} />
                 </div>
               )}
 
               {error && (
-                <div className="text-sm p-3 rounded-lg" style={{ background: '#F3E2D4', color: '#C67952' }}>{error}</div>
+                <div className="text-sm p-3 rounded-lg" style={{ background: 'var(--danger-soft)', color: 'var(--danger)' }}>{error}</div>
               )}
 
-              <button type="submit" disabled={loading}
-                className="w-full py-3 rounded-full font-semibold text-sm transition disabled:opacity-50"
-                style={{ background: '#0F4238', color: '#FFF' }}>
+              <button type="submit" disabled={loading} className="btn btn-primary w-full justify-center py-3 text-sm disabled:opacity-50">
                 {loading ? 'Please wait…' : mode === 'password' ? (isSignUp ? 'Create account' : 'Sign in') : 'Send magic link'}
               </button>
             </form>
 
             {mode === 'password' && (
-              <button onClick={() => setIsSignUp(!isSignUp)} className="w-full text-sm mt-3 underline" style={{ color: '#0F4238' }}>
+              <button onClick={() => setIsSignUp(!isSignUp)} className="w-full text-sm mt-3 underline" style={{ color: 'var(--primary)' }}>
                 {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
               </button>
             )}
 
             <div className="my-5 flex items-center gap-3">
-              <div className="flex-1 h-px" style={{ background: '#E6DFCF' }} />
-              <span className="text-xs uppercase tracking-wider" style={{ color: '#5A635C' }}>or</span>
-              <div className="flex-1 h-px" style={{ background: '#E6DFCF' }} />
+              <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
+              <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>or</span>
+              <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
             </div>
 
             <button onClick={() => setMode(mode === 'password' ? 'magic' : 'password')}
-              className="w-full py-3 rounded-full font-semibold text-sm border transition hover:bg-gray-50 mb-3"
-              style={{ borderColor: '#E6DFCF', color: '#171A17', background: '#FFF' }}>
+              className="w-full py-3 rounded-lg font-medium text-sm border transition hover:bg-slate-50 mb-3"
+              style={{ borderColor: 'var(--border)', color: 'var(--text)' }}>
               {mode === 'password' ? 'Use magic link instead' : 'Use password instead'}
             </button>
 
             <button onClick={handleGoogle}
-              className="w-full py-3 rounded-full font-semibold text-sm border transition hover:bg-gray-50"
-              style={{ borderColor: '#E6DFCF', color: '#171A17', background: '#FFF' }}>
+              className="w-full py-3 rounded-lg font-medium text-sm border transition hover:bg-slate-50"
+              style={{ borderColor: 'var(--border)', color: 'var(--text)' }}>
               Continue with Google
             </button>
           </>
         )}
 
-        <p className="mt-8 text-xs text-center" style={{ color: '#5A635C' }}>
+        <p className="mt-8 text-xs text-center" style={{ color: 'var(--text-muted)' }}>
           By signing in, you agree to FABRIQ&apos;s confidentiality terms.
         </p>
       </div>

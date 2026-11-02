@@ -1,55 +1,67 @@
 import { createServerSupabase } from '@/lib/supabase';
+import type { InspectionStatus } from '@/types/database';
+
+const STATUS_CHIP: Record<InspectionStatus, string> = {
+  scheduled: 'chip-warning', started: 'chip-primary', in_progress: 'chip-primary',
+  paused: 'chip-neutral', completed_pass: 'chip-success', completed_fail: 'chip-danger', cancelled: 'chip-neutral',
+};
+const STATUS_LABELS: Record<InspectionStatus, string> = {
+  scheduled: 'Scheduled', started: 'Started', in_progress: 'In progress',
+  paused: 'Paused', completed_pass: 'Pass', completed_fail: 'Fail', cancelled: 'Cancelled',
+};
+const TYPE_LABELS: Record<string, string> = {
+  in_line: 'In-line', pre_final: 'Pre-final', final_random: 'Final random',
+  '4_point_fabric': '4-point fabric', ethical_audit: 'Ethical audit', container_loading: 'Container loading',
+};
 
 export default async function InspectionsPage() {
   const supabase = await createServerSupabase();
 
   const { data: inspections } = await supabase
     .from('inspections')
-    .select('*, po:purchase_orders!inspections_po_id_fkey(po_number, style_name), inspector:profiles!inspections_inspector_id_fkey(display_name)')
+    .select('*, po:purchase_orders(po_number), inspector:profiles!inspections_inspector_id_fkey(display_name)')
     .order('scheduled_date', { ascending: false });
 
-  return (
-    <div className="max-w-7xl mx-auto px-5 md:px-8 py-10">
-      <h1 className="font-serif text-4xl mb-8 pl-10 md:pl-0" style={{ color: '#171A17' }}>Inspections</h1>
+  const { data: defects } = await supabase.from('defects').select('inspection_id');
+  const defectCounts: Record<string, number> = {};
+  for (const d of (defects || []) as any[]) {
+    if (d.inspection_id) defectCounts[d.inspection_id] = (defectCounts[d.inspection_id] || 0) + 1;
+  }
 
-      <div className="bg-white rounded-2xl border overflow-hidden" style={{ borderColor: '#E6DFCF' }}>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-xs uppercase tracking-wider" style={{ color: '#5A635C', background: '#F2EDE2' }}>
-                <th className="px-6 py-3 text-left font-medium">PO</th>
-                <th className="px-6 py-3 text-left font-medium">Type</th>
-                <th className="px-6 py-3 text-left font-medium hidden sm:table-cell">Inspector</th>
-                <th className="px-6 py-3 text-left font-medium hidden sm:table-cell">Date</th>
-                <th className="px-6 py-3 text-left font-medium">Status</th>
-                <th className="px-6 py-3 text-left font-medium">Result</th>
+  return (
+    <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-8">
+      <h1 className="text-2xl font-bold mb-6 pl-10 md:pl-0" style={{ color: 'var(--text)' }}>All Inspections</h1>
+
+      <div className="card overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-xs" style={{ background: 'var(--bg)', color: 'var(--text-muted)' }}>
+              <th className="text-left px-4 py-2 font-medium">ID</th>
+              <th className="text-left px-4 py-2 font-medium">PO</th>
+              <th className="text-left px-4 py-2 font-medium">Type</th>
+              <th className="text-left px-4 py-2 font-medium">Status</th>
+              <th className="text-left px-4 py-2 font-medium hidden sm:table-cell">Date</th>
+              <th className="text-right px-4 py-2 font-medium hidden sm:table-cell">Defects</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(inspections || []).map((i: any) => (
+              <tr key={i.id} className="border-t" style={{ borderColor: 'var(--border)' }}>
+                <td className="px-4 py-3 font-mono text-xs" style={{ color: 'var(--text-muted)' }}>{i.id.slice(0, 8)}</td>
+                <td className="px-4 py-3 text-xs">{i.po?.po_number}</td>
+                <td className="px-4 py-3 text-xs">{TYPE_LABELS[i.inspection_type] || i.inspection_type}</td>
+                <td className="px-4 py-3"><span className={`chip ${STATUS_CHIP[i.status as InspectionStatus]}`}>{STATUS_LABELS[i.status as InspectionStatus]}</span></td>
+                <td className="px-4 py-3 text-xs hidden sm:table-cell" style={{ color: 'var(--text-muted)' }}>
+                  {i.scheduled_date ? new Date(i.scheduled_date).toLocaleDateString('en-GB') : '—'}
+                </td>
+                <td className="px-4 py-3 text-right font-mono text-xs hidden sm:table-cell">{defectCounts[i.id] || 0}</td>
               </tr>
-            </thead>
-            <tbody>
-              {(inspections || []).map((insp: any) => (
-                <tr key={insp.id} className="border-t" style={{ borderColor: '#ECE4D1' }}>
-                  <td className="px-6 py-4 font-mono text-xs" style={{ color: '#0F4238' }}>{insp.po?.po_number}</td>
-                  <td className="px-6 py-4" style={{ color: '#171A17' }}>{insp.inspection_type?.replace(/_/g, ' ')}</td>
-                  <td className="px-6 py-4 hidden sm:table-cell" style={{ color: '#5A635C' }}>{insp.inspector?.display_name || '—'}</td>
-                  <td className="px-6 py-4 hidden sm:table-cell text-xs" style={{ color: '#5A635C' }}>
-                    {insp.scheduled_date ? new Date(insp.scheduled_date).toLocaleDateString('en-GB') : '—'}
-                  </td>
-                  <td className="px-6 py-4 text-xs" style={{ color: '#5A635C' }}>{insp.status?.replace(/_/g, ' ')}</td>
-                  <td className="px-6 py-4">
-                    {insp.result === 'pass' && <span className="text-emerald-600 font-medium text-xs">Pass</span>}
-                    {insp.result === 'fail' && <span className="text-red-600 font-medium text-xs">Fail</span>}
-                    {(!insp.result || insp.result === 'pending') && <span className="text-xs" style={{ color: '#5A635C' }}>Pending</span>}
-                  </td>
-                </tr>
-              ))}
-              {(!inspections || inspections.length === 0) && (
-                <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-sm" style={{ color: '#5A635C' }}>No inspections yet.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+            ))}
+            {(!inspections || inspections.length === 0) && (
+              <tr><td colSpan={6} className="px-4 py-12 text-center text-sm" style={{ color: 'var(--text-subtle)' }}>No inspections recorded.</td></tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
