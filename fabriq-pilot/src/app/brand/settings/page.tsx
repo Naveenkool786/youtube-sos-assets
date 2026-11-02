@@ -1,4 +1,5 @@
 import { getCurrentUser } from '@/lib/supabase';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default async function SettingsPage() {
   const session = await getCurrentUser();
@@ -8,6 +9,12 @@ export default async function SettingsPage() {
   return (
     <div className="max-w-[800px] mx-auto px-4 md:px-8 py-8">
       <h1 className="text-2xl font-bold mb-6 pl-10 md:pl-0" style={{ color: 'var(--text)' }}>Settings</h1>
+
+      <div className="card p-5 mb-4">
+        <h2 className="font-semibold mb-4" style={{ color: 'var(--text)' }}>Appearance</h2>
+        <div className="text-sm mb-3" style={{ color: 'var(--text-muted)' }}>Choose your preferred color theme</div>
+        <ThemeToggle />
+      </div>
 
       <div className="card p-5 mb-4">
         <h2 className="font-semibold mb-4" style={{ color: 'var(--text)' }}>Profile</h2>
